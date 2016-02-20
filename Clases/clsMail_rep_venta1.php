@@ -1,0 +1,66 @@
+<?php
+
+require "../mailer/class.phpmailer.php";
+
+class Mail_venta extends PHPMailer {
+
+    function envia_correo_venta($file, $correo) {
+        $sms = 0;
+        $this->PluginDir = "../mailer/";
+        $this->Mailer = "smtp";
+        $this->SMTPAuth = true;
+        $this->IsHTML(true);
+        $this->IsSMTP();
+//NOPERTI ******************************************************************************
+        $this->SMTPSecure = "";
+        $this->Port = 587;
+        $this->Host = "mail.gruponoperti.com";
+       $this->Username = "proveedores@gruponoperti.com";
+       $this->Password = "@2015noperti70";
+       $this->From = "proveedores@gruponoperti.com";
+//*************************************************************************************
+        $this->FromName = "Noperti";
+        while ($x < count($correo)) {
+            $this->AddAddress($mls[$x], '');
+            $x++;
+        }
+        $this->AddBCC('gabokatz@hotmail.com', 'gabokatz');
+      
+        $this->Subject = " Grupo Noperti // Reporte de Ventas";
+        $this->AddEmbeddedImage('../img/noperti_logo.jpg', 'logo_cli');
+        $this->AddEmbeddedImage('../img/tikva_logo.jpg', 'logo_tivka');
+        $mensaje = "<html>
+            <body>
+            <table>
+            <tr><td><img src='cid:logo_cli' /></td></tr>
+            <tr><td>Estimado Gerente</td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td>Se adjunta el Documento de Reporte de Ventas diarias.<br><br><br>
+            Este mail no debe ser respondido. <br>
+                        </td></tr>
+            <tr><td><br><br><br><br><br>
+            <img src='cid:logo_tivka' />
+            <br>Derechos Reservados TIKVASYSTEMS https://www.tivkasystem.com/</td></tr>
+            </table>
+            </body>
+            </html>";
+
+        $this->MsgHTML($mensaje);
+        $n = 0;
+        while ($n < count($file)) {
+            $this->AddAttachment($file[$n]);
+            $n++;
+        }
+
+        if (!$this->Send()) {
+            $sms = $this->ErrorInfo;
+        }
+        return count($file);
+//        return $sms;
+    }
+
+}
+
+?>

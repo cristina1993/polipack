@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0"> 
+    <infoTributaria> 
+        <ambiente>1</ambiente> 
+        <tipoEmision>1</tipoEmision> 
+        <razonSocial>DIAZ SANCHEZ JOSE ANTONIO</razonSocial> 
+        <nombreComercial>TRANSPORTE</nombreComercial> 
+        <ruc>1790007871001</ruc> 
+        <claveAcceso>123</claveAcceso> 
+        <codDoc>01</codDoc> 
+        <estab>001</estab> 
+        <ptoEmi>001</ptoEmi> 
+        <secuencial>000022222</secuencial> 
+        <dirMatriz>LOS MADROÑOS 1141 Y LAS PALMERAS</dirMatriz> 
+    </infoTributaria> 
+    <infoFactura> 
+        <fechaEmision>13/07/2015</fechaEmision> 
+        <dirEstablecimiento>LOS MADROÑOS 1141 Y LAS PALMERAS</dirEstablecimiento> 
+        <contribuyenteEspecial>636</contribuyenteEspecial>
+        <obligadoContabilidad>SI</obligadoContabilidad>
+        <tipoIdentificacionComprador>05</tipoIdentificacionComprador> 
+        <razonSocialComprador>JUAN JOSE MARTINEZ</razonSocialComprador> 
+        <identificacionComprador>1204495350</identificacionComprador> 
+        <totalSinImpuestos>10.00</totalSinImpuestos> 
+        <totalDescuento>0.00</totalDescuento> 
+        <totalConImpuestos> 
+            <totalImpuesto>
+                <codigo>2</codigo>
+                <codigoPorcentaje>0</codigoPorcentaje>
+                <baseImponible>10.00</baseImponible>
+                <tarifa>0</tarifa>
+                <valor>0.00</valor>
+            </totalImpuesto>
+        </totalConImpuestos> 
+        <propina>0.00</propina> 
+        <importeTotal>10.00</importeTotal> 
+        <moneda>DOLAR</moneda> 
+    </infoFactura> 
+    <detalles> 
+        <detalle> 
+            <codigoPrincipal>T0001</codigoPrincipal> 
+            <codigoAuxiliar>0</codigoAuxiliar> 
+            <descripcion>SERVICIO DE TRANSPORTE MARTINEZ JOEL</descripcion> 
+            <cantidad>1.00</cantidad> 
+            <precioUnitario>10.0000</precioUnitario> 
+            <descuento>0.00</descuento> 
+            <precioTotalSinImpuesto>10.00</precioTotalSinImpuesto> 
+            <impuestos> 
+                <impuesto> 
+                    <codigo>2</codigo> 
+                    <codigoPorcentaje>0</codigoPorcentaje> 
+                    <tarifa>0</tarifa> 
+                    <baseImponible>10.00</baseImponible> 
+                    <valor>0.00</valor> 
+                </impuesto> 
+            </impuestos> 
+        </detalle> 
+    </detalles> 
+</factura>
