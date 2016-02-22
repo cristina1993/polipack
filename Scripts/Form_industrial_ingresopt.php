@@ -6,7 +6,7 @@ $Ing = new Clase_industrial_ingresopt();
 if (isset($_REQUEST[mov_documento])) {
     $cod = $_REQUEST[mov_documento];
 } else {
-    $cod = 0;
+    $cod = $_GET[sec];
 }
 $cns_pro = $Ing->lista_productos_total($emisor);
 $cns = $Ing->lista_ingresos_doc($cod);
@@ -24,7 +24,6 @@ $cns = $Ing->lista_ingresos_doc($cod);
             cdg = '<?php echo $cod ?>';
             $(function () {
                 if (cdg == 0) {
-                    seccion_auto();
                     $('#validador').val('1');
                 }
                 $('#frm_save').submit(function (e) {
@@ -34,11 +33,6 @@ $cns = $Ing->lista_ingresos_doc($cod);
                     }
                 });
             });
-            function seccion_auto() {
-                $.post("actions_industrial_ingresopt.php", {op: 4}, function (dt) {
-                    mov_documento.value = '001-' + dt;
-                });
-            }
             function save(e, c) {
                 var data = Array();
                 n = 0;

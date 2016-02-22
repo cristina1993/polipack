@@ -84,9 +84,18 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
                 switch (a)
                 {
                     case 0://Nuevo
-                        frm.src = '../Scripts/Form_industrial_ingresopt.php';//Cambiar Form_productos
-                        parent.document.getElementById('contenedor2').rows = "*,50%";
-                        //look_menu();
+                        $.post("actions_industrial_ingresopt.php", {op: 15}, function (dt) {
+                            secuencial = '001-' + dt;
+                            frm.src = '../Scripts/Form_industrial_ingresopt.php?sec=' + secuencial;//Cambiar Form_productos
+                            if (secuencial != 0) {
+                                $.post("actions_industrial_ingresopt.php", {op: 16, sec: secuencial}, function (dt) {
+                                    if (dt != 0) {
+                                        alert(dt);
+                                    }
+                                });
+                            }
+                        });
+                        look_menu();
                         break;
                     case 1://Editar
                         frm.src = '../Scripts/Form_industrial_ingresopt.php?id=' + id + '&x=' + x;//Cambiar Form_productos

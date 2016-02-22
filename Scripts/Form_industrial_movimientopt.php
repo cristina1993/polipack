@@ -15,6 +15,8 @@ if (isset($_GET[id])) {
     $id = 0;
     $rst['mov_fecha_trans'] = date('Y-m-d');
     $fila = 0;
+    $secuencial = $_GET[sec];
+    $x=0;
 }
 $cns_combo = $Clase_industrial_ingresopt->lista_combo_fabricas_industrial();
 $cns_combo1 = $Clase_industrial_ingresopt->lista_combo_fabricas_noperti();
@@ -48,7 +50,6 @@ $cns_trans = $Clase_industrial_movimientopt->lista_combo_transacciones();
                 });
                 Calendar.setup({inputField: "mov_fecha_trans", ifFormat: "%Y-%m-%d", button: "im-mov_fecha_trans"});
                 if (id == 0) {
-                    seccion_auto();
                     $("#factura").hide();
                     $("#guardar").show();
                     $('#mov_cantidad1').val('0');
@@ -219,11 +220,7 @@ $cns_trans = $Clase_industrial_movimientopt->lista_combo_transacciones();
                     alert('No puede eliminar todas las filas');
                 }
             }
-            function seccion_auto() {
-                $.post("actions_industrial_ingresopt.php", {op: 4}, function (dt) {
-                    mov_documento.value = '001-' + dt;
-                })
-            }
+
             function cliente(obj) {
                 $.post("actions_industrial_ingresopt.php", {op: 5, id: obj.value}, function (dt) {
                     dat = dt.split('&');
@@ -416,7 +413,7 @@ $cns_trans = $Clase_industrial_movimientopt->lista_combo_transacciones();
                                 <tr>
                                     <td>Documento No:</td>
                                     <td>
-                                        <input type="text" size="20"  id="mov_documento" readonly value="<?php echo $rst['mov_documento'] ?>"  />
+                                        <input type="text" size="20"  id="mov_documento" readonly value="<?php echo $secuencial ?>"  />
                                         <input type="hidden"   id="emisor" readonly value="<?php echo $emisor ?>"  />
                                     </td>
                                     <td>Fecha de Ingreso:</td>
