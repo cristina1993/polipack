@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+      <ns2:RespuestaAutorizacion xsi:type='ns2:autorizacion' xmlns:ns2='http://ec.gob.sri.ws.autorizacion' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+      <estado>AUTORIZADO</estado>
+      <numeroAutorizacion>2202201612593917900078710014545161515</numeroAutorizacion>
+      <fechaAutorizacion>2016-02-22T12:59:39-05:00</fechaAutorizacion>
+      <ambiente>2</ambiente>
+      <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><factura id="comprobante" version="1.1.0">
+<infoTributaria>
+<ambiente>2</ambiente>
+<tipoEmision>1</tipoEmision>
+<razonSocial>NOPERTI CIA LTDA</razonSocial>
+<nombreComercial>QUICENTRO SHOPPING</nombreComercial>
+<ruc>1790007871001</ruc>
+<claveAcceso>2202201601179000787100120090010000040921234567817</claveAcceso>
+<codDoc>01</codDoc>
+<estab>009</estab>
+<ptoEmi>001</ptoEmi>
+<secuencial>000004092</secuencial>
+<dirMatriz>LOS MADRONOS 1141 Y LAS PALMERAS</dirMatriz>
+</infoTributaria>
+<infoFactura>
+<fechaEmision>22/02/2016</fechaEmision>
+<dirEstablecimiento>AV NACIONES UNIDAS Y AV 6 DE DICIEMBRE</dirEstablecimiento>
+<contribuyenteEspecial>636</contribuyenteEspecial>
+<obligadoContabilidad>SI</obligadoContabilidad>
+<tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+<razonSocialComprador>CECILIA GALLEGOS</razonSocialComprador>
+<identificacionComprador>1706841549001</identificacionComprador>
+<totalSinImpuestos>26.79</totalSinImpuestos>
+<totalDescuento>0.01</totalDescuento>
+<totalConImpuestos>
+<totalImpuesto>
+<codigo>2</codigo>
+<codigoPorcentaje>2</codigoPorcentaje>
+<baseImponible>26.79</baseImponible>
+<valor>3.21</valor>
+</totalImpuesto>
+</totalConImpuestos>
+<propina>0.00</propina>
+<importeTotal>30</importeTotal>
+<moneda>DOLAR</moneda>
+</infoFactura>
+<detalles>
+<detalle>
+<codigoPrincipal>7861028888000</codigoPrincipal>
+<codigoAuxiliar>7861028888000</codigoAuxiliar>
+<descripcion>FUNDA COJIN SHAG 50X50cm</descripcion>
+<cantidad>2</cantidad>
+<precioUnitario>13.3929</precioUnitario>
+<descuento>0</descuento>
+<precioTotalSinImpuesto>26.79</precioTotalSinImpuesto>
+<impuestos>
+<impuesto>
+<codigo>2</codigo>
+<codigoPorcentaje>2</codigoPorcentaje>
+<tarifa>12</tarifa>
+<baseImponible>26.79</baseImponible>
+<valor>3.21</valor>
+</impuesto>
+</impuestos>
+</detalle>
+<detalle>
+<codigoPrincipal>FPNO1617</codigoPrincipal>
+<codigoAuxiliar>FPNO1617</codigoAuxiliar>
+<descripcion>FUNDA NOPERTI 16X17</descripcion>
+<cantidad>1</cantidad>
+<precioUnitario>0.01</precioUnitario>
+<descuento>0.01</descuento>
+<precioTotalSinImpuesto>0</precioTotalSinImpuesto>
+<impuestos>
+<impuesto>
+<codigo>2</codigo>
+<codigoPorcentaje>2</codigoPorcentaje>
+<tarifa>12</tarifa>
+<baseImponible>0</baseImponible>
+<valor>0</valor>
+</impuesto>
+</impuestos>
+</detalle>
+</detalles>
+<infoAdicional>
+<campoAdicional nombre="Direccion">REPUBLICA DEL SALVADOR Y NACIONES UNIDAS</campoAdicional>
+<campoAdicional nombre="Telefono">5140288</campoAdicional>
+<campoAdicional nombre="Email">disgalarhotmailcom</campoAdicional>
+</infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature1001548">
+<ds:SignedInfo Id="Signature-SignedInfo206461">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+<ds:Reference Id="SignedPropertiesID702917" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature1001548-SignedProperties123155">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>vssmxf5/zzj1nld7MmiQPwkNTZ8=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate11027310">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>7bfxdUIXI/KiVmoAlWfouoStR9M=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-736302" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>T59gSoPjuv+DrEo5t3V46Sknylo=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue100737">
+y7uqJZOsLbRd9M31n+Ga/esa/ziNl98rEPwYAN7ocr7KdBjmYMCJqse3EoxAh7c34xSeWdTnomaL
+zIfBBvWEiVq/EBY1zilx2CPH7NftHmazO3rKg362Mj7b/+kzi3kFni+VuTDiP5JUFxGBcVPTyOk8
+l+hW3OaLwJ+uFeATqN550vguoDb55YTJIQpJA4lilnBW/7UvsrOYRAXaFWaMwrqGtvOSkDjpcUiF
+wZpS3PV5E7xnAa3X8hayWMH8bEe8947cbEFXnBj2FTcyKa5m0Y+sGCSIAYU/5DNI+nReALIrXnyO
+0sOtw3svBzgtHJaWIsHDI/tZfv3JpNVPAFI4AQ==
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate11027310">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIJXzCCB0egAwIBAgIETkVTwjANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTE1MTAxMjE3MjQxNloXDTE2MTAxMjE3NTQx
+NlowgbwxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+DAYDVQQHEwVRVUlUTzFAMBEGA1UEBRMKMDAwMDA4NDEzNDArBgNVBAMTJE5JQ09MQVMgQUxFSkFO
+RFJPIE1BUkNPVklDSSBMT05HQVZFUjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7k
+ziFSridd3P1wor6whpeUl9DxLzCI1A+ns3kh7NLUNplbJTfSUQX79VF33fq+GNwSBgGBK5sTDSPN
+lJ0nOddo76x+XIcMSdWh1co6fIQI5l8DE0y0Q4ug5eVDfeUieH4BUr0W10pZeXs8a7k/yfyRWhVq
+ADnJonWtYgvF60nWO3TbYxspsZbWNwoaz2v4kmx/t0FgouE06d0r5yUXIvZ9k+xJSrG4zJ8pJxFt
+iGvSAO4fuSdIWG6UxAz/rQ053TER/LmqPl6wyjJSHoFBh5Y9Q7n+oNE5AI+3+NZYWEpUn7ryrGSw
+SvJjRYtYjtqI5ehG10TXXR/D/i7iZBYF0w0CAwEAAaOCBIAwggR8MIGRBggrBgEFBQcBAQSBhDCB
+gTA+BggrBgEFBQcwAYYyaHR0cDovL29jc3AuZWNpLmJjZS5lYy9lamJjYS9wdWJsaWN3ZWIvc3Rh
+dHVzL29jc3AwPwYIKwYBBQUHMAGGM2h0dHA6Ly9vY3NwMS5lY2kuYmNlLmVjL2VqYmNhL3B1Ymxp
+Y3dlYi9zdGF0dXMvb2NzcDAfBgorBgEEAYKoOwMKBBETD05PUEVSVEkgQ0lBTFREQTAdBgorBgEE
+AYKoOwMLBA8TDTE3OTAwMDc4NzEwMDEwGgYKKwYBBAGCqDsDAQQMEwoxNzAyNzcwMDIzMCEGCisG
+AQQBgqg7AwIEExMRTklDT0xBUyBBTEVKQU5EUk8wGQYKKwYBBAGCqDsDAwQLEwlNQVJDT1ZJQ0kw
+GAYKKwYBBAGCqDsDBAQKEwhMT05HQVZFUjAaBgorBgEEAYKoOwMFBAwTClBSRVNJREVOVEUwLAYK
+KwYBBAGCqDsDBwQeExxNQURST05PUyAxMTQxIFkgTEFTIFBBTE1FUkFTMBkGCisGAQQBgqg7AwgE
+CxMJMDIyNDQ1MTQ1MBUGCisGAQQBgqg7AwkEBxMFUXVpdG8wFwYKKwYBBAGCqDsDDAQJEwdFQ1VB
+RE9SMCAGCisGAQQBgqg7AzMEEhMQU09GVFdBUkUtQVJDSElWTzAlBgNVHREEHjAcgRpuaWNvbGFz
+bWFyY292aWNpQHlhaG9vLmNvbTCCAd8GA1UdHwSCAdYwggHSMIIBzqCCAcqgggHGhoHVbGRhcDov
+L2JjZXFsZGFwc3VicDEuYmNlLmVjL2NuPUNSTDI2NSxjbj1BQyUyMEJBTkNPJTIwQ0VOVFJBTCUy
+MERFTCUyMEVDVUFET1IsbD1RVUlUTyxvdT1FTlRJREFEJTIwREUlMjBDRVJUSUZJQ0FDSU9OJTIw
+REUlMjBJTkZPUk1BQ0lPTi1FQ0lCQ0Usbz1CQU5DTyUyMENFTlRSQUwlMjBERUwlMjBFQ1VBRE9S
+LGM9RUM/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlhjRodHRwOi8vd3d3LmVjaS5iY2Uu
+ZWMvQ1JML2VjaV9iY2VfZWNfY3JsZmlsZWNvbWIuY3JspIG1MIGyMQswCQYDVQQGEwJFQzEiMCAG
+A1UEChMZQkFOQ08gQ0VOVFJBTCBERUwgRUNVQURPUjE3MDUGA1UECxMuRU5USURBRCBERSBDRVJU
+SUZJQ0FDSU9OIERFIElORk9STUFDSU9OLUVDSUJDRTEOMAwGA1UEBxMFUVVJVE8xJTAjBgNVBAMT
+HEFDIEJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxDzANBgNVBAMTBkNSTDI2NTALBgNVHQ8EBAMC
+BSAwHwYDVR0jBBgwFoAUGPnw++YyHJlmOSrKi7JpfUknv84wHQYDVR0OBBYEFBN78fio9RKw9m35
+nenq4IBj8owbMAkGA1UdEwQCMAAwGQYJKoZIhvZ9B0EABAwwChsEVjguMQMCBJAwDQYJKoZIhvcN
+AQELBQADggIBAJDXeY+FyEXkjHhDHCdMSykc+nXJ+Wld6UiFMpbJCBF+LfpcSWWP9GG75uW1o/sH
+EN2E7uFfMg/Z8994ZhIjH2NaH63VKAmIkV6GUELo76MWFU/Q5wlsi4KZQzeWi5qHD8uoPTz7Nyak
+VQanWdBydjoDEI4phnit/NNOwoj/BEML1UhdAFf+hkC+Puiq6r3Fiyc//kIITe1y2azPBQLVIUFR
+USXwA9AOjQnT0Mi4snwGw17lBM/AfuQ3E9ABRMLZ+vNkhRLRj2Aa04S7CfdKbljAd/5wWL6X4k8a
+1lJHBWMNq4QwTNEZLb62/0wwIIh9UB4ED/mr5qVSiP/lmaozkM7L7GtHh1haTH/nYeA2j811hZf4
+KCrgkQkWTVZzYtACa97jR68V4YItNSKmW/yjnYUqavkpUODFHd4LpyY+a0LlOAjc+vu+ySx0d4QX
+tTj9ShEgHHJoHecv/o+o3hpexXjo0LWljwszlxgmRZEYPg1w6oWbNKuCll6O5LVrr60NZnN9ttXB
+Xr/XUwqNQl5Y3SvLK7jBbL5C7YHBw/VksYkz/M3o7SG1AekBg6P9tnHH6TKYmVcC3xYycgqu0Lz1
+9XHOy1sk+1GdzAs5uYP3mrcC753ci7nlvoElV2ckOTAQEni5mtlMwQ7L2PV79uB+mqQObsd8YWdP
+bljdrO5Ki5h7
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+zuTOIVKuJ13c/XCivrCGl5SX0PEvMIjUD6ezeSHs0tQ2mVslN9JRBfv1UXfd+r4Y3BIGAYErmxMN
+I82UnSc512jvrH5chwxJ1aHVyjp8hAjmXwMTTLRDi6Dl5UN95SJ4fgFSvRbXSll5ezxruT/J/JFa
+FWoAOcmida1iC8XrSdY7dNtjGymxltY3ChrPa/iSbH+3QWCi4TTp3SvnJRci9n2T7ElKsbjMnykn
+EW2Ia9IA7h+5J0hYbpTEDP+tDTndMRH8uao+XrDKMlIegUGHlj1Duf6g0TkAj7f41lhYSlSfuvKs
+ZLBK8mNFi1iO2ojl6EbXRNddH8P+LuJkFgXTDQ==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature1001548-Object1031840"><etsi:QualifyingProperties Target="#Signature1001548"><etsi:SignedProperties Id="Signature1001548-SignedProperties123155"><etsi:SignedSignatureProperties><etsi:SigningTime>2016-02-22T12:59:38-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>cPm3RX/h+n735cPQVhwFraH4fjg=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1313166274</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-736302"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+      <mensajes/>
+      </ns2:RespuestaAutorizacion>
