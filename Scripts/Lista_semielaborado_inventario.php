@@ -9,11 +9,9 @@ if (isset($_GET[txt], $_GET[fecha2])) {
     if ($fec2 == date('Y-m-d')) {
         $txt = "and (pro_codigo like '%$nm%' or pro_descripcion like '%$nm%' or substring(m.mva_rollo from  1 for 7) like '%$nm%')";
         $cns = $Set->lista_buscar_inventario_actual($txt);
-        $det = 0;
     } else {
         $txt = "and (pro_codigo like '%$nm%' or pro_descripcion like '%$nm%' or substring(m.mvh_rollo from  1 for 7) like '%$nm%') and m.mvh_fecha='$fec2'";
         $cns = $Set->lista_buscar_inventario_historico($txt);
-        $det = 1;
     }
 } else {
     $fec1 = date("Y-m-d");
@@ -115,8 +113,8 @@ if (isset($_GET[txt], $_GET[fecha2])) {
                 $i = 0;
                 $g_total = 0;
                 while ($rst = pg_fetch_array($cns)) {
-                    $i++;
                     if ($rst[cantidad]!= 0 && $rst[peso] != 0) {
+                        $i++;
                         echo "<tr style='height: 20px' id='fila'>
                             <td>$i </td>
                             <td>$rst[pro_codigo]</td>
