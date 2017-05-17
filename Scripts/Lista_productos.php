@@ -256,21 +256,21 @@ if (isset($_GET[search])) {
                         if ($user == 1) {
                             if ($rst['pro_estado'] == 2) {
                                 ?> 
-                                <img src = "../img/noshow.png" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 0, this)">
+                                <img src = "../img/noshow.png" title="Mostrar producto" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 0, this)">
                                 <?php
                             } else {
                                 ?> 
-                                <img src = "../img/show.png" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 2, this)">
+                                <img src = "../img/show.png" title="Ocultar producto" width="16px" class="auxBtn" onclick ="auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 2, this)">
                                 <?php
                             }
                         }
                         if ($rst['pro_estado'] != 0) {
                             ?>  
-                            <img src = "../img/inactivo.png" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 0, this)">
+                            <img src = "../img/inactivo.png"  title="Activar producto" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 0, this)">
                             <?php
                         } else {
                             ?>
-                            <img src="../img/activo.png" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 1, this)">
+                            <img src="../img/activo.png"  title="Desactivar producto" width="16px" class="auxBtn" onclick = "auxWindow(4, 0,<?php echo $rst[id] ?>, 0, 1, this)">
                             <?php
                         }
                         ?>
@@ -280,12 +280,12 @@ if (isset($_GET[search])) {
                         <?php
                         if ($Prt->delete == 0) {
                             ?>
-                            <img src="../img/del_reg.png" width="16px" class="auxBtn" onclick="del(<?php echo $rst[id] ?>, '<?php echo $tbl ?>', '<?php echo $rst[$tp0 . 'a'] ?>',<?php echo $rst[pro_a] ?>)">                        
+                            <img src="../img/del_reg.png"  title="Eliminar producto" width="16px" class="auxBtn" onclick="del(<?php echo $rst[id] ?>, '<?php echo $tbl ?>', '<?php echo $rst[$tp0 . 'a'] ?>',<?php echo $rst[pro_a] ?>)">                        
                             <?php
                         }
                         if ($Prt->edition == 0) {
                             ?>
-                            <img src="../img/upd.png" width="16px" class="auxBtn" onclick="auxWindow(1,<?php echo $rst[ids] ?>,<?php echo $rst[id] ?>, 0)">                        
+                            <img src="../img/upd.png"  title="Editar producto" width="16px" class="auxBtn" onclick="auxWindow(1,<?php echo $rst[ids] ?>,<?php echo $rst[id] ?>, 0)">                        
                         <?php }
                         ?>
                     </td>

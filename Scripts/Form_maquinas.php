@@ -62,7 +62,8 @@ if (isset($_GET[id])) {
                         if (dt == 0)
                         {
                             loading('hidden');
-                            parent.document.getElementById('mainFrame').src = '../Scripts/Lista_maquinas.php';
+                            cancelar();
+                            
                         } else {
                             alert(dt);
                         }
@@ -70,8 +71,6 @@ if (isset($_GET[id])) {
                 } else {
                     alert('Existen Campos Requerido vacios \n Favor Revise ');
                 }
-                mnu = window.parent.frames[0].document.getElementById('lock_menu');
-                mnu.style.visibility = "hidden";
             }
 
             function cancelar()
@@ -82,6 +81,7 @@ if (isset($_GET[id])) {
                 grid.style.visibility = "hidden";
                 parent.document.getElementById('bottomFrame').src = '';
                 parent.document.getElementById('contenedor2').rows = "*,0%";
+                parent.document.getElementById('mainFrame').src = '../Scripts/Lista_maquinas.php?tipo=<?php $_get[tipo]?>';
             }
             function archivo(evt, imgid) {
                 var files = evt.target.files;
@@ -124,7 +124,7 @@ if (isset($_GET[id])) {
         <div id="cargando">Por Favor Espere...</div>
         <table id="tbl_form" cellpadding="0" >
             <thead>
-                <tr><th colspan="3" ><?php echo $tbl_name ?></th></tr>
+                <tr><th colspan="3" ><?php echo strtoupper($tbl_name) ?><font class="cerrar"  onclick="cancelar()" title="Salir del Formulario">&#X00d7;</font></th></tr>
             </thead>
             <tr>
                 <td id="head" colspan="3" valign="top" align="left">

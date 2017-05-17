@@ -97,9 +97,9 @@ class Clase_industrial_movimientopt {
         }
     }
 
-    function lista_buscador_industrial_ingresopt($bod, $txt) {
+    function lista_buscador_industrial_ingresopt($txt) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_i_mov_inv_pt m,erp_transacciones t, erp_i_cliente c where m.trs_id=t.trs_id and m.cli_id=c.cli_id and m.bod_id=$bod $txt order by m.mov_documento desc");
+            return pg_query("SELECT * FROM erp_i_mov_inv_pt m,erp_transacciones t, erp_i_cliente c, erp_i_productos p where m.pro_id=p.pro_id and m.trs_id=t.trs_id and m.cli_id=c.cli_id $txt order by m.mov_documento desc");
         }
     }
 
@@ -197,11 +197,11 @@ class Clase_industrial_movimientopt {
         }
     }
 
-    function lista_un_producto($id) {
-        if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM  erp_i_productos where pro_codigo='$id'");
-        }
-    }
+//    function lista_un_producto($id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("SELECT * FROM  erp_i_productos where pro_codigo='$id'");
+//        }
+//    }
 
     function lista_proveedor($tp) {
         if ($this->con->Conectar() == true) {
@@ -260,6 +260,72 @@ and m.cli_id=c.cli_id
 and m.pro_id=p.id 
 and p.ids=ps.ids
 and m.bod_id=$emi $prod order by m.mov_documento desc");
+        }
+    }
+    
+    function lista_una_orden_extrusion($id, $pro) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select pro_id,opp_velocidad FROM erp_i_orden_produccion  where replace(ord_num_orden,'-','')='$id' and pro_id=$pro
+                            union
+                            select ord_pro_secundario,opp_velocidad2 FROM erp_i_orden_produccion  where replace(ord_num_orden,'-','')='$id' and ord_pro_secundario=$pro
+                            union
+                            select ord_pro3,opp_velocidad3 FROM erp_i_orden_produccion  where replace(ord_num_orden,'-','')='$id' and ord_pro3=$pro
+                            union
+                            select ord_pro4,opp_velocidad4  FROM erp_i_orden_produccion  where replace(ord_num_orden,'-','')='$id' and ord_pro4=$pro");
+        }
+    }
+
+    function lista_una_orden_corte($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * FROM erp_i_orden_produccion_padding  where replace(opp_codigo,'-','')='$id'");
+        }
+    }
+    
+     function lista_ordenes() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT ord_num_orden, '0' as tip FROM  erp_i_orden_produccion where ord_bodega='2' 
+                            union
+                            SELECT opp_codigo as ord_num_orden,'1' as tip FROM  erp_i_orden_produccion_padding
+                            order by tip, ord_num_orden");
+        }
+    }
+    
+     function lista_movimiento_lote($lt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * FROM erp_i_mov_inv_pt m, erp_i_productos p where m.pro_id=p.pro_id and m.mov_pago='$lt'");
+        }
+    }
+    
+    function lista_un_producto($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_productos WHERE pro_id=$id");
+        }
+    }
+    
+     function total_ingreso_egreso_fac($id, $lt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0 and m.mov_pago='$lt') as ingreso,
+                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and m.mov_pago='$lt') as egreso,
+                                   (SELECT SUM(m.mov_tabla)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0 and m.mov_pago='$lt') as cnt_ingreso,
+                                   (SELECT SUM(m.mov_tabla)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and m.mov_pago='$lt') as cnt_egreso,
+                                    (SELECT mov_flete FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and m.mov_pago='$lt' order by mov_id desc limit 1) as estado");
+        }
+    }
+
+    function total_ingreso_egreso_lote($lt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 0 and m.mov_pago='$lt') as ingreso,
+                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 1 and m.mov_pago='$lt') as egreso,
+                                   (SELECT SUM(m.mov_tabla)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 0 and m.mov_pago='$lt') as cnt_ingreso,
+                                   (SELECT SUM(m.mov_tabla)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 1 and m.mov_pago='$lt') as cnt_egreso,
+                                   (SELECT mov_flete FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.mov_pago='$lt' order by mov_id desc limit 1) as estado");
+        }
+    }
+
+
+     function lista_lotes_movimiento($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * FROM inventario_rollos  where inv>0 and pro_id=$id and bod=2");
         }
     }
 

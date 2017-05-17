@@ -242,10 +242,10 @@ if (isset($_GET[ord], $_GET[cli], $_GET[ruc], $_GET[fecha1], $_GET[fecha2])) {
                         <select id="ped_estado" name="ped_estado">
                             <option value="x" >SELECCIONE</option>
                             <option value="1" >APROBADO</option>
-                            <option value="3" >SEMI-FACTURADO</option>
-                            <option value="4" >FACTURADO</option>
-                            <option value="5" >SUSPENDIDO</option>
-                            <option value="6" >CADUCADO</option>
+                            <!--<option value="3" >SEMI-FACTURADO</option>-->
+                            <option value="4" >ENVIADO</option>
+                            <option value="5" >ANULADO</option>
+                            <!--<option value="6" >CADUCADO</option>-->
                         </select>
                         DESDE:<input type="text" size="10" name="fecha1" id="fecha1" value="<?php echo $fec1 ?>" />
                         <img src="../img/calendar.png" id="im-campo1"/>
@@ -262,8 +262,8 @@ if (isset($_GET[ord], $_GET[cli], $_GET[ruc], $_GET[fecha1], $_GET[fecha2])) {
             <th>Orden de Venta</th>
             <th>Ruc/Cedula</th>
             <th>Cliente</th>                                
-            <th>Local</th>
-            <th>Vendedor</th>
+<!--            <th>Local</th>
+            <th>Vendedor</th>-->
             <th>Total Valor</th>
             <th>Estado</th>
             <th>Registro Fecha</th>
@@ -276,48 +276,48 @@ if (isset($_GET[ord], $_GET[cli], $_GET[ruc], $_GET[fecha1], $_GET[fecha2])) {
             $n = 0;
             while ($rst = pg_fetch_array($cns)) {
                 $n++;
-                switch ($rst[ped_local]) {
-                    case '1':$local = 'Noperti';
-                        break;
-                    case '10':$local = 'Industrial';
-                        break;
-                    case '2':$local = 'Condado';
-                        break;
-                    case '3':$local = 'Quicentro Sur Shopping';
-                        break;
-                    case '4':$local = 'Mall del Sol';
-                        break;
-                    case '5':$local = 'Shopping Machala';
-                        break;
-                    case '6':$local = 'Riocentro Norte';
-                        break;
-                    case '7':$local = 'San Marino Shopping';
-                        break;
-                    case '8':$local = 'City Mall';
-                        break;
-                    case '9':$local = 'Quicentro Shopping';
-                        break;
-                    case '11':$local = 'Top Tenis';
-                        break;
-                    case '12':$local = 'Recreo';
-                        break;
-                    case '13':$local = 'CCNU';
-                        break;
-                    case '14':$local = 'Atahualpa';
-                        break;
-                }
+//                switch ($rst[ped_local]) {
+//                    case '1':$local = 'Noperti';
+//                        break;
+//                    case '10':$local = 'Industrial';
+//                        break;
+//                    case '2':$local = 'Condado';
+//                        break;
+//                    case '3':$local = 'Quicentro Sur Shopping';
+//                        break;
+//                    case '4':$local = 'Mall del Sol';
+//                        break;
+//                    case '5':$local = 'Shopping Machala';
+//                        break;
+//                    case '6':$local = 'Riocentro Norte';
+//                        break;
+//                    case '7':$local = 'San Marino Shopping';
+//                        break;
+//                    case '8':$local = 'City Mall';
+//                        break;
+//                    case '9':$local = 'Quicentro Shopping';
+//                        break;
+//                    case '11':$local = 'Top Tenis';
+//                        break;
+//                    case '12':$local = 'Recreo';
+//                        break;
+//                    case '13':$local = 'CCNU';
+//                        break;
+//                    case '14':$local = 'Atahualpa';
+//                        break;
+//                }
                 switch ($rst[ped_estado]) {
                     case '0':$estado = 'Pendiente';
                         break;
                     case '1':$estado = 'Aprobado';
                         break;
-                    case '3':$estado = 'Semi-Facturado';
+                    case '3'://$estado = 'Semi-Facturado';
                         break;
-                    case '4':$estado = 'Facturado';
+                    case '4':$estado = 'Enviado';
                         break;
-                    case '5':$estado = 'Suspendido';
+                    case '5':$estado = 'Anulado';
                         break;
-                    case '6':$estado = 'Caducado';
+                    case '6'://$estado = 'Caducado';
                         break;
                 }
                 ?>
@@ -326,8 +326,8 @@ if (isset($_GET[ord], $_GET[cli], $_GET[ruc], $_GET[fecha1], $_GET[fecha2])) {
                     <td><?php echo $rst[ped_num_registro] ?></td>
                     <td><?php echo $rst[ped_ruc_cc_cliente] ?></td>
                     <td><?php echo $rst[ped_nom_cliente] ?></td>
-                    <td><?php echo $local ?></td>
-                    <td><?php echo $rst[ped_vendedor] ?></td>
+                    <!--<td><?php echo $local ?></td>-->
+                    <!--<td><?php echo $rst[ped_vendedor] ?></td>-->
                     <td align="right"><?php echo $rst[ped_total] ?></td>
                     <?php
                     if ($estado == 'Aprobado') {

@@ -343,8 +343,8 @@ switch ($act) {
             }
             echo $rst[reg_id] . '&' .
             $rst[reg_femision] . '&' .
-            $rst[reg_ruc_cliente] . '&' .
-            $rst[cli_raz_social] . '&' .
+            str_replace('&','',$rst[reg_ruc_cliente]) . '&' .
+            str_replace('&','',$rst[cli_raz_social]) . '&' .
             $lista . '&' .
             $rst[cli_id] . '&' .
             str_replace(',', '', number_format($rst[reg_propina], $s)) . '&' .

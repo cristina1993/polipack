@@ -26,15 +26,16 @@ class Clase_ord_pedido_venta {
 
     function lista_productos_todos() {
         if ($this->con->Conectar() == true) {
-            return pg_query("(SELECT '1' as tbl,id as id,pro_ac as lote,pro_a as codigo,pro_b as descripcion FROM  erp_productos where pro_estado='0' 
-                              union
-                              SELECT '0' as tbl, pro_id as id, '' as lote ,pro_codigo as codigo,pro_descripcion as descripcion FROM  erp_i_productos where pro_estado='0') order by descripcion");
+//            return pg_query("(SELECT '1' as tbl,id as id,pro_ac as lote,pro_a as codigo,pro_b as descripcion FROM  erp_productos where pro_estado='0' 
+//                              union
+//                              SELECT '0' as tbl, pro_id as id, '' as lote ,pro_codigo as codigo,pro_descripcion as descripcion FROM  erp_i_productos where pro_estado='0') order by descripcion");
+            return pg_query("select * from erp_i_productos where pro_estado=0 and pro_tipo=1 order by pro_codigo");
         }
     }
 
     function lista_detalle_registro_pedido($id) {
         if ($this->con->Conectar() == true) {
-            return pg_query("select * from erp_det_ped_venta where ped_id=$id and (det_estado=1 or det_estado=9) ");
+            return pg_query("select * from erp_det_ped_venta where ped_id=$id");
         }
     }
 
@@ -213,7 +214,7 @@ class Clase_ord_pedido_venta {
             '$data[20]',                
             '$data[21]',
             '$data[22]',
-                '0',
+                '1',
             '$data[23]',
             '$cli_id',
             '$cli_tipo',
@@ -239,6 +240,7 @@ class Clase_ord_pedido_venta {
             pro_id,
             det_tab,
             det_unidad,
+            det_observacion,
             ped_id)
     VALUES (
    '$data[0]',    
@@ -254,7 +256,8 @@ class Clase_ord_pedido_venta {
    '$data[10]',
    '$data[11]',
    '$data[12]',
-    $data[13])");
+   '$data[13]',
+    $data[14])");
         }
     }
 
@@ -608,8 +611,8 @@ cli_parroquia
 
     function lista_vendedores() {
         if ($this->con->Conectar() == true) {
-            //return pg_query("SELECT * FROM erp_users u, erp_vendedores v WHERE upper(u.usu_person)=v.vnd_nombre ORDER BY vnd_nombre");
-            return pg_query("SELECT upper(vnd_nombre) as vnd_nombre FROM erp_vendedores group by vnd_nombre ORDER BY vnd_nombre");
+            return pg_query("SELECT * FROM erp_users");
+//            return pg_query("SELECT upper(vnd_nombre) as vnd_nombre FROM erp_vendedores group by vnd_nombre ORDER BY vnd_nombre");
 
         }
     }
@@ -744,7 +747,7 @@ cli_parroquia
             return pg_query("select sum(d.dfc_cantidad) as suma from erp_factura c, erp_det_factura d where c.fac_id=d.fac_id and c.ped_id=$id and d.pro_id=$pro and d.dfc_tab=$tab");
         }
     }
-
+    
 }
 
 ?>

@@ -152,6 +152,9 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             .sbtls input{
                 text-align:right; 
             }
+            *{
+                text-transform: uppercase;
+            }
         </style>        
     </head>
     <body>
@@ -181,7 +184,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             <tr>
                 <td >Proveedor:</td>
                 <td>
-                    <input  type="text" readonly value="<?php echo $rst_cli[cli_nombre] ?>"/>
+                    <input  type="text" readonly value="<?php echo $rst_cli[cli_raz_social] ?>"/>
                     <input  type="hidden" id="cli_id" value="<?php echo $rst_h[cli_id] ?>"/>
                 </td>
                 <td>Fecha Entrega:</td>

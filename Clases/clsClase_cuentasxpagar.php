@@ -18,7 +18,7 @@ class CuentasPagar {
     
     function lista_documentos_buscador($nm) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_reg_documentos c  $nm order by reg_ruc_cliente,reg_num_documento");
+            return pg_query("SELECT * FROM erp_reg_documentos c, erp_i_cliente cl where cl.cli_id=c.cli_id $nm order by reg_ruc_cliente,reg_num_documento");
         }
     }
 
@@ -716,7 +716,7 @@ rd.reg_ruc_cliente
 //        }
 //    }
 
-    function lista_pagos_aprobados() {
+    function lista_pagos_aprobados($txt,$txt2) {
         if ($this->con->Conectar() == true) {
             return pg_query("select op.obl_codigo,
 rd.reg_ruc_cliente,
@@ -735,6 +735,7 @@ erp_reg_documentos rd
 where op.pag_id=pd.pag_id
 and pd.reg_id=rd.reg_id
 and (op.obl_estado_obligacion=1 or op.obl_estado_obligacion=3)
+$txt
 group by 
 op.obl_estado_obligacion,
 op.obl_fecha_pago,
@@ -762,6 +763,7 @@ from erp_obligacion_pago op,
 erp_i_cliente c
 where op.cli_id = c.cli_id
 and (op.obl_estado_obligacion=1 or op.obl_estado_obligacion=3)
+$txt2
 group by 
 op.obl_estado_obligacion,
 op.obl_fecha_pago,

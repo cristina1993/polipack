@@ -56,7 +56,7 @@ class PDF extends FPDF {
         }
         $this->SetFont('helvetica', '', 7);
         $this->SetXY(1, 36 + $y1);
-        $this->Cell(54, 5, "SUBTOTAL 12%", 'T', 0, 'L');
+        $this->Cell(54, 5, "SUBTOTAL ", 'T', 0, 'L');
         $this->Cell(18, 5, number_format($rst[ncr_subtotal12], 2), 'T', 0, 'R');
         $this->SetXY(1, 40 + $y1);
         $this->Cell(54, 5, "SUBTOTAL 0%", '', 0, 'L');

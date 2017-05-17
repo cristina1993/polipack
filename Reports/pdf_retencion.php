@@ -172,11 +172,11 @@ class PDF extends FPDF {
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
         $this->SetXY(5, 67);
-        $this->Cell(100, 5, "Contribuyente Especial Nro :   636  ", 'LR');
+        $this->Cell(100, 5, "CONTRIBUYENTE ESPECIAL No :   636  ", 'LR');
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
         $this->SetXY(5, 72);
-        $this->Cell(100, 5, "OBLIGAO A LLEVAR CONTABILIDAD      SI ", 'LRB', 0, 'L');
+        $this->Cell(100, 5, "OBLIGADO A LLEVAR CONTABILIDAD :     SI ", 'LRB', 0, 'L');
         $this->Ln();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////// ENCABEZADO DERECHO ////////////////////////////////////////////////////////        
@@ -229,37 +229,37 @@ class PDF extends FPDF {
         //////////////////////////////////// ENCABEZADO CENTRAL ////////////////////////////////////////////////////////        
         $this->Ln($x + 4, $y + 1);
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(140, 5, "Razon Social / Nombres y Apellidos : " . trim($rst[ret_nombre]), 'LT', 0, 'L');
-        $this->Cell(55, 5, "Identificacion : " . $rst[ret_identificacion], 'RT', 'R');
+        $this->Cell(140, 5, "RAZON SOCIAL / NOMBRE Y APELLIDO : " . trim($rst[ret_nombre]), 'LT', 0, 'L');
+        $this->Cell(55, 5, "IDENTIFICACION : " . $rst[ret_identificacion], 'RT', 'R');
         $this->Ln();
-        $this->Cell(195, 5, "Fecha de Emision : " . $rst[ret_fecha_emision], 'LRB', 0, 'L');
+        $this->Cell(195, 5, "FECHA DE EMISION : " . $rst[ret_fecha_emision], 'LRB', 0, 'L');
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////// CUERPO ////////////////////////////////////////////////////////                        
 
         $this->Ln();
         $this->Ln();
-        $this->SetFont('helvetica', 'B', 10);
+        $this->SetFont('helvetica', 'B', 8);
         $this->SetXY(6, 100);
-        $this->Cell(27, 5, "Comprobante", 'LT', 0, 'C');
-        $this->Cell(30, 5, "Numero", 'LT', 0, 'C');
-        $this->Cell(26, 5, "Fecha Emision", 'LT', 0, 'C');
-        $this->Cell(19, 5, "Ejercicio", 'LT', 0, 'C');
-        $this->Cell(36, 5, "Base imponible para", 'LT', 0, 'C');
+        $this->Cell(27, 5, "COMPROBANTE", 'LT', 0, 'C');
+        $this->Cell(30, 5, "NUMERO", 'LT', 0, 'C');
+        $this->Cell(26, 5, "FECHA EMISION", 'LT', 0, 'C');
+        $this->Cell(19, 5, "EJERCICIO", 'LT', 0, 'C');
+        $this->Cell(36, 5, "BASE IMPONIBLE PARA", 'LT', 0, 'C');
         $this->Cell(20, 5, "IMPUESTO", 'LT', 0, 'C');
-        $this->Cell(22, 5, "Porcentaje ", 'LT', 0, 'C');
-        $this->Cell(17, 5, "Valor", 'LTR', 0, 'C');
+        $this->Cell(22, 5, "PORCENTAJE ", 'LT', 0, 'C');
+        $this->Cell(17, 5, "VALOR", 'LTR', 0, 'C');
         $this->Ln();
         $this->SetXY(6, 105);
-        $this->SetFont('Arial', 'B', 10);
+        $this->SetFont('Arial', 'B', 8);
         $this->Cell(27, 5, "", 'LBR', 0, 'C');
         $this->Cell(30, 5, "", 'BR', 0, 'C');
         $this->Cell(26, 5, "", 'LBR', 0, 'C');
         $this->Cell(19, 5, "FISCAL", 'BR', 0, 'C');
-        $this->Cell(36, 5, "la Retencion", 'LBR', 0, 'C');
+        $this->Cell(36, 5, "LA RETENCION", 'LBR', 0, 'C');
         $this->Cell(20, 5, "", 'BR', 0, 'L');
-        $this->Cell(22, 5, "Retencion", 'LBR', 0, 'C');
-        $this->Cell(17, 5, "Retenido", 'BR', 0, 'C');
+        $this->Cell(22, 5, "RETENCION", 'LBR', 0, 'C');
+        $this->Cell(17, 5, "RETENIDO", 'BR', 0, 'C');
         $this->Ln();
 
         $y1 = 0;
@@ -297,16 +297,16 @@ class PDF extends FPDF {
         $this->Ln();
         $this->Ln();
         $this->SetFont('helvetica', 'B', 10);
-        $this->Cell(85, 10, "Informacion Adicional ", 'LRT', 0, 'L');
+        $this->Cell(120, 10, "INFORMACION ADICIONAL", 'LRT', 0, 'L');
         $this->Ln();
-        $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(85, 9, "Direccion : " . $rst[ret_direccion], 'LR');
+        $this->SetFont('helvetica', 'B', 7);
+        $this->Cell(120, 9, "DIRECCION: " . $rst[ret_direccion], 'LR');
         $this->Ln();
-        $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(85, 9, "Telefono : " . $rst[ret_telefono], 'LR');
+        $this->SetFont('helvetica', 'B', 7);
+        $this->Cell(120, 9, "TELEFONO: " . $rst[ret_telefono], 'LR');
         $this->Ln();
-        $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(85, 9, "Email :  " . strtolower($rst[ret_email]), 'LRB', 0, 'L');
+        $this->SetFont('helvetica', 'B', 7);
+        $this->Cell(120, 9, "EMAIL: " . strtolower($rst[ret_email]), 'LRB', 0, 'L');
         $this->Ln();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
     }

@@ -421,6 +421,7 @@ $cns_pre = $Clase_preciospt->lista_precios();
                         IVA:<select id="ivab" name="ivab">
                             <option value="">SELECCIONE</option>
                             <option value="12">12%</option>
+			    <option value="14">14%</option>
                             <option value="0">0%</option>                             
                             <option value="EX">EX</option>                             
                             <option value="NO">NO</option>                             
@@ -499,6 +500,7 @@ $cns_pre = $Clase_preciospt->lista_precios();
                                 <td  align="center"><input type ="text" size="10"  id="<?php echo 'pre_preciox' . $n ?>"  value="<?php echo number_format($rst['pre_precio2'], 4) ?>" style="text-align:right" disabled /><input type="radio" class="precios2" id="<?php echo $rst[pre_id] ?>" name="<?php echo 'pre_precios' . $n ?>" value="" lang="<?php echo $n ?>" hidden></td>
                                 <td align="center"><select id="<?php echo 'pre_iva' . $n ?>" value="<?php echo $rst['pre_iva'] ?>" disabled >
                                         <option value="12">12%</option>
+                                        <option value="14">14%</option>
                                         <option value="0">0%</option>                            
                                         <option value="EX">EX</option>                            
                                         <option value="NO">NO</option>                            

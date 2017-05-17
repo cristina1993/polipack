@@ -12,7 +12,7 @@ class Clase_reg_ecocambrella {
 
     function lista_buscador_orden($txt) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_reg_op_ecocambrella r, erp_i_orden_produccion o, erp_i_productos p where r.ord_id=o.ord_id and o.pro_id=p.pro_id $txt order by rec_numero");
+            return pg_query("SELECT * FROM erp_reg_op_ecocambrella r, erp_i_orden_produccion o, erp_i_productos p where r.ord_id=o.ord_id and r.pro_id=p.pro_id $txt order by rec_numero");
         }
     }
 
@@ -30,22 +30,24 @@ class Clase_reg_ecocambrella {
 
     function lista_una_orden_cod($id) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_i_orden_produccion where ord_num_orden='$id'");
+            return pg_query("SELECT * FROM erp_i_orden_produccion o, erp_i_cliente c where o.cli_id=c.cli_id and o.ord_num_orden='$id'");
         }
     }
 
     function insert_registro_ecocambrella($data) {
         if ($this->con->Conectar() == true) {
             return pg_query("INSERT INTO erp_reg_op_ecocambrella(
-					rec_fecha, 
+                                        ord_id,					
+                                        rec_fecha, 
+                                        rec_numero,
+                                        rec_lote,
 					rec_peso_primario, 
-					rec_peso_secundario, 
 					rec_rollo_primario,
-					rec_rollo_secundario, 
-					rec_desperdicio, 
-					rec_operador, 
-					ord_id,
-					rec_numero)
+                                        rec_estado,
+                                        pro_id,
+                                        maq_id,
+                                        rec_observaciones
+                                       )
                               VALUES ( '$data[0]',
                                        '$data[1]',
                                        '$data[2]',
@@ -54,11 +56,12 @@ class Clase_reg_ecocambrella {
                                        '$data[5]',
                                        '$data[6]',
                                        '$data[7]',
-                                       '$data[8]')");
+                                       '$data[8]',
+                                       '$data[9]')");
         }
     }
 
-    function update_registro_ecocambrella($data,$id) {
+    function update_registro_ecocambrella($data, $id) {
         if ($this->con->Conectar() == true) {
             return pg_query("UPDATE erp_reg_op_ecocambrella
 					SET rec_fecha='$data[0]', 
@@ -69,7 +72,10 @@ class Clase_reg_ecocambrella {
 					rec_desperdicio='$data[5]', 
 					rec_operador='$data[6]', 
 					ord_id='$data[7]',
-					rec_numero='$data[8]' where rec_id=$id");
+					rec_numero='$data[8]',
+					rec_lote='$data[9]',
+					rec_lote2='$data[10]',
+					where rec_id=$id");
         }
     }
 
@@ -297,7 +303,275 @@ order by nombres");
         }
     }
 
-///////////////////////////////////////////////////////////////////////////////////////         
+///////////////////////////////////////////////////////////////////////////////////////  
+    function lista_secuencial_transferencia() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_secuencial_semielaborado   ORDER BY sec_id DESC LIMIT 1");
+        }
+    }
+
+    function insert_sec_transferencia($data) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("INSERT INTO erp_secuencial_semielaborado(sec_transferencias) VALUES ('$data')");
+        }
+    }
+
+    function insert_transferencia($data) {
+        if ($this->con->Conectar() == true) {
+            $f = date('Y-m-d');
+            $h = date('H:i');
+            $usu = strtoupper($_SESSION[User]);
+            return pg_query("INSERT INTO erp_mov_inv_semielaborado(
+                pro_id,
+                trs_id,
+                cli_id,
+                bod_id,
+                mov_documento,
+                mov_guia_transporte,
+                mov_fecha_trans,
+                mov_cantidad,                
+                mov_tabla,                
+                mov_fecha_registro,
+                mov_hora_registro,
+                mov_usuario,
+                mov_pago,
+                mov_flete
+            )
+    VALUES ('$data[0]',
+            '$data[1]',
+            '$data[2]',   
+            '$data[3]',
+            '$data[4]',   
+            '$data[5]',
+            '$data[6]',   
+            '$data[7]',
+            '$data[8]',
+            '$f',
+            '$h',
+            '$usu',
+            '$data[9]',
+            '$data[10]')");
+        }
+    }
+
+    function lista_una_orden($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_orden_produccion where ord_id=$id");
+        }
+    }
+
+    function update_estado_mov($id, $lt, $std, $ord) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("UPDATE erp_movse_total SET estado='$std' WHERE pro_id='$id' and pro_lote='$lt' and mvt_orden='$ord'");
+        }
+    }
+
+    function lista_secuencial_transferencia_terminado() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_secuencial  ORDER BY sec_id DESC LIMIT 1");
+        }
+    }
+
+    function insert_sec_transferencia_terminado($data) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("INSERT INTO erp_secuencial(sec_transferencias) VALUES ('$data')");
+        }
+    }
+
+    function insert_transferencia_terminado($data) {
+        if ($this->con->Conectar() == true) {
+            $f = date('Y-m-d');
+            $h = date('H:i');
+            $usu = strtoupper($_SESSION[User]);
+            return pg_query("INSERT INTO erp_i_mov_inv_pt(
+                pro_id,
+                trs_id,
+                cli_id,
+                bod_id,
+                mov_documento,
+                mov_guia_transporte,
+                mov_fecha_trans,
+                mov_cantidad,                
+                mov_tabla,                
+                mov_fecha_registro,
+                mov_hora_registro,
+                mov_usuario,
+                mov_pago,
+                mov_flete
+            )
+    VALUES ('$data[0]',
+            '$data[1]',
+            '$data[2]',   
+            '$data[3]',
+            '$data[4]',   
+            '$data[5]',
+            '$data[6]',   
+            '$data[7]',
+            '$data[8]',
+            '$f',
+            '$h',
+            '$usu',
+            '$data[9]',
+            '$data[10]')");
+        }
+    }
+
+    function lista_maquinas() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_maquinas where ids='1' ORDER BY maq_a");
+        }
+    }
+
+    function lista_registros_orden($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_rec_ecoacambrella where ord_id='$id'");
+        }
+    }
+
+    function lista_ordenes() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT ord_num_orden,pro_descripcion FROM erp_i_orden_produccion o, erp_i_productos p where o.pro_id=p.pro_id and (select sum(rec_peso_primario) from erp_reg_op_ecocambrella p where p.ord_id=o.ord_id)<(o.ord_kgtotal+o.ord_kgtotal2+o.ord_kgtotal3+o.ord_kgtotal4)
+                            union 
+                            select ord_num_orden,pro_descripcion FROM erp_i_orden_produccion o, erp_i_productos p where o.pro_id=p.pro_id and not exists(select * from erp_reg_op_ecocambrella p where p.ord_id=o.ord_id) order by ord_num_orden desc
+                            ");
+        }
+    }
+
+    function lista_mp($fbc) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_mp mp,
+erp_i_tpmp tmp,
+erp_empresa em 
+WHERE mp.emp_id=em.emp_id
+AND   mp.mpt_id=tmp.mpt_id
+AND   mp.emp_id=$fbc
+ORDER BY mp.mp_id ");
+        }
+    }
+
+    function registros_productos($ord, $p1, $p2, $p3, $p4) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("   select 1 as prod,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado from erp_reg_op_ecocambrella where pro_id=$p1 and ord_id=$ord
+                                union  
+                                select 2 as prod,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado from erp_reg_op_ecocambrella where pro_id=$p2 and ord_id=$ord 
+                                union  
+                                select 3 as prod,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado from erp_reg_op_ecocambrella where pro_id=$p3 and ord_id=$ord 
+                                union 
+                                select 4 as prod,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado from erp_reg_op_ecocambrella where pro_id=$p4 and ord_id=$ord"
+                    . "         order by rec_id");
+        }
+    }
+
+    function lista_etiquetas() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_etiquetas order by eti_descripcion");
+        }
+    }
+
+    function insert_etiqueta_pallets($data) {
+        if ($this->con->Conectar() == true) {
+            $usu = strtoupper($_SESSION[User]);
+            return pg_query("INSERT INTO erp_etiqueta_pallets(
+                ord_id, 
+                pro_id, 
+                pal_numero, 
+                pal_rollos, 
+                pal_peso,
+                pal_usuario,
+                pal_estado
+            )
+    VALUES ('$data[0]',
+            '$data[1]',
+            '$data[2]',   
+            '$data[3]',
+            '$data[4]',   
+            '$usu',
+             '$data[5]'      
+            )");
+        }
+    }
+
+    function update_etiqueta_pallets($data, $id) {
+        if ($this->con->Conectar() == true) {
+            $usu = strtoupper($_SESSION[User]);
+            return pg_query("UPDATE erp_etiqueta_pallets set
+                ord_id='$data[0]', 
+                pro_id='$data[1]', 
+                pal_numero='$data[2]', 
+                pal_rollos='$data[3]', 
+                pal_peso='$data[4]',
+                pal_usuario='$usu',
+                pal_estado='$data[5]'
+                    where pal_id=$id
+            ");
+        }
+    }
+
+    function lista_pallets($id, $ord) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_etiqueta_pallets where ord_id=$ord and pro_id=$id order by pal_id desc");
+        }
+    }
+
+    function lista_pallets_suma($id, $ord) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT sum(pal_numero) as pal_numero  FROM erp_etiqueta_pallets where ord_id=$ord and pro_id=$id group by ord_id,pro_id");
+        }
+    }
+
+    function insert_etiqueta($data) {
+        if ($this->con->Conectar() == true) {
+            $usu = strtoupper($_SESSION[User]);
+            return pg_query("INSERT INTO erp_etiqueta_grande(
+                ord_id, 
+                pro_id, 
+                cli_id, 
+                etg_tipo, 
+                etg_numero,
+                etg_copias,
+                etg_fecha,
+                etg_pallet1,
+                etg_estado,
+                etg_procedencia,
+                etg_tamano,
+                etg_peso_neto,
+                etg_peso_bruto,
+                etg_espacio8,
+                etg_operador,
+                etg_observaciones
+            )
+    VALUES ('$data[17]',
+            '$data[18]',
+            '$data[19]',   
+            '0',
+            '$data[0]',   
+            '$data[8]',   
+            '$data[9]',      
+            '$data[5]',      
+            '$data[6]',      
+            '1',      
+            '$data[7]',         
+            '$data[12]',         
+            '$data[2]',
+            '$data[20]',    
+            '$data[21]',    
+            '$data[22]'    
+            )");
+        }
+    }
+
+    function lista_cambia_status_det($id, $sts, $pro) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("UPDATE erp_det_ped_venta SET det_estado='$sts' where ped_id=$id and pro_id=$pro");
+        }
+    }
+
+    function lista_cambia_status_pedido($id, $sts) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("UPDATE erp_reg_pedido_venta SET ped_estado='$sts' where ped_id=$id");
+        }
+    }
+
 }
 
 ?>

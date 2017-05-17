@@ -392,6 +392,11 @@ $rst_user = pg_fetch_array($User->listUnUsuario($_SESSION[usuid]));
                                 $("#cli_nombres").focus();
                                 return false;
                             }
+                            else if (cli_fecha_nac.value.length == 0) {
+                                $("#cli_fecha_nac").css({borderColor: "red"});
+                                $("#cli_fecha_nac").focus();
+                                return false;
+                            }
                         }
                         if (cli_ced_ruc.value.length == 0) {
                             $("#cli_ced_ruc").css({borderColor: "red"});
@@ -662,6 +667,7 @@ $rst_user = pg_fetch_array($User->listUnUsuario($_SESSION[usuid]));
                 $('#cli_ref_nombres2').val('');
                 $('#cli_ref_parentesco2').val('');
                 $('#cli_ref_telefono2').val('');
+                $('#cli_fecha_nac').val('<?php echo date('Y-m-d')?>');
                 cli_tipo_actividad1.checked = false;
                 cli_tipo_actividad2.checked = false;
                 cli_tipo_actividad3.checked = false;
@@ -1304,7 +1310,7 @@ $rst_user = pg_fetch_array($User->listUnUsuario($_SESSION[usuid]));
                                     <td>
                                         <input type="text" size="30" id="cli_ref_nombres1" value="<?php echo $rst[cli_ref_nombres1] ?>"/>
                                     </td>
-                                    <td><label for="male" id="lblrefparentesco1">Parentesco:</label></td>
+                                    <td><label for="male" id="lblrefparentesco1">Relacion:</label></td>
                                     <td>
                                         <input type="text" size="30" id="cli_ref_parentesco1" value="<?php echo $rst[cli_ref_parentesco1] ?>"/>
                                     </td>
@@ -1322,7 +1328,7 @@ $rst_user = pg_fetch_array($User->listUnUsuario($_SESSION[usuid]));
                                     <td>
                                         <input type="text" size="30" id="cli_ref_nombres2" value="<?php echo $rst[cli_ref_nombres2] ?>"/>
                                     </td>
-                                    <td><label for="male" id="lblrefparentesco2">Parentesco:</label></td>
+                                    <td><label for="male" id="lblrefparentesco2">Relacion:</label></td>
                                     <td>
                                         <input type="text" size="30" id="cli_ref_parentesco2" value="<?php echo $rst[cli_ref_parentesco2] ?>"/>
                                     </td>

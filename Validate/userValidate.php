@@ -22,13 +22,13 @@ try {
             } else {
                 header("location:../menu/main.php");
                 //// insertar inventario
-                $rst = pg_fetch_array($Set->lista_ultima_fecha());
-                $fec = date('Y-m-d', strtotime('-1 day'));
-                if ($rst[con_fecha] != $fec) {
-                    if ($Set->insert_consulta_inventario($fec) == false) {
-                        echo pg_last_error();
-                    }
-                }
+//                $rst = pg_fetch_array($Set->lista_ultima_fecha());
+//                $fec = date('Y-m-d', strtotime('-1 day'));
+//                if ($rst[con_fecha] != $fec) {
+//                    if ($Set->insert_consulta_inventario($fec) == false) {
+//                        echo pg_last_error();
+//                    }
+//                }
             }
         } else {
             session_start();

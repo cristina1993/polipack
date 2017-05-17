@@ -598,7 +598,7 @@ AND   mov_ins_id=$ins ");
 
     function lista_tpmp() {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_i_tpmp ORDER BY mpt_id ");
+            return pg_query("SELECT * FROM erp_i_tpmp ORDER BY mpt_nombre ");
         }
     }
 
@@ -616,6 +616,18 @@ erp_empresa em
 WHERE mp.emp_id=em.emp_id
 AND   mp.mpt_id=tmp.mpt_id
 AND   mp.emp_id=$fbc
+ORDER BY mp.mp_id ");
+        }
+    }
+    
+     function lista_solo_mp() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_mp mp,
+erp_i_tpmp tmp,
+erp_empresa em 
+WHERE mp.emp_id=em.emp_id
+AND   mp.mpt_id=tmp.mpt_id
+AND   mp.mpt_id!=26 AND   mp.mpt_id!=27
 ORDER BY mp.mp_id ");
         }
     }
@@ -775,6 +787,31 @@ and pmp.ped_orden='$ped'
  ");
         }
     }
+    
+    function lista_un_pedidmp_group($ped) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT mp.mp_id,
+                                    mp_codigo,
+                                    mp_referencia,
+                                    mp_presentacion,
+                                    mp_unidad,
+                                    sum(ped_det_cant) as ped_det_cant
+                                    FROM erp_i_pedido_mp pmp,
+                                    erp_empresa emp,
+                                    erp_i_mp mp
+                                    WHERE pmp.emp_id=emp.emp_id
+                                    and   pmp.mp_id=mp.mp_id
+                                    and pmp.ped_orden='$ped'
+                                    group by 
+                                    mp.mp_id,
+                                    mp_codigo,
+                                    mp_referencia,
+                                    mp_presentacion,
+                                    mp_unidad
+ ");
+        }
+    }
+    
 
 // Movimientos de Materia Prima
     function lista_mov_mp($trs) {
@@ -842,11 +879,43 @@ and pmp.ped_orden='$ped'
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT * FROM erp_i_mov_inventario mi,
                                         erp_transacciones trs,
-                                        erp_i_mp mp
+                                        erp_i_mp mp,
+                                        erp_i_tpmp t
                                         WHERE mi.mp_id=mp.mp_id
-                                        AND   mi.trs_id=trs.trs_id
+                                        AND  mi.trs_id=trs.trs_id
+                                        and t.mpt_id=mp.mpt_id 
                                         $txt
-                                        ORDER BY mp.mp_id,mi.mov_fecha_trans,mi.mov_id");
+                                        ORDER BY t.mpt_nombre,mp.mp_id,mi.mov_fecha_trans,mi.mov_id");
+        }
+    }
+    
+    function lista_inventario_mp($txt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT mp.mp_id,
+						 mp.mp_codigo,
+						 mp.mp_referencia,
+						 t.mpt_id,
+						 t.mpt_nombre
+						 FROM erp_i_mov_inventario mi,
+                                        erp_transacciones trs,
+                                        erp_i_mp mp,
+                                        erp_i_tpmp t
+                                        WHERE mi.mp_id=mp.mp_id
+                                        AND  mi.trs_id=trs.trs_id
+                                        and t.mpt_id = mp.mpt_id 
+                                        $txt
+                                        group by mp.mp_id,
+						 mp.mp_codigo,
+						 mp.mp_referencia,
+						 t.mpt_id,
+						 t.mpt_nombre
+                                        ORDER BY t.mpt_nombre,mp.mp_id");
+        }
+    }
+    
+    function lista_tipos($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_tpmp WHERE mpt_id=$id");
         }
     }
 
@@ -910,7 +979,7 @@ and pmp.ped_orden='$ped'
                                         AND   mi.trs_id=trs.trs_id
                                         AND   trs.trs_operacion=$trs
 					AND   mi.mov_documento='$ped' 
-                                        ORDER BY mov_id ");
+                                        ORDER BY mov_id desc");
         }
     }
 
@@ -1904,7 +1973,7 @@ AND   etq.orc_det_id=$id GROUP BY mp.mp_referencia,etq.etq_fecha,etq.etq_bar_cod
 
     function lista_clientes_tipo($tp) {
         if ($this->con->Conectar() == true) {
-            return pg_query("select cli_id, trim(cli_apellidos || ' ' || cli_nombres || ' ' || cli_raz_social) as nombres  
+            return pg_query("select cli_id, trim(cli_raz_social) as nombres  
 from  erp_i_cliente 
 where cli_tipo <>'$tp'
 order by nombres");
@@ -2163,165 +2232,888 @@ order by nombres");
 
     function lista_productos_faltantes($faltante, $gramaje) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM erp_i_productos WHERE pro_ancho <= $faltante and pro_gramaje= $gramaje ORDER BY pro_ancho desc");
+//            return pg_query("SELECT * FROM erp_i_productos WHERE pro_ancho <= $faltante and pro_gramaje= $gramaje ORDER BY pro_ancho desc");
+            return pg_query("SELECT * FROM erp_i_productos order by pro_codigo");
         }
     }
 
 ///////////////////////////////// Orden de Produccion ECOCAMBRELLA////////////////////////////////////////    
+//    function insertar_orden_produccion($data) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("INSERT INTO erp_i_orden_produccion (  
+//                                  ord_num_orden,
+//                                  cli_id,
+//                                  pro_id,
+//                                  ord_num_rollos,
+//                                  ord_mp1,
+//                                  ord_mp2,
+//                                  ord_mp3,
+//                                  ord_mp4,
+//                                  ord_mf1,
+//                                  ord_mf2,
+//                                  ord_mf3,
+//                                  ord_mf4,
+//                                  ord_mftotal,
+//                                  ord_kg1,
+//                                  ord_kg2,
+//                                  ord_kg3,
+//                                  ord_kg4,
+//                                  ord_kgtotal,
+//                                  ord_fec_pedido,
+//                                  ord_fec_entrega,
+//                                  ord_anc_total,
+//                                  ord_refilado,                                  
+//                                  ord_pri_ancho,
+//                                  ord_pri_carril,
+//                                  ord_pri_faltante,
+//                                  ord_pro_secundario,
+//                                  ord_sec_ancho,
+//                                  ord_sec_carril,
+//                                  ord_rep_ancho,
+//                                  ord_rep_carril,
+//                                  ord_largo,
+//                                  ord_gramaje,
+//                                  ord_zo1,
+//                                  ord_zo2,
+//                                  ord_zo3,
+//                                  ord_zo4,
+//                                  ord_zo5,
+//                                  ord_zo6,
+//                                  ord_spi_temp,
+//                                  ord_upp_rol_tem_controller,
+//                                  ord_dow_rol_tem_controller,
+//                                  ord_spi_tem_controller,
+//                                  ord_coo_air_temp,
+//                                  ord_upp_rol_heating,
+//                                  ord_upp_rol_oil_pump,
+//                                  ord_dow_rol_heating,
+//                                  ord_dow_rol_oil_pump,
+//                                  ord_spi_rol_heating,
+//                                  ord_spi_rol_oil_pump,
+//                                  ord_mat_pump,
+//                                  ord_spi_blower,
+//                                  ord_sid_blower,
+//                                  ord_dra_blower,
+//                                  ord_gsm_setting,
+//                                  ord_aut_spe_adjust,
+//                                  ord_spe_mod_auto,
+//                                  ord_lap_speed,
+//                                  ord_man_spe_setting,
+//                                  ord_rol_mill,
+//                                  ord_win_tensility,
+//                                  ord_mas_bra_autosetting,
+//                                  ord_rol_mil_up_down,
+//                                  ord_observaciones,
+//                                  ord_mp5,
+//                                  ord_mp6,
+//                                  ord_mf5,
+//                                  ord_mf6,
+//                                  ord_kg5,
+//                                  ord_kg6,
+//                                  ord_merma,
+//                                  ord_merma_peso,
+//                                  ord_tot_fin,
+//                                  ord_tot_fin_peso,
+//                                  ord_mp7,
+//                                  ord_mp8,
+//                                  ord_mp9,
+//                                  ord_mp10,
+//                                  ord_mp11,
+//                                  ord_mp12,
+//                                  ord_mf7,
+//                                  ord_mf8,
+//                                  ord_mf9,
+//                                  ord_mf10,
+//                                  ord_mf11,
+//                                  ord_mf12,
+//                                  ord_kg7,
+//                                  ord_kg8,
+//                                  ord_kg9,
+//                                  ord_kg10,
+//                                  ord_kg11,
+//                                  ord_kg12,
+//                                  ord_mp13,
+//                                  ord_mp14,
+//                                  ord_mp15,
+//                                  ord_mp16,
+//                                  ord_mp17,
+//                                  ord_mp18,
+//                                  ord_mf13,
+//                                  ord_mf14,
+//                                  ord_mf15,
+//                                  ord_mf16,
+//                                  ord_mf17,
+//                                  ord_mf18,
+//                                  ord_kg13,
+//                                  ord_kg14,
+//                                  ord_kg15,
+//                                  ord_kg16,
+//                                  ord_kg17,
+//                                  ord_kg18,
+//                                  ord_por_tornillo1,
+//                                  ord_por_tornillo2,
+//                                  ord_por_tornillo3,
+//                                  ord_tornillo,
+//                                  ord_bodega,
+//                                   pro_mp1,
+//                                    pro_mp2,
+//                                    pro_mp3,
+//                                    pro_mp4,
+//                                    pro_mp5,
+//                                    pro_mp6,
+//                                    pro_mf1,
+//                                    pro_mf2,
+//                                    pro_mf3,
+//                                    opp_kg1,
+//                                    opp_kg2,
+//                                    opp_kg3,
+//                                    opp_kg4,
+//                                    opp_kg5,
+//                                    opp_kg6,
+//                                    opp_velocidad,
+//                                    mp_cnt1,
+//                                    mp_cnt2,
+//                                    mp_cnt3,
+//                                    mp_cnt4,
+//                                    mp_cnt5,
+//                                    mp_cnt6 
+//                                  )VALUES(
+//                                   '$data[0]',
+//                                    $data[1],
+//                                    $data[2],
+//                                    $data[3],
+//                                    $data[4],
+//                                    $data[5],
+//                                    $data[6],
+//                                    $data[7],
+//                                    $data[8],
+//                                    $data[9],
+//                                    $data[10],
+//                                    $data[11],                                                               
+//                                    $data[12],
+//                                    $data[13],
+//                                    $data[14],
+//                                    $data[15],
+//                                    $data[16],
+//                                    $data[17],
+//                                   '$data[18]',
+//                                   '$data[19]',
+//                                    $data[20],
+//                                    $data[21],                                                                     
+//                                    $data[22],
+//                                    $data[23],
+//                                    $data[24],
+//                                    $data[25],
+//                                    $data[26],
+//                                    $data[27],
+//                                    $data[28],
+//                                    $data[29],
+//                                    $data[30],
+//                                    $data[31],
+//                                    '$data[32]',
+//                                   '$data[33]',
+//                                   '$data[34]',
+//                                   '$data[35]',
+//                                   '$data[36]',                            
+//                                   '$data[37]',
+//                                   '$data[38]',
+//                                   '$data[39]',                                                            
+//                                   '$data[40]',
+//                                   '$data[41]',
+//                                   '$data[42]',     
+//                                   '$data[43]',
+//                                   '$data[44]',
+//                                   '$data[45]',     
+//                                   '$data[46]',
+//                                   '$data[47]',
+//                                   '$data[48]',
+//                                   '$data[49]',
+//                                   '$data[50]',                            
+//                                   '$data[51]',
+//                                   '$data[52]',
+//                                   '$data[53]',                                                            
+//                                   '$data[54]',
+//                                   '$data[55]',
+//                                   '$data[56]',     
+//                                   '$data[57]',
+//                                   '$data[58]',
+//                                   '$data[59]',     
+//                                   '$data[60]',
+//                                   '$data[61]',
+//                                   '$data[62]',
+//                                    '$data[63]',
+//                                    '$data[64]',
+//                                    '$data[65]',
+//                                    '$data[66]',
+//                                    '$data[67]',
+//                                    '$data[68]',
+//                                    '$data[69]',
+//                                    '$data[70]',
+//                                    '$data[71]',
+//                                    '$data[72]',
+//                                    '$data[74]',
+//                                    '$data[75]',
+//                                    '$data[76]',
+//                                    '$data[77]',
+//                                    '$data[78]',
+//                                    '$data[79]',
+//                                    '$data[80]',
+//                                    '$data[81]',
+//                                    '$data[82]',
+//                                    '$data[83]',
+//                                    '$data[84]',
+//                                    '$data[85]',
+//                                    '$data[86]',
+//                                    '$data[87]',
+//                                    '$data[88]',
+//                                    '$data[89]',
+//                                    '$data[90]',
+//                                    '$data[91]',
+//                                    '$data[92]',
+//                                    '$data[93]',
+//                                    '$data[94]',
+//                                    '$data[95]',
+//                                    '$data[96]',
+//                                    '$data[97]',
+//                                    '$data[98]',
+//                                    '$data[99]',
+//                                    '$data[100]',
+//                                    '$data[101]',
+//                                    '$data[102]',
+//                                    '$data[103]',
+//                                    '$data[104]',
+//                                    '$data[105]',
+//                                    '$data[106]',
+//                                    '$data[107]',
+//                                    '$data[108]',
+//                                    '$data[109]',
+//                                    '$data[110]',
+//                                    '$data[111]',
+//                                    '$data[112]',
+//                                    '$data[113]',
+//                                    '$data[114]',
+//                                    '$data[115]',
+//                                    '$data[116]',
+//                                    '$data[117]',
+//                                    '$data[118]',
+//                                    '$data[119]',
+//                                    '$data[120]',
+//                                    '$data[121]',
+//                                    '$data[122]',
+//                                    '$data[123]',
+//                                    '$data[124]',
+//                                    '$data[125]',
+//                                    '$data[126]',
+//                                    '$data[127]',
+//                                    '$data[128]',
+//                                    '$data[129]',
+//                                    '$data[130]',
+//                                    '$data[131]',
+//                                    '$data[132]',
+//                                    '$data[133]',
+//                                    '$data[134]',
+//                                    '$data[135]',
+//                                    '$data[136]')");
+//        }
+//    }
 
     function insertar_orden_produccion($data) {
         if ($this->con->Conectar() == true) {
             return pg_query("INSERT INTO erp_i_orden_produccion (  
-                                  ord_num_orden,
-                                  cli_id,
-                                  pro_id,
-                                  ord_num_rollos,
-                                  ord_mp1,
-                                  ord_mp2,
-                                  ord_mp3,
-                                  ord_mp4,
-                                  ord_mf1,
-                                  ord_mf2,
-                                  ord_mf3,
-                                  ord_mf4,
-                                  ord_mftotal,
-                                  ord_kg1,
-                                  ord_kg2,
-                                  ord_kg3,
-                                  ord_kg4,
-                                  ord_kgtotal,
-                                  ord_fec_pedido,
-                                  ord_fec_entrega,
-                                  ord_anc_total,
-                                  ord_refilado,                                  
-                                  ord_pri_ancho,
-                                  ord_pri_carril,
-                                  ord_pri_faltante,
-                                  ord_pro_secundario,
-                                  ord_sec_ancho,
-                                  ord_sec_carril,
-                                  ord_rep_ancho,
-                                  ord_rep_carril,
-                                  ord_largo,
-                                  ord_gramaje,
-                                  ord_zo1,
-                                  ord_zo2,
-                                  ord_zo3,
-                                  ord_zo4,
-                                  ord_zo5,
-                                  ord_zo6,
-                                  ord_spi_temp,
-                                  ord_upp_rol_tem_controller,
-                                  ord_dow_rol_tem_controller,
-                                  ord_spi_tem_controller,
-                                  ord_coo_air_temp,
-                                  ord_upp_rol_heating,
-                                  ord_upp_rol_oil_pump,
-                                  ord_dow_rol_heating,
-                                  ord_dow_rol_oil_pump,
-                                  ord_spi_rol_heating,
-                                  ord_spi_rol_oil_pump,
-                                  ord_mat_pump,
-                                  ord_spi_blower,
-                                  ord_sid_blower,
-                                  ord_dra_blower,
-                                  ord_gsm_setting,
-                                  ord_aut_spe_adjust,
-                                  ord_spe_mod_auto,
-                                  ord_lap_speed,
-                                  ord_man_spe_setting,
-                                  ord_rol_mill,
-                                  ord_win_tensility,
-                                  ord_mas_bra_autosetting,
-                                  ord_rol_mil_up_down,
-                                  ord_observaciones,
-                                  ord_mp5,
-                                  ord_mp6,
-                                  ord_mf5,
-                                  ord_mf6,
-                                  ord_kg5,
-                                  ord_kg6,
-                                  ord_merma,
-                                  ord_merma_peso,
-                                  ord_tot_fin,
-                                  ord_tot_fin_peso
-                                  )VALUES(
-                                   '$data[0]',
-                                    $data[1],
-                                    $data[2],
-                                    $data[3],
-                                    $data[4],
-                                    $data[5],
-                                    $data[6],
-                                    $data[7],
-                                    $data[8],
-                                    $data[9],
-                                    $data[10],
-                                    $data[11],                                                               
-                                    $data[12],
-                                    $data[13],
-                                    $data[14],
-                                    $data[15],
-                                    $data[16],
-                                    $data[17],
-                                   '$data[18]',
-                                   '$data[19]',
-                                    $data[20],
-                                    $data[21],                                                                     
-                                    $data[22],
-                                    $data[23],
-                                    $data[24],
-                                    $data[25],
-                                    $data[26],
-                                    $data[27],
-                                    $data[28],
-                                    $data[29],
-                                    $data[30],
-                                    $data[31],
-                                    '$data[32]',
-                                   '$data[33]',
-                                   '$data[34]',
-                                   '$data[35]',
-                                   '$data[36]',                            
-                                   '$data[37]',
-                                   '$data[38]',
-                                   '$data[39]',                                                            
-                                   '$data[40]',
-                                   '$data[41]',
-                                   '$data[42]',     
-                                   '$data[43]',
-                                   '$data[44]',
-                                   '$data[45]',     
-                                   '$data[46]',
-                                   '$data[47]',
-                                   '$data[48]',
-                                   '$data[49]',
-                                   '$data[50]',                            
-                                   '$data[51]',
-                                   '$data[52]',
-                                   '$data[53]',                                                            
-                                   '$data[54]',
-                                   '$data[55]',
-                                   '$data[56]',     
-                                   '$data[57]',
-                                   '$data[58]',
-                                   '$data[59]',     
-                                   '$data[60]',
-                                   '$data[61]',
-                                   '$data[62]',
-                                    $data[63],
-                                    $data[64],
-                                    $data[65],
-                                    $data[66],
-                                    $data[67],
-                                    $data[68],
-                                    $data[69],
-                                    $data[70],
-                                    $data[71],
-                                    $data[72]  )");
+                            ord_num_orden,
+                            cli_id,
+                            pro_id,
+                            ord_num_rollos,
+                            ord_num_rollos2,
+                            ord_num_rollos3,
+                            ord_num_rollos4,
+                            ord_mp1,
+                            ord_mp2,
+                            ord_mp3,
+                            ord_mp4,
+                            ord_mp5,
+                            ord_mp6,
+                            ord_mp7,
+                            ord_mp8,
+                            ord_mp9,
+                            ord_mp10,
+                            ord_mp11,
+                            ord_mp12,
+                            ord_mp13,
+                            ord_mp14,
+                            ord_mp15,
+                            ord_mp16,
+                            ord_mp17,
+                            ord_mp18,
+                            ord_mf1,
+                            ord_mf2,
+                            ord_mf3,
+                            ord_mf4,
+                            ord_mf5,
+                            ord_mf6,
+                            ord_mf7,
+                            ord_mf8,
+                            ord_mf9,
+                            ord_mf10,
+                            ord_mf11,
+                            ord_mf12,
+                            ord_mf13,
+                            ord_mf14,
+                            ord_mf15,
+                            ord_mf16,
+                            ord_mf17,
+                            ord_mf18,
+                            ord_mftotal,
+                            ord_kg1,
+                            ord_kg2,
+                            ord_kg3,
+                            ord_kg4,
+                            ord_kg5,
+                            ord_kg6,
+                            ord_kg7,
+                            ord_kg8,
+                            ord_kg9,
+                            ord_kg10,
+                            ord_kg11,
+                            ord_kg12,
+                            ord_kg13,
+                            ord_kg14,
+                            ord_kg15,
+                            ord_kg16,
+                            ord_kg17,
+                            ord_kg18,
+                            ord_kgtotal,
+                            ord_kgtotal2,
+                            ord_kgtotal3,
+                            ord_kgtotal4,
+                            ord_kgtotal_rep,
+                            ord_fec_pedido,
+                            ord_fec_entrega,
+                            ord_anc_total,
+                            ord_refilado,
+                            ord_pri_ancho,
+                            ord_pri_carril,
+                            ord_pri_faltante,
+                            ord_pro_secundario,
+                            ord_pro3,
+                            ord_pro4,
+                            ord_sec_ancho,
+                            ord_ancho3,
+                            ord_ancho4,
+                            ord_sec_carril,
+                            ord_carril3,
+                            ord_carril4,
+                            ord_rep_ancho,
+                            ord_rep_carril,
+                            ord_largo,
+                            ord_gramaje,
+                            ord_observaciones,
+                            ord_merma,
+                            ord_merma_peso,
+                            ord_tot_fin,                                  
+                            ord_tot_fin_peso,
+                            ord_por_tornillo1,
+                            ord_por_tornillo2,
+                            ord_por_tornillo3,
+                            ord_tornillo,
+                            ord_bodega,
+                            pro_mp1,
+                            pro_mp2,
+                            pro_mp3,
+                            pro_mp4,
+                            pro_mp5,
+                            pro_mp6,
+                            pro_mp7,
+                            pro_mp8,
+                            pro_mp9,
+                            pro_mp10,
+                            pro_mp11,
+                            pro_mp12,
+                            pro_mp13,
+                            pro_mp14,
+                            pro_mp15,
+                            pro_mp16,
+                            pro_mp17,
+                            pro_mp18,
+                            pro_mp19,
+                            pro_mp20,
+                            pro_mp21,
+                            pro_mp22,
+                            pro_mp23,
+                            pro_mp24,
+                            pro_mf1,
+                            pro_mf2,
+                            pro_mf3,
+                            pro_mf4,
+                            pro_mf5,
+                            pro_mf6,
+                            pro_mf7,
+                            pro_mf8,
+                            pro_mf9,
+                            pro_mf10,
+                            pro_mf11,
+                            pro_mf12,
+                            opp_kg1,
+                            opp_kg2,
+                            opp_kg3,
+                            opp_kg4,
+                            opp_kg5,
+                            opp_kg6,
+                            opp_kg7,
+                            opp_kg8,
+                            opp_kg9,
+                            opp_kg10,
+                            opp_kg11,
+                            opp_kg12,
+                            opp_kg13,
+                            opp_kg14,
+                            opp_kg15,
+                            opp_kg16,
+                            opp_kg17,
+                            opp_kg18,
+                            opp_kg19,
+                            opp_kg20,
+                            opp_kg21,
+                            opp_kg22,
+                            opp_kg23,
+                            opp_kg24,
+                            opp_velocidad,
+                            opp_velocidad2,
+                            opp_velocidad3,
+                            opp_velocidad4,
+                            mp_cnt1,
+                            mp_cnt2,
+                            mp_cnt3,
+                            mp_cnt4,
+                            mp_cnt5,
+                            mp_cnt6,
+                            mp_cnt7,
+                            mp_cnt8,
+                            mp_cnt9,
+                            mp_cnt10,
+                            mp_cnt11,
+                            mp_cnt12,
+                            mp_cnt13,
+                            mp_cnt14,
+                            mp_cnt15,
+                            mp_cnt16,
+                            mp_cnt17,
+                            mp_cnt18,
+                            mp_cnt19,
+                            mp_cnt20,
+                            mp_cnt21,
+                            mp_cnt22,
+                            mp_cnt23,
+                            mp_cnt24,
+                            ped_id,
+                            ord_patch1,
+                            ord_patch2,
+                            ord_patch3,
+                            ord_formula,
+                            ord_etiqueta,
+                            ord_eti_numero,
+                            ord_tratado
+                )values(
+                            '$data[0]',
+                            '$data[1]',
+                            '$data[2]',
+                            '$data[3]',
+                            '$data[4]',
+                            '$data[5]',
+                            '$data[6]',
+                            '$data[7]',
+                            '$data[8]',
+                            '$data[9]',
+                            '$data[10]',
+                            '$data[11]',
+                            '$data[12]',
+                            '$data[13]',
+                            '$data[14]',
+                            '$data[15]',
+                            '$data[16]',
+                            '$data[17]',
+                            '$data[18]',
+                            '$data[19]',
+                            '$data[20]',
+                            '$data[21]',
+                            '$data[22]',
+                            '$data[23]',
+                            '$data[24]',
+                            '$data[25]',
+                            '$data[26]',
+                            '$data[27]',
+                            '$data[28]',
+                            '$data[29]',
+                            '$data[30]',
+                            '$data[31]',
+                            '$data[32]',
+                            '$data[33]',
+                            '$data[34]',
+                            '$data[35]',
+                            '$data[36]',
+                            '$data[37]',
+                            '$data[38]',
+                            '$data[39]',
+                            '$data[40]',
+                            '$data[41]',
+                            '$data[42]',
+                            '$data[43]',
+                            '$data[44]',
+                            '$data[45]',
+                            '$data[46]',
+                            '$data[47]',
+                            '$data[48]',
+                            '$data[49]',
+                            '$data[50]',
+                            '$data[51]',
+                            '$data[52]',
+                            '$data[53]',
+                            '$data[54]',
+                            '$data[55]',
+                            '$data[56]',
+                            '$data[57]',
+                            '$data[58]',
+                            '$data[59]',
+                            '$data[60]',
+                            '$data[61]',
+                            '$data[62]',
+                            '$data[63]',
+                            '$data[64]',
+                            '$data[65]',
+                            '$data[66]',
+                            '$data[67]',
+                            '$data[68]',
+                            '$data[69]',
+                            '$data[70]',
+                            '$data[71]',
+                            '$data[72]',
+                            '$data[73]',
+                            '$data[74]',
+                            '$data[75]',
+                            '$data[76]',
+                            '$data[77]',
+                            '$data[78]',
+                            '$data[79]',
+                            '$data[80]',
+                            '$data[81]',
+                            '$data[82]',
+                            '$data[83]',
+                            '$data[84]',
+                            '$data[85]',
+                            '$data[86]',
+                            '$data[87]',
+                            '$data[88]',
+                            '$data[89]',
+                            '$data[90]',
+                            '$data[91]',
+                            '$data[92]',
+                            '$data[93]',
+                            '$data[94]',
+                            '$data[95]',
+                            '$data[96]',
+                            '$data[97]',
+                            '$data[98]',
+                            '$data[99]',
+                            '$data[100]',
+                            '$data[101]',
+                            '$data[102]',
+                            '$data[103]',
+                            '$data[104]',
+                            '$data[105]',
+                            '$data[106]',
+                            '$data[107]',
+                            '$data[108]',
+                            '$data[109]',
+                            '$data[110]',
+                            '$data[111]',
+                            '$data[112]',
+                            '$data[113]',
+                            '$data[114]',
+                            '$data[115]',
+                            '$data[116]',
+                            '$data[117]',
+                            '$data[118]',
+                            '$data[119]',
+                            '$data[120]',
+                            '$data[121]',
+                            '$data[122]',
+                            '$data[123]',
+                            '$data[124]',
+                            '$data[125]',
+                            '$data[126]',
+                            '$data[127]',
+                            '$data[128]',
+                            '$data[129]',
+                            '$data[130]',
+                            '$data[131]',
+                            '$data[132]',
+                            '$data[133]',
+                            '$data[134]',
+                            '$data[135]',
+                            '$data[136]',
+                            '$data[137]',
+                            '$data[138]',
+                            '$data[139]',
+                            '$data[140]',
+                            '$data[141]',
+                            '$data[142]',
+                            '$data[143]',
+                            '$data[144]',
+                            '$data[145]',
+                            '$data[146]',
+                            '$data[147]',
+                            '$data[148]',
+                            '$data[149]',
+                            '$data[150]',
+                            '$data[151]',
+                            '$data[152]',
+                            '$data[153]',
+                            '$data[154]',
+                            '$data[155]',
+                            '$data[156]',
+                            '$data[157]',
+                            '$data[158]',
+                            '$data[159]',
+                            '$data[160]',
+                            '$data[161]',
+                            '$data[162]',
+                            '$data[163]',
+                            '$data[164]',
+                            '$data[165]',
+                            '$data[166]',
+                            '$data[167]',
+                            '$data[168]',
+                            '$data[169]',
+                            '$data[170]',
+                            '$data[171]',
+                            '$data[172]',
+                            '$data[173]',
+                            '$data[174]',
+                            '$data[175]',
+                            '$data[176]',
+                            '$data[177]',
+                            '$data[178]',
+                            '$data[179]',
+                            '$data[180]',
+                            '$data[181]',
+                            '$data[182]',
+                            '$data[183]',
+                            '$data[184]',
+                            '$data[185]',
+                            '$data[187]',
+                            '$data[188]',
+                            '$data[189]',
+                            '$data[190]',
+                            '$data[191]',
+                            '$data[192]',
+                            '$data[193]'
+                )");
         }
     }
 
+    function insertar_formula_produccion($data) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("INSERT INTO erp_formulacion(
+                                                            ord_numero, 
+                                                            ord_por_tornillo1, 
+                                                            ord_por_tornillo2, 
+                                                            ord_por_tornillo3, 
+                                                            ord_patch1, 
+                                                            ord_patch2, 
+                                                            ord_patch3, 
+                                                            ord_mp1, 
+                                                            ord_mp2, 
+                                                            ord_mp3, 
+                                                            ord_mp4, 
+                                                            ord_mp5, 
+                                                            ord_mp6, 
+                                                            ord_mp7, 
+                                                            ord_mp8, 
+                                                            ord_mp9, 
+                                                            ord_mp10, 
+                                                            ord_mp11, 
+                                                            ord_mp12, 
+                                                            ord_mp13, 
+                                                            ord_mp14, 
+                                                            ord_mp15, 
+                                                            ord_mp16, 
+                                                            ord_mp17, 
+                                                            ord_mp18, 
+                                                            ord_mf1, 
+                                                            ord_mf2, 
+                                                            ord_mf3, 
+                                                            ord_mf4, 
+                                                            ord_mf5, 
+                                                            ord_mf6, 
+                                                            ord_mf7, 
+                                                            ord_mf8, 
+                                                            ord_mf9, 
+                                                            ord_mf10, 
+                                                            ord_mf11, 
+                                                            ord_mf12, 
+                                                            ord_mf13, 
+                                                            ord_mf14, 
+                                                            ord_mf15, 
+                                                            ord_mf16, 
+                                                            ord_mf17, 
+                                                            ord_mf18, 
+                                                            ord_kg1, 
+                                                            ord_kg2, 
+                                                            ord_kg3, 
+                                                            ord_kg4, 
+                                                            ord_kg5, 
+                                                            ord_kg6, 
+                                                            ord_kg7, 
+                                                            ord_kg8, 
+                                                            ord_kg9, 
+                                                            ord_kg10, 
+                                                            ord_kg11, 
+                                                            ord_kg12, 
+                                                            ord_kg13, 
+                                                            ord_kg14, 
+                                                            ord_kg15, 
+                                                            ord_kg16, 
+                                                            ord_kg17, 
+                                                            ord_kg18)
+                                                    VALUES (
+                                                            '$data[0]',
+                                                            '$data[92]',
+                                                            '$data[93]',
+                                                            '$data[94]',
+                                                            '$data[187]',
+                                                            '$data[188]',
+                                                            '$data[189]',
+                                                            '$data[7]',
+                                                            '$data[8]',
+                                                            '$data[9]',
+                                                            '$data[10]',
+                                                            '$data[11]',
+                                                            '$data[12]',
+                                                            '$data[13]',
+                                                            '$data[14]',
+                                                            '$data[15]',
+                                                            '$data[16]',
+                                                            '$data[17]',
+                                                            '$data[18]',
+                                                            '$data[19]',
+                                                            '$data[20]',
+                                                            '$data[21]',
+                                                            '$data[22]',
+                                                            '$data[23]',
+                                                            '$data[24]',
+                                                            '$data[25]',
+                                                            '$data[26]',
+                                                            '$data[27]',
+                                                            '$data[28]',
+                                                            '$data[29]',
+                                                            '$data[30]',
+                                                            '$data[31]',
+                                                            '$data[32]',
+                                                            '$data[33]',
+                                                            '$data[34]',
+                                                            '$data[35]',
+                                                            '$data[36]',
+                                                            '$data[37]',
+                                                            '$data[38]',
+                                                            '$data[39]',
+                                                            '$data[40]',
+                                                            '$data[41]',
+                                                            '$data[42]',
+                                                            '$data[44]',
+                                                            '$data[45]',
+                                                            '$data[46]',
+                                                            '$data[47]',
+                                                            '$data[48]',
+                                                            '$data[49]',
+                                                            '$data[50]',
+                                                            '$data[51]',
+                                                            '$data[52]',
+                                                            '$data[53]',
+                                                            '$data[54]',
+                                                            '$data[55]',
+                                                            '$data[56]',
+                                                            '$data[57]',
+                                                            '$data[58]',
+                                                            '$data[59]',
+                                                            '$data[60]',
+                                                            '$data[61]')");
+        }
+    }
+    
+     function modificar_formula_produccion($data) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("update erp_formulacion set
+                                                            ord_numero='$data[0]', 
+                                                            ord_por_tornillo1='$data[92]', 
+                                                            ord_por_tornillo2='$data[93]', 
+                                                            ord_por_tornillo3='$data[94]', 
+                                                            ord_patch1='$data[187]', 
+                                                            ord_patch2='$data[188]', 
+                                                            ord_patch3='$data[189]', 
+                                                             ord_mp1='$data[7]', 
+                                                            ord_mp2='$data[8]', 
+                                                            ord_mp3='$data[9]', 
+                                                            ord_mp4='$data[10]', 
+                                                            ord_mp5='$data[11]', 
+                                                            ord_mp6='$data[12]', 
+                                                            ord_mp7='$data[13]', 
+                                                            ord_mp8='$data[14]', 
+                                                            ord_mp9='$data[15]', 
+                                                            ord_mp10='$data[16]', 
+                                                            ord_mp11='$data[17]', 
+                                                            ord_mp12='$data[18]', 
+                                                            ord_mp13='$data[19]', 
+                                                            ord_mp14='$data[20]', 
+                                                            ord_mp15='$data[21]', 
+                                                            ord_mp16='$data[22]', 
+                                                            ord_mp17='$data[23]', 
+                                                            ord_mp18='$data[24]', 
+                                                            ord_mf1='$data[25]', 
+                                                            ord_mf2='$data[26]', 
+                                                            ord_mf3='$data[27]', 
+                                                            ord_mf4='$data[28]', 
+                                                            ord_mf5='$data[29]', 
+                                                            ord_mf6='$data[30]', 
+                                                            ord_mf7='$data[31]', 
+                                                            ord_mf8='$data[32]', 
+                                                            ord_mf9='$data[33]', 
+                                                            ord_mf10='$data[34]', 
+                                                            ord_mf11='$data[35]', 
+                                                            ord_mf12='$data[36]', 
+                                                            ord_mf13='$data[37]', 
+                                                            ord_mf14='$data[38]', 
+                                                            ord_mf15='$data[39]', 
+                                                            ord_mf16='$data[40]', 
+                                                            ord_mf17='$data[41]', 
+                                                            ord_mf18='$data[42]', 
+                                                            ord_kg1='$data[44]', 
+                                                            ord_kg2='$data[45]', 
+                                                            ord_kg3='$data[46]', 
+                                                            ord_kg4='$data[47]', 
+                                                            ord_kg5='$data[48]', 
+                                                            ord_kg6='$data[49]', 
+                                                            ord_kg7='$data[50]', 
+                                                            ord_kg8='$data[51]', 
+                                                            ord_kg9='$data[52]', 
+                                                            ord_kg10='$data[53]', 
+                                                            ord_kg11='$data[54]', 
+                                                            ord_kg12='$data[55]', 
+                                                            ord_kg13='$data[56]', 
+                                                            ord_kg14='$data[57]', 
+                                                            ord_kg15='$data[58]', 
+                                                            ord_kg16='$data[59]', 
+                                                            ord_kg17='$data[60]', 
+                                                            ord_kg18='$data[61]'
+                    where ord_numero='$data[0]'");
+        }
+     }
+    
+     function lista_ordenes() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT ord_num_orden FROM erp_i_orden_produccion");
+        }
+    }
+    
     function lista_secuencial_orden_produccion() {
         if ($this->con->Conectar() == true) {
             return pg_query("select * from  erp_i_orden_produccion Order by ord_num_orden desc limit 1");
@@ -2339,7 +3131,7 @@ order by nombres");
             return pg_query("SELECT * FROM erp_i_orden_produccion WHERE ord_id=$id");
         }
     }
-
+    
     function lista_una_orden_produccion_numero_orden($ord_num_orden) {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT * FROM erp_i_orden_produccion WHERE ord_num_orden='$ord_num_orden'");
@@ -2358,86 +3150,327 @@ order by nombres");
         }
     }
 
-    function modificar_orden_produccion($data, $id) {
+//    function modificar_orden_produccion($data, $id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("UPDATE erp_i_orden_produccion
+//                          SET                          
+//                            ord_num_orden='$data[0]',                  
+//                              cli_id=$data[1],
+//                              pro_id=$data[2],
+//                              ord_num_rollos=$data[3],
+//                              ord_mp1=$data[4],
+//                              ord_mp2=$data[5],
+//                              ord_mp3=$data[6],
+//                              ord_mp4=$data[7],
+//                              ord_mf1=$data[8],
+//                              ord_mf2=$data[9],
+//                              ord_mf3=$data[10],
+//                              ord_mf4=$data[11],
+//                              ord_mftotal=$data[12],
+//                              ord_kg1=$data[13],
+//                              ord_kg2=$data[14],
+//                              ord_kg3=$data[15],
+//                              ord_kg4=$data[16],
+//                              ord_kgtotal=$data[17],
+//                              ord_fec_pedido='$data[18]',                               
+//                              ord_fec_entrega='$data[19]',
+//                              ord_anc_total=$data[20],
+//                              ord_refilado=$data[21],                              
+//                              ord_pri_ancho=$data[22],
+//                              ord_pri_carril=$data[23],
+//                              ord_pri_faltante=$data[24],
+//                              ord_pro_secundario=$data[25],
+//                              ord_sec_ancho=$data[26],
+//                              ord_sec_carril=$data[27],
+//                              ord_rep_ancho=$data[28],
+//                              ord_rep_carril=$data[29],
+//                              ord_largo=$data[30],
+//                              ord_gramaje =$data[31],
+//                              ord_zo1='$data[32]',
+//                              ord_zo2='$data[33]',
+//                              ord_zo3='$data[34]',
+//                              ord_zo4='$data[35]',
+//                              ord_zo5='$data[36]',
+//                              ord_zo6='$data[37]',
+//                              ord_spi_temp='$data[38]',
+//                              ord_upp_rol_tem_controller='$data[39]',
+//                              ord_dow_rol_tem_controller='$data[40]',
+//                              ord_spi_tem_controller='$data[41]',
+//                              ord_coo_air_temp='$data[42]',
+//                              ord_upp_rol_heating='$data[43]',
+//                              ord_upp_rol_oil_pump='$data[44]',
+//                              ord_dow_rol_heating='$data[45]',
+//                              ord_dow_rol_oil_pump='$data[46]',
+//                              ord_spi_rol_heating='$data[47]',
+//                              ord_spi_rol_oil_pump='$data[48]',
+//                              ord_mat_pump='$data[49]',
+//                              ord_spi_blower='$data[50]',
+//                              ord_sid_blower='$data[51]',
+//                              ord_dra_blower='$data[52]',
+//                              ord_gsm_setting='$data[53]',
+//                              ord_aut_spe_adjust='$data[54]',
+//                              ord_spe_mod_auto='$data[55]',
+//                              ord_lap_speed='$data[56]',
+//                              ord_man_spe_setting='$data[57]',
+//                              ord_rol_mill='$data[58]',
+//                              ord_win_tensility='$data[59]',
+//                              ord_mas_bra_autosetting='$data[60]',
+//                              ord_rol_mil_up_down='$data[61]',
+//                              ord_observaciones='$data[62]',
+//                                  ord_mp5=$data[63],
+//                                  ord_mp6=$data[64],
+//                                  ord_mf5=$data[65],
+//                                  ord_mf6=$data[66],
+//                                  ord_kg5=$data[67],
+//                                  ord_kg6=$data[68],                                  
+//                                  ord_merma=$data[69],                                  
+//                                  ord_merma_peso=$data[70],                                  
+//                                  ord_tot_fin=$data[71],                                  
+//                                  ord_tot_fin_peso=$data[72],
+//                                  ord_mp7='$data[74]',
+//                                  ord_mp8='$data[75]',
+//                                  ord_mp9='$data[76]',
+//                                  ord_mp10='$data[77]',
+//                                  ord_mp11='$data[78]',
+//                                  ord_mp12='$data[79]',
+//                                  ord_mf7='$data[80]',
+//                                  ord_mf8='$data[81]',
+//                                  ord_mf9='$data[82]',
+//                                  ord_mf10='$data[83]',
+//                                  ord_mf11='$data[84]',
+//                                  ord_mf12='$data[85]',
+//                                  ord_kg7='$data[86]',
+//                                  ord_kg8='$data[87]',
+//                                  ord_kg9='$data[88]',
+//                                  ord_kg10='$data[89]',
+//                                  ord_kg11='$data[90]',
+//                                  ord_kg12='$data[91]',
+//                                  ord_mp13='$data[92]',
+//                                  ord_mp14='$data[93]',
+//                                  ord_mp15='$data[94]',
+//                                  ord_mp16='$data[95]',
+//                                  ord_mp17='$data[96]',
+//                                  ord_mp18='$data[97]',
+//                                  ord_mf13='$data[98]',
+//                                  ord_mf14='$data[99]',
+//                                  ord_mf15='$data[100]',
+//                                  ord_mf16='$data[101]',
+//                                  ord_mf17='$data[102]',
+//                                  ord_mf18='$data[103]',
+//                                  ord_kg13='$data[104]',
+//                                  ord_kg14='$data[105]',
+//                                  ord_kg15='$data[106]',
+//                                  ord_kg16='$data[107]',
+//                                  ord_kg17='$data[108]',
+//                                  ord_kg18='$data[109]',
+//                                  ord_por_tornillo1='$data[110]',
+//                                  ord_por_tornillo2='$data[111]',
+//                                  ord_por_tornillo3='$data[112]',
+//                                  ord_tornillo='$data[113]',
+//                                  ord_bodega='$data[114]'    
+//                            WHERE   ord_id=$id");
+//        }
+//    }
+    
+     function modificar_orden_produccion($data, $id) {
         if ($this->con->Conectar() == true) {
-            return pg_query("UPDATE erp_i_orden_produccion
-                          SET                          
-                            ord_num_orden='$data[0]',                  
-                              cli_id=$data[1],
-                              pro_id=$data[2],
-                              ord_num_rollos=$data[3],
-                              ord_mp1=$data[4],
-                              ord_mp2=$data[5],
-                              ord_mp3=$data[6],
-                              ord_mp4=$data[7],
-                              ord_mf1=$data[8],
-                              ord_mf2=$data[9],
-                              ord_mf3=$data[10],
-                              ord_mf4=$data[11],
-                              ord_mftotal=$data[12],
-                              ord_kg1=$data[13],
-                              ord_kg2=$data[14],
-                              ord_kg3=$data[15],
-                              ord_kg4=$data[16],
-                              ord_kgtotal=$data[17],
-                              ord_fec_pedido='$data[18]',                               
-                              ord_fec_entrega='$data[19]',
-                              ord_anc_total=$data[20],
-                              ord_refilado=$data[21],                              
-                              ord_pri_ancho=$data[22],
-                              ord_pri_carril=$data[23],
-                              ord_pri_faltante=$data[24],
-                              ord_pro_secundario=$data[25],
-                              ord_sec_ancho=$data[26],
-                              ord_sec_carril=$data[27],
-                              ord_rep_ancho=$data[28],
-                              ord_rep_carril=$data[29],
-                              ord_largo=$data[30],
-                              ord_gramaje =$data[31],
-                              ord_zo1='$data[32]',
-                              ord_zo2='$data[33]',
-                              ord_zo3='$data[34]',
-                              ord_zo4='$data[35]',
-                              ord_zo5='$data[36]',
-                              ord_zo6='$data[37]',
-                              ord_spi_temp='$data[38]',
-                              ord_upp_rol_tem_controller='$data[39]',
-                              ord_dow_rol_tem_controller='$data[40]',
-                              ord_spi_tem_controller='$data[41]',
-                              ord_coo_air_temp='$data[42]',
-                              ord_upp_rol_heating='$data[43]',
-                              ord_upp_rol_oil_pump='$data[44]',
-                              ord_dow_rol_heating='$data[45]',
-                              ord_dow_rol_oil_pump='$data[46]',
-                              ord_spi_rol_heating='$data[47]',
-                              ord_spi_rol_oil_pump='$data[48]',
-                              ord_mat_pump='$data[49]',
-                              ord_spi_blower='$data[50]',
-                              ord_sid_blower='$data[51]',
-                              ord_dra_blower='$data[52]',
-                              ord_gsm_setting='$data[53]',
-                              ord_aut_spe_adjust='$data[54]',
-                              ord_spe_mod_auto='$data[55]',
-                              ord_lap_speed='$data[56]',
-                              ord_man_spe_setting='$data[57]',
-                              ord_rol_mill='$data[58]',
-                              ord_win_tensility='$data[59]',
-                              ord_mas_bra_autosetting='$data[60]',
-                              ord_rol_mil_up_down='$data[61]',
-                              ord_observaciones='$data[62]',
-                                  ord_mp5=$data[63],
-                                  ord_mp6=$data[64],
-                                  ord_mf5=$data[65],
-                                  ord_mf6=$data[66],
-                                  ord_kg5=$data[67],
-                                  ord_kg6=$data[68],                                  
-                                  ord_merma=$data[69],                                  
-                                  ord_merma_peso=$data[70],                                  
-                                  ord_tot_fin=$data[71],                                  
-                                  ord_tot_fin_peso=$data[72]                                  
-                            WHERE   ord_id=$id");
+            return pg_query("UPDATE erp_i_orden_produccion SET
+                            ord_num_orden='$data[0]',	
+                            cli_id='$data[1]',	
+                            pro_id='$data[2]',	
+                            ord_num_rollos='$data[3]',	
+                            ord_num_rollos2='$data[4]',	
+                            ord_num_rollos3='$data[5]',	
+                            ord_num_rollos4='$data[6]',	
+                            ord_mp1='$data[7]',	
+                            ord_mp2='$data[8]',	
+                            ord_mp3='$data[9]',	
+                            ord_mp4='$data[10]',	
+                            ord_mp5='$data[11]',	
+                            ord_mp6='$data[12]',	
+                            ord_mp7='$data[13]',	
+                            ord_mp8='$data[14]',	
+                            ord_mp9='$data[15]',	
+                            ord_mp10='$data[16]',	
+                            ord_mp11='$data[17]',	
+                            ord_mp12='$data[18]',	
+                            ord_mp13='$data[19]',	
+                            ord_mp14='$data[20]',	
+                            ord_mp15='$data[21]',	
+                            ord_mp16='$data[22]',	
+                            ord_mp17='$data[23]',	
+                            ord_mp18='$data[24]',	
+                            ord_mf1='$data[25]',	
+                            ord_mf2='$data[26]',	
+                            ord_mf3='$data[27]',	
+                            ord_mf4='$data[28]',	
+                            ord_mf5='$data[29]',	
+                            ord_mf6='$data[30]',	
+                            ord_mf7='$data[31]',	
+                            ord_mf8='$data[32]',	
+                            ord_mf9='$data[33]',	
+                            ord_mf10='$data[34]',	
+                            ord_mf11='$data[35]',	
+                            ord_mf12='$data[36]',	
+                            ord_mf13='$data[37]',	
+                            ord_mf14='$data[38]',	
+                            ord_mf15='$data[39]',	
+                            ord_mf16='$data[40]',	
+                            ord_mf17='$data[41]',	
+                            ord_mf18='$data[42]',	
+                            ord_mftotal='$data[43]',	
+                            ord_kg1='$data[44]',	
+                            ord_kg2='$data[45]',	
+                            ord_kg3='$data[46]',	
+                            ord_kg4='$data[47]',	
+                            ord_kg5='$data[48]',	
+                            ord_kg6='$data[49]',	
+                            ord_kg7='$data[50]',	
+                            ord_kg8='$data[51]',	
+                            ord_kg9='$data[52]',	
+                            ord_kg10='$data[53]',	
+                            ord_kg11='$data[54]',	
+                            ord_kg12='$data[55]',	
+                            ord_kg13='$data[56]',	
+                            ord_kg14='$data[57]',	
+                            ord_kg15='$data[58]',	
+                            ord_kg16='$data[59]',	
+                            ord_kg17='$data[60]',	
+                            ord_kg18='$data[61]',	
+                            ord_kgtotal='$data[62]',	
+                            ord_kgtotal2='$data[63]',	
+                            ord_kgtotal3='$data[64]',	
+                            ord_kgtotal4='$data[65]',	
+                            ord_kgtotal_rep='$data[66]',	
+                            ord_fec_pedido='$data[67]',	
+                            ord_fec_entrega='$data[68]',	
+                            ord_anc_total='$data[69]',	
+                            ord_refilado='$data[70]',	
+                            ord_pri_ancho='$data[71]',	
+                            ord_pri_carril='$data[72]',	
+                            ord_pri_faltante='$data[73]',	
+                            ord_pro_secundario='$data[74]',	
+                            ord_pro3='$data[75]',	
+                            ord_pro4='$data[76]',	
+                            ord_sec_ancho='$data[77]',	
+                            ord_ancho3='$data[78]',	
+                            ord_ancho4='$data[79]',	
+                            ord_sec_carril='$data[80]',	
+                            ord_carril3='$data[81]',	
+                            ord_carril4='$data[82]',	
+                            ord_rep_ancho='$data[83]',	
+                            ord_rep_carril='$data[84]',	
+                            ord_largo='$data[85]',	
+                            ord_gramaje='$data[86]',	
+                            ord_observaciones='$data[87]',	
+                            ord_merma='$data[88]',	
+                            ord_merma_peso='$data[89]',	
+                            ord_tot_fin='$data[90]',	
+                            ord_tot_fin_peso='$data[91]',	
+                            ord_por_tornillo1='$data[92]',	
+                            ord_por_tornillo2='$data[93]',	
+                            ord_por_tornillo3='$data[94]',	
+                            ord_tornillo='$data[95]',	
+                            ord_bodega='$data[96]',	
+                            pro_mp1='$data[97]',	
+                            pro_mp2='$data[98]',	
+                            pro_mp3='$data[99]',	
+                            pro_mp4='$data[100]',	
+                            pro_mp5='$data[101]',	
+                            pro_mp6='$data[102]',	
+                            pro_mp7='$data[103]',	
+                            pro_mp8='$data[104]',	
+                            pro_mp9='$data[105]',	
+                            pro_mp10='$data[106]',	
+                            pro_mp11='$data[107]',	
+                            pro_mp12='$data[108]',	
+                            pro_mp13='$data[109]',	
+                            pro_mp14='$data[110]',	
+                            pro_mp15='$data[111]',	
+                            pro_mp16='$data[112]',	
+                            pro_mp17='$data[113]',	
+                            pro_mp18='$data[114]',	
+                            pro_mp19='$data[115]',	
+                            pro_mp20='$data[116]',	
+                            pro_mp21='$data[117]',	
+                            pro_mp22='$data[118]',	
+                            pro_mp23='$data[119]',	
+                            pro_mp24='$data[120]',	
+                            pro_mf1='$data[121]',	
+                            pro_mf2='$data[122]',	
+                            pro_mf3='$data[123]',	
+                            pro_mf4='$data[124]',	
+                            pro_mf5='$data[125]',	
+                            pro_mf6='$data[126]',	
+                            pro_mf7='$data[127]',	
+                            pro_mf8='$data[128]',	
+                            pro_mf9='$data[129]',	
+                            pro_mf10='$data[130]',	
+                            pro_mf11='$data[131]',	
+                            pro_mf12='$data[132]',	
+                            opp_kg1='$data[133]',	
+                            opp_kg2='$data[134]',	
+                            opp_kg3='$data[135]',	
+                            opp_kg4='$data[136]',	
+                            opp_kg5='$data[137]',	
+                            opp_kg6='$data[138]',	
+                            opp_kg7='$data[139]',	
+                            opp_kg8='$data[140]',	
+                            opp_kg9='$data[141]',	
+                            opp_kg10='$data[142]',	
+                            opp_kg11='$data[143]',	
+                            opp_kg12='$data[144]',	
+                            opp_kg13='$data[145]',	
+                            opp_kg14='$data[146]',	
+                            opp_kg15='$data[147]',	
+                            opp_kg16='$data[148]',	
+                            opp_kg17='$data[149]',	
+                            opp_kg18='$data[150]',	
+                            opp_kg19='$data[151]',	
+                            opp_kg20='$data[152]',	
+                            opp_kg21='$data[153]',	
+                            opp_kg22='$data[154]',	
+                            opp_kg23='$data[155]',	
+                            opp_kg24='$data[156]',	
+                            opp_velocidad='$data[157]',	
+                            opp_velocidad2='$data[158]',	
+                            opp_velocidad3='$data[159]',	
+                            opp_velocidad4='$data[160]',	
+                            mp_cnt1='$data[161]',	
+                            mp_cnt2='$data[162]',	
+                            mp_cnt3='$data[163]',	
+                            mp_cnt4='$data[164]',	
+                            mp_cnt5='$data[165]',	
+                            mp_cnt6='$data[166]',	
+                            mp_cnt7='$data[167]',	
+                            mp_cnt8='$data[168]',	
+                            mp_cnt9='$data[169]',	
+                            mp_cnt10='$data[170]',	
+                            mp_cnt11='$data[171]',	
+                            mp_cnt12='$data[172]',	
+                            mp_cnt13='$data[173]',	
+                            mp_cnt14='$data[174]',	
+                            mp_cnt15='$data[175]',	
+                            mp_cnt16='$data[176]',	
+                            mp_cnt17='$data[177]',	
+                            mp_cnt18='$data[178]',	
+                            mp_cnt19='$data[179]',	
+                            mp_cnt20='$data[180]',	
+                            mp_cnt21='$data[181]',	
+                            mp_cnt22='$data[182]',	
+                            mp_cnt23='$data[183]',	
+                            mp_cnt24='$data[184]',
+                            ord_patch1='$data[187]',
+                            ord_patch2='$data[188]',
+                            ord_patch3='$data[189]',
+                            ord_formula='$data[190]',
+                            ord_etiqueta='$data[191]',    
+                            ord_eti_numero='$data[192]',
+                            ord_tratado='$data[193]' 
+                     WHERE   ord_id=$id            
+                    ");
         }
-    }
+     }
 
     function delete_orden_produccion($id) {
         if ($this->con->Conectar() == true) {
@@ -3250,14 +4283,24 @@ $data[3],
         }
     }
 
-    function total_ingreso_egreso_fac($id, $emi, $tab) {
+    function total_ingreso_egreso_fac($id, $lt) {
         if ($this->con->Conectar() == true) {
-            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0 and m.bod_id=$emi and m.mov_tabla=$tab) as ingreso,
-                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and m.bod_id=$emi and m.mov_tabla=$tab) as egreso");
+            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0 and m.mov_pago='$lt') as ingreso,
+                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and m.mov_pago='$lt') as egreso");
         }
     }
 
     function total_ingreso_egreso_mp($id, $fec) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select (SELECT SUM(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=0 AND mi.mov_fecha_trans <='$fec' AND mi.mp_id=$id)ingreso,
+                                    (SELECT SUM(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_fecha_trans <='$fec' AND mi.mp_id=$id)egreso,
+                                    (SELECT SUM(mi.mov_peso_total) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=0 AND mi.mov_fecha_trans <='$fec' AND mi.mp_id=$id)p1,
+                                    (SELECT SUM(mi.mov_peso_total) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_fecha_trans <='$fec' AND mi.mp_id=$id)p2
+                    ");
+        }
+    }
+    
+    function total_ingreso_egreso_mp_ant($id, $fec) {
         if ($this->con->Conectar() == true) {
             return pg_query("select (SELECT SUM(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=0 AND mi.mov_fecha_trans <'$fec' AND mi.mp_id=$id)ingreso,
                                     (SELECT SUM(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs,erp_i_mp mp WHERE mi.mp_id=mp.mp_id AND mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_fecha_trans <'$fec' AND mi.mp_id=$id)egreso,
@@ -3407,9 +4450,9 @@ $data[3],
         }
     }
 
-    function lista_produccion_pedido($id) {
+    function lista_produccion_pedido($id,$pro_id) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT sum(rec_rollo_primario) as rollo,sum(rec_rollo_secundario) as rollo2,sum(rec_peso_primario) as peso,sum(rec_peso_secundario) as peso2, sum(rec_desperdicio) as desperdicio FROM erp_reg_op_ecocambrella where ord_id=$id");
+            return pg_query("SELECT sum(rec_rollo_primario) as rollo,sum(rec_rollo_secundario) as rollo2,sum(rec_peso_primario) as peso,sum(rec_peso_secundario) as peso2, sum(rec_desperdicio) as desperdicio FROM erp_reg_op_ecocambrella where ord_id=$id and pro_id=$pro_id");
         }
     }
 
@@ -3452,8 +4495,8 @@ $data[3],
             return pg_query("UPDATE erp_det_ped_venta SET det_estado='$sts' where det_id=$id");
         }
     }
-    
-    function lista_ordenes_produccion_mp($sts){
+
+    function lista_ordenes_produccion_mp($sts) {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT ped_num_orden FROM erp_i_pedido_mp WHERE ped_sts=$sts and ped_num_orden<>'' GROUP BY ped_num_orden");
         }
@@ -3464,28 +4507,199 @@ $data[3],
             return pg_query("UPDATE erp_configuraciones set con_correo='$val' where con_id=$id");
         }
     }
-    
+
     function lista_unidad_pro_indus($id) {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT * from erp_i_productos WHERE pro_id=$id");
         }
     }
-    
+
     function upd_configuraciones_sueldo($id, $data) {
         if ($this->con->Conectar() == true) {
             return pg_query("UPDATE erp_configuraciones set con_ambiente='$data[0]', con_valor2='$data[1]', con_valor3='$data[2]' where con_id=$id");
         }
     }
-    
-    function upd_sueldo_basico($data){
-        if($this->con->Conectar() == true){
+
+    function upd_sueldo_basico($data) {
+        if ($this->con->Conectar() == true) {
             return pg_query("UPDATE erp_configuraciones set con_valor2='$data[0]' where con_id=5");
         }
     }
-    
-    function upd_sueldo_basico_empleado($data){
-        if($this->con->Conectar() == true){
+
+    function upd_sueldo_basico_empleado($data) {
+        if ($this->con->Conectar() == true) {
             return pg_query("UPDATE par_empleados set emp_sueldo_inicial='$data[0]' where emp_sueldo_basico=1");
+        }
+    }
+
+    function lista_movmp_numtrans($code) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_mov_inventario mi,
+                                        erp_i_mp mp WHERE mi.mp_id=mp.mp_id and mi.mov_num_trans='$code'");
+        }
+    }
+
+    function lista_combo_empa_core($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_i_mp m, erp_i_tpmp t where m.mpt_id=t.mpt_id and m.mpt_id='$id' ORDER BY mp_referencia");
+        }
+    }
+    
+    function lista_combo_empa_core2($id,$id2) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_i_mp m, erp_i_tpmp t where m.mpt_id=t.mpt_id and (m.mpt_id='$id' or m.mpt_id='$id2') ORDER BY mp_referencia");
+        }
+    }
+
+    function lista_consumo_mp($ord) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT i.trs_id,i.mp_id,m.mp_codigo,m.mp_referencia, i.mov_num_orden,sum(mov_cantidad) as mov_cantidad 
+                            FROM  erp_i_mp m, erp_i_mov_inventario i 
+                            where m.mp_id=i.mp_id and i.trs_id=1 and i.mov_num_orden='$ord'
+                            group by i.trs_id,i.mp_id,m.mp_codigo,m.mp_referencia, i.mov_num_orden order by mov_num_orden,mp_referencia");
+        }
+    }
+    
+     function lista_costo_mp($id,$fec) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_costos_mp where mp_id=$id and cmp_tabla='0' and cmp_fecha<='$fec' order by cmp_fecha desc limit 1");
+        }
+    }
+    
+    function registros_productos($ord, $p1, $p2, $p3, $p4) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("   select 1 as prod,rec_fecha,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado,maq_id from erp_reg_op_ecocambrella where pro_id=$p1 and ord_id=$ord
+                                union  
+                                select 2 as prod,rec_fecha,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado,maq_id from erp_reg_op_ecocambrella where pro_id=$p2 and ord_id=$ord 
+                                union  
+                                select 3 as prod,rec_fecha,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado,maq_id from erp_reg_op_ecocambrella where pro_id=$p3 and ord_id=$ord 
+                                union 
+                                select 4 as prod,rec_fecha,rec_id,ord_id,rec_peso_primario,pro_id,rec_lote,rec_estado,maq_id from erp_reg_op_ecocambrella where pro_id=$p4 and ord_id=$ord
+                                order by prod,rec_fecha,rec_lote    
+                                ");
+        }
+    }
+    
+    function lista_una_maquina($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM  erp_maquinas where id=$id");
+        }
+    }
+    
+     function lista_una_formula($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_formulacion where ord_numero='$id'");
+        }
+    }
+    
+     function lista_etiquetas() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_etiquetas order by eti_descripcion");
+        }
+    }
+    
+     
+    function total_ingreso_egreso_lote($lt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 0 and m.mov_pago='$lt') as ingreso,
+                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and t.trs_operacion= 1 and m.mov_pago='$lt') as egreso");
+        }
+    }
+    
+    function lista_movimiento_lote($lt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * FROM erp_i_mov_inv_pt m, erp_i_productos p where m.pro_id=p.pro_id and m.mov_pago='$lt'");
+        }
+    }
+    
+    function lista_lotes_movimiento($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * FROM inventario_rollos  where inv>0 and pro_id=$id and bod=2");
+        }
+    }
+    
+    
+      function lista_todas_ordenes() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT ord_num_orden FROM erp_i_orden_produccion
+                                union 
+                             SELECT opp_codigo FROM erp_i_orden_produccion_padding");
+        }
+    }
+    
+    function lista_pedidosmp_pendientes() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT 
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            FROM erp_i_pedido_mp pmp, erp_empresa emp
+                            WHERE pmp.emp_id=emp.emp_id
+                            and (SELECT sum(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs WHERE mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_documento=pmp.ped_orden) is null
+                            group by
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            ORDER BY pmp.ped_fecha");
+        }
+    }
+    
+    function lista_pedidosmp_proceso() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT 
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            FROM erp_i_pedido_mp pmp, erp_empresa emp
+                            WHERE pmp.emp_id=emp.emp_id
+                            and (SELECT sum(ped_det_cant)* 0.9 FROM erp_i_pedido_mp p1 WHERE pmp.ped_orden=p1.ped_orden)> (SELECT sum(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs WHERE mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_documento=pmp.ped_orden)
+                            group by
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            ORDER BY pmp.ped_fecha");
+        }
+    }
+    
+    function lista_pedidosmp_entregado() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT 
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            FROM erp_i_pedido_mp pmp, erp_empresa emp
+                            WHERE pmp.emp_id=emp.emp_id
+                            and (SELECT sum(ped_det_cant)* 0.9 FROM erp_i_pedido_mp p1 WHERE pmp.ped_orden=p1.ped_orden)<=(SELECT sum(mi.mov_cantidad) FROM erp_i_mov_inventario mi,erp_transacciones trs WHERE mi.trs_id=trs.trs_id AND trs.trs_operacion=1 AND mi.mov_documento=pmp.ped_orden)
+                            and (SELECT sum(ped_det_cant)* 0.9 FROM erp_i_pedido_mp p1 WHERE pmp.ped_orden=p1.ped_orden)!=0                            
+                            group by
+                            emp.emp_descripcion,
+                            pmp.emp_id,
+                            pmp.ped_fecha,
+                            pmp.ped_orden,
+                            pmp.ped_num_orden
+                            ORDER BY pmp.ped_fecha");
+        }
+    }
+    
+      function lista_cambia_status_pedido($id, $sts) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("UPDATE erp_reg_pedido_venta SET ped_estado='$sts' where ped_id=$id");
+        }
+    }
+    
+    function lista_pedido($id, $sts) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select * from erp_det_ped_venta where det_id=$id");
         }
     }
     

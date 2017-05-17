@@ -41,22 +41,25 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
                 frm = parent.document.getElementById('bottomFrame');
                 main = parent.document.getElementById('mainFrame');
                 parent.document.getElementById('contenedor2').rows = "*,80%";
+                txt1 = $('#txt1').val();
+                txt2 = $('#txt2').val();
+                txt3 = $('#txt3').val();
                 switch (a)
                 {
                     case 0://Nuevo
-                        frm.src = '../Scripts/Form_i_orden_padding.php';
+                        frm.src = '../Scripts/Form_i_orden_padding.php?txt1=' + txt1 + '&txt2=' + txt2 + '&txt3=' + txt3;
                         look_menu();
                         break;
                     case 1://Editar
-                        frm.src = '../Scripts/Form_i_orden_padding.php?id=' + id;
+                        frm.src = '../Scripts/Form_i_orden_padding.php?id=' + id + '&txt1=' + txt1 + '&txt2=' + txt2 + '&txt3=' + txt3;
                         look_menu();
                         break;
                     case 2://PDF
-                        frm.src = '../Scripts/Form_i_pdf_orden_padding.php?id=' + id;
+                        frm.src = '../Reports/rpt_orden_corte.php?id=' + id + '&txt1=' + txt1 + '&txt2=' + txt2 + '&txt3=' + txt3;
                         look_menu();
                         break;
                     case 3:
-                        frm.src = '../Scripts/Form_i_orden_padding.php?id=' + id + '&x=' + x;
+                        frm.src = '../Scripts/Form_i_orden_padding.php?id=' + id + '&x=' + x + '&txt1=' + txt1 + '&txt2=' + txt2 + '&txt3=' + txt3;
                         look_menu();
                         break;
                     case 4://etiqueta
@@ -114,7 +117,7 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
 
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" >ORDEN DE PRODUCCION PADDING</center>
+                <center class="cont_title" >ORDEN DE BOBINADO/CORTE</center>
                 <center class="cont_finder">
                     <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo </a>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
@@ -122,7 +125,7 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
                         <img src="../img/calendar.png" id="im-campo1"/>
                         HASTA:<input type="text" id="txt2" name="txt2" size="15" value="<?php echo $fec2 ?>"/>
                         <img src="../img/calendar.png" id="im-campo2"/>
-                        ORDEN:<input type="text" name="txt3" size="15" value="<?php echo $ord ?>"/>
+                        ORDEN:<input type="text" id="txt3" name="txt3" size="15" value="<?php echo $ord ?>"/>
                         <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
                     </form>  
                 </center>
@@ -130,10 +133,10 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
             <!--Nombres de la columna de la tabla-->
             <thead>
             <th colspan="5"></th>
-            <th colspan="2">Solicitado</th>
+            <th colspan="3">Solicitado</th>
             <th colspan="2">Produccion</th>
             <th colspan="2">Faltante</th>
-            <th colspan="2">Despacho</th>
+            <!--<th colspan="2">Despacho</th>-->
             <th colspan="2"></th>
         </thead>
         <thead>
@@ -142,14 +145,15 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
         <th>Fecha Pedido</th>
         <th>Cliente</th>
         <th>Producto</th>
-        <th>Cant.</th>
-        <th>Kg.</th>
-        <th>Cant.</th>
-        <th>Kg.</th>
-        <th>Cant.</th>
-        <th>Kg.</th>
-        <th>Cant.</th>
-        <th>Kg.</th>
+        <th style="width: 80px">Cant.</th>
+        <th style="width: 80px">P.Materia Kg</th>
+        <th style="width: 80px">P. Bruto Kg.</th>
+        <th style="width: 80px">Cant.</th>
+        <th style="width: 80px">Kg.</th>
+        <th style="width: 80px">Cant.</th>
+        <th style="width: 80px">Kg.</th>
+<!--        <th>Cant.</th>
+        <th>Kg.</th>-->
         <th>Status</th>
         <th>Acciones</th>
     </thead>
@@ -161,7 +165,7 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
             $n++;
             $rst_prod = pg_fetch_array($Clase->lista_produccion_pedido($rst[opp_id]));
             $faltante = $rst[opp_cantidad] - $rst_prod[rollo];
-            $f_peso = $rst[pro_peso] - $rst_prod[peso];
+            $f_peso = $rst[pro_mf3] - $rst_prod[peso];
             $ev = "onclick='auxWindow(3,$rst[opp_id], 1)'";
             echo"<tr>
                 <td>$n</td>
@@ -169,15 +173,15 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
                 <td $ev >$rst[opp_fec_pedido]</td>
                 <td $ev >$rst[cli_raz_social]</td>
                 <td $ev >$rst[pro_descripcion]</td>
-                <td align='right' $ev >$rst[opp_cantidad]</td>
-                <td align='right' $ev >$rst[pro_peso]</td>
-                <td align='right' $ev >$rst_prod[rollo]</td>
-                <td align='right' $ev >$rst_prod[peso]</td>
-                <td align='right' $ev >$faltante</td>
-                <td align='right' $ev >$f_peso</td>
-                <td align='right' $ev ></td>
-                <td align='right' $ev ></td>";
-            $por = ($rst_prod[peso] * 100) / $rst[pro_peso];
+                <td align='right' $ev >" . number_format($rst[opp_cantidad], 2) . "</td>
+                <td align='right' $ev >" . number_format($rst[pro_mf1], 2) . "</td>
+                <td align='right' $ev >" . number_format($rst[pro_mf3], 2) . "</td>
+                <td align='right' $ev >" . number_format($rst_prod[rollo], 2) . "</td>
+                <td align='right' $ev >" . number_format($rst_prod[peso], 2) . "</td>
+                <td align='right' $ev >" . number_format($faltante, 2) . "</td>
+                <td align='right' $ev >" . number_format($f_peso, 2) . "</td>
+                ";
+            $por = ($rst_prod[peso] * 100) / $rst[pro_mf3];
             if ($rst_prod[peso] == '') {
                 $est = 'REGISTRADO';
             } else if ($por >= 90) {
@@ -188,14 +192,16 @@ if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
             echo"<td $ev >$est</td>
                 <td align='center'>";
             if ($Prt->delete == 0) {
-                $a = '"';
-                echo"<img src='../img/b_delete.png'  class='auxBtn' onclick='del($rst[opp_id], 1,$a$rst[opp_codigo]$a)'>";
+                if ($rst_prod[peso] == '') {
+                    $a = '"';
+                    echo"<img src='../img/b_delete.png'  class='auxBtn' onclick='del($rst[opp_id], 1,$a$rst[opp_codigo]$a)'>";
+                }
             }
             if ($Prt->pdf == 0) {
                 echo"<img src='../img/orden.png'  class='auxBtn' onclick='auxWindow(2,$rst[opp_id], 0)'>";
             }
-            echo "<img src='../img/etq2.jpg' title='etiqueta' width='24px' class='auxBtn' onclick='auxWindow(4,$rst[opp_id])'>";
-            if ($Prt->edition == 0) {
+//            echo "<img src='../img/etq2.jpg' title='etiqueta' width='24px' class='auxBtn' onclick='auxWindow(4,$rst[opp_id])'>";
+            if ($Prt->edition == 0 && $est != 'TERMINADO') {
                 echo"<img src='../img/upd.png'  class='auxBtn' onclick='auxWindow(1,$rst[opp_id], 0)'>";
             }
             echo"</td>           

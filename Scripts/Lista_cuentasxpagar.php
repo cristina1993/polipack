@@ -9,16 +9,16 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta], $_GET[estado])) {
     $hasta = $_GET[hasta];
 
     if (!empty($_GET[txt])) {
-        $txt = "WHERE reg_ruc_cliente like '%$nm%' or reg_num_documento LIKE '%$nm%' or reg_concepto like '%$nm%' and reg_estado<3";
+        $txt = "and cli_raz_social like '%$nm%' or reg_ruc_cliente like '%$nm%' or reg_num_documento LIKE '%$nm%' or reg_concepto like '%$nm%' and reg_estado<3";
     } else {
         if ($est1 == 0) {
-            $txt = " WHERE c.reg_femision between '$desde' and '$hasta' and c.reg_estado<3";
+            $txt = " and c.reg_femision between '$desde' and '$hasta' and c.reg_estado<3";
         } else if ($est1 == 1) {
-            $txt = " WHERE c.reg_femision between '$desde' and '$hasta' and not exists(Select from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
+            $txt = " and c.reg_femision between '$desde' and '$hasta' and not exists(Select from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
         } else if ($est1 == 2) {
-            $txt = " WHERE c.reg_femision between '$desde' and '$hasta' and reg_total>(Select sum(ctp_monto)from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
+            $txt = " and c.reg_femision between '$desde' and '$hasta' and reg_total>(Select sum(ctp_monto)from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
         } else if ($est1 == 3) {//pagados
-            $txt = " WHERE c.reg_femision between '$desde' and '$hasta' and reg_total=(Select sum(ctp_monto)from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
+            $txt = " and c.reg_femision between '$desde' and '$hasta' and reg_total=(Select sum(ctp_monto)from erp_ctasxpagar ct where c.reg_id=ct.reg_id) and c.reg_estado<3";
         }
     }
     $cns = $Cxp->lista_documentos_buscador($txt);

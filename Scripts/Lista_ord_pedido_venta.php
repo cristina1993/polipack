@@ -240,7 +240,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
         <div id="cargando">Por Favor Espere...</div>
         <div id="grid" onclick="alert(' ¡ Tiene Una Accion Habilitada ! \n Debe Guardar o Cancelar para habilitar es resto de la pantalla')"></div>  
         <div id="accion" align="center" >
-            <table id="confirm" border="0" align="center"> 
+<!--            <table id="confirm" border="0" align="center"> 
                 <tr>
                     <td colspan="2">Elija la acción a realizar</td>
                     <td><input type="hidden"  id="texto"/> </td>
@@ -265,7 +265,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                         <button onclick="accion.style.visibility = 'hidden'">Cancelar</button>
                     </td>
                 </tr>
-            </table>
+            </table>-->
         </div>
         <div id="autorizar" align="center">
             <table id="confirm" border="0" align="center">
@@ -307,15 +307,19 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                         ESTADO:
                         <select id="ped_estado" name="ped_estado">
                             <option value="x" >SELECCIONE</option>
-                            <option value="0" >Pendiente</option>
+                            <!--<option value="0" >Pendiente</option>-->
                             <option value="1" >Aprobado</option>
-                            <option value="2" >Rechazado</option>
-                            <option value="3" >Semi-Facturado</option>
-                            <option value="4" >Facturado</option>
-                            <option value="5" >Suspendido</option>
-                            <option value="6" >Caducado</option>
-                            <option value="7" >Semi-Transferido</option>
-                            <option value="8" >Transferido</option>
+                            <!--<option value="2" >Rechazado</option>-->
+                            <!--<option value="3" >Semi-Facturado</option>-->
+                            <option value="9" >En Espera</option>
+                            <option value="10" >Produccion</option>
+                            <option value="4" >Enviado</option>
+                            <option value="5" >Anulado</option>
+                            <option value="11" >Terminado</option>
+                            <!--<option value="6" >Caducado</option>-->
+                            <!--<option value="7" >Semi-Transferido</option>-->
+                            <!--<option value="8" >Transferido</option>-->
+
                         </select>
                         DESDE:<input type="text" size="10" name="fecha1" id="fecha1" value="<?php echo $fecha1 ?>" />
                         <img src="../img/calendar.png" id="im-campo1"/>
@@ -332,8 +336,8 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             <th>Orden de Venta</th>
             <th>Ruc/Cedula</th>
             <th>Cliente</th>                                
-            <th>Local</th>
-            <th>Vendedor</th>
+<!--            <th>Local</th>
+            <th>Vendedor</th>-->
             <th>Total Valor</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -345,36 +349,36 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             $n = 0;
             while ($rst = pg_fetch_array($cns)) {
                 $n++;
-                switch ($rst[ped_local]) {
-                    case '1':$local = 'Noperti';
-                        break;
-                    case '10':$local = 'Industrial';
-                        break;
-                    case '2':$local = 'Condado';
-                        break;
-                    case '3':$local = 'Quicentro Sur Shopping';
-                        break;
-                    case '4':$local = 'Mall del Sol';
-                        break;
-                    case '5':$local = 'Shopping Machala';
-                        break;
-                    case '6':$local = 'Riocentro Norte';
-                        break;
-                    case '7':$local = 'San Marino Shopping';
-                        break;
-                    case '8':$local = 'City Mall';
-                        break;
-                    case '9':$local = 'Quicentro Shopping';
-                        break;
-                    case '11':$local = 'Top Tenis';
-                        break;
-                    case '12':$local = 'Recreo';
-                        break;
-                    case '13':$local = 'CCNU';
-                        break;
-                    case '14':$local = 'Atahualpa';
-                        break;
-                }
+//                switch ($rst[ped_local]) {
+//                    case '1':$local = 'Noperti';
+//                        break;
+//                    case '10':$local = 'Industrial';
+//                        break;
+//                    case '2':$local = 'Condado';
+//                        break;
+//                    case '3':$local = 'Quicentro Sur Shopping';
+//                        break;
+//                    case '4':$local = 'Mall del Sol';
+//                        break;
+//                    case '5':$local = 'Shopping Machala';
+//                        break;
+//                    case '6':$local = 'Riocentro Norte';
+//                        break;
+//                    case '7':$local = 'San Marino Shopping';
+//                        break;
+//                    case '8':$local = 'City Mall';
+//                        break;
+//                    case '9':$local = 'Quicentro Shopping';
+//                        break;
+//                    case '11':$local = 'Top Tenis';
+//                        break;
+//                    case '12':$local = 'Recreo';
+//                        break;
+//                    case '13':$local = 'CCNU';
+//                        break;
+//                    case '14':$local = 'Atahualpa';
+//                        break;
+//                }
                 switch ($rst[ped_estado]) {
                     case '0':$estado = 'Pendiente';
                         break;
@@ -382,32 +386,39 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                         break;
                     case '2':$estado = 'Rechazado';
                         break;
-                    case '3':$estado = 'Semi-Facturado';
+                    case '3'://$estado = 'Semi-Facturado';
                         break;
-                    case '4':$estado = 'Facturado';
+                    case '4':$estado = 'Enviado';
                         break;
-                    case '5':$estado = 'Suspendido';
+                    case '5':$estado = 'Anulado';
                         break;
-                    case '6':$estado = 'Caducado';
+                    case '6'://$estado = 'Caducado';
                         break;
-                    case '7':$estado = 'Semi-Transferido';
+                    case '7'://$estado = 'Semi-Transferido';
                         break;
-                    case '8':$estado = 'Transferido';
+                    case '8'://$estado = 'Transferido';
+                        break;
+                    case '9':$estado = 'En espera';
+                        break;
+                    case '10':$estado = 'Produccion';
+                        break;
+                    case '11':$estado = 'Terminado';
                         break;
                 }
+                $even = "onclick='auxWindow(1,$rst[ped_id])'";
                 ?>
                 <tr>
-                    <td><?php echo $n ?></td>
-                    <td><?php echo $rst[ped_num_registro] ?></td>
-                    <td><?php echo $rst[ped_ruc_cc_cliente] ?></td>
-                    <td><?php echo $rst[ped_nom_cliente] ?></td>
-                    <td><?php echo $local ?></td>
-                    <td><?php echo $rst[ped_vendedor] ?></td>
-                    <td align="right"><?php echo $rst[ped_total] ?></td>
-                    <td align="center" onclick="estado(<?php echo $rst[ped_id] ?>,<?php echo $rst[ped_estado] ?>,<?php echo $rst[tipo_cliente] ?>)"><?php echo $estado ?></td>
+                    <td <?php echo $even ?>><?php echo $n ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[ped_num_registro] ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[ped_ruc_cc_cliente] ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[ped_nom_cliente] ?></td>
+    <!--                    <td><?php echo $local ?></td>
+                    <td><?php echo $rst[ped_vendedor] ?></td>-->
+                    <td <?php echo $even ?> align="right"><?php echo number_format($rst[ped_total], 2) ?></td>
+                    <td <?php echo $even ?> align="center" onclick="estado(<?php echo $rst[ped_id] ?>,<?php echo $rst[ped_estado] ?>,<?php echo $rst[tipo_cliente] ?>)"><?php echo $estado ?></td>
                     <td align="center">
                         <?php
-                        if ($estado != 'Aprobado') {
+                        if ($estado == 'Anulado') {
                             if ($Prt->delete == 0) {
                                 ?>
                                 <img src="../img/b_delete.png" width="20px"  class="auxBtn" onclick="del(<?php echo $rst[ped_id] ?>, '<?php echo $rst[ped_num_registro] ?>')">

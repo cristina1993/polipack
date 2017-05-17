@@ -392,11 +392,11 @@ if (isset($_GET[desde])) {
                         <td>$rst[fac_fec_hora_aut]</td>
                         <td style='width:170px'>";
 
-                    if ($_SESSION[usuid] == 1) {
+         //           if ($_SESSION[usuid] == 1) {
                         ?>
                     <img class="auxBtn" width="12px" src="../img/xml.png" onclick="auxWindow(9, '<?php echo $rst[fac_id] ?>', '<?php echo $rst[fac_clave_acceso] ?>', '<?php echo $tp ?>')" />
                     <?php
-                }
+           //     }
                 ?>
                 <?php
                 if ($estaemail != 'ENVIADO' && $nomemi != 'CONSUMIDOR FINAL') {

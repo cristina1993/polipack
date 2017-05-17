@@ -385,6 +385,10 @@ $descuento == '0';
                         t12 = (t12 * 1 + val * 1);
                         tiva = ((t12 * 1) * 12 / 100);
                     }
+                    if (ob == '14') {
+                        t12 = (t12 * 1 + val * 1);
+                        tiva = ((t12 * 1) * 14 / 100);
+                    }
                     if (ob == '0') {
                         t0 = (t0 * 1 + val * 1);
                     }
@@ -656,7 +660,7 @@ $descuento == '0';
                         <table>
                             <tr>
                                 <td style="width: 400px;" class="td1" colspan="4">
-                                <td style="width: 693px;" colspan="7" align="right">Subtotal 12%:</td>
+                                <td style="width: 693px;" colspan="7" align="right">Subtotal :</td>
                                 <td class="sbtls" ><input type="text" size="8" id="subtotal12" readonly  value="<?php echo number_format(0, 2) ?>"style="text-align:right" /></td>
                                 <td></td>
                             </tr>
@@ -692,7 +696,7 @@ $descuento == '0';
                             </tr>
                             <tr>
                                 <td class="td1" colspan="4">
-                                <td colspan="7" align="right">IVA 12%:</td>
+                                <td colspan="7" align="right">TOTAL IVA:</td>
                                 <td class="sbtls" ><input type="text" size="8" id="total_iva" readonly  value="<?php echo number_format(0, 2) ?>" style="text-align:right"/></td>
                                 <td></td>
                             </tr>

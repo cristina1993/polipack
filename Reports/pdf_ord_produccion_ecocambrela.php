@@ -139,9 +139,9 @@ class PDF extends FPDF {
         $x = 0;
         $y = 15;
         $this->Code39($x + 5, $y + 5, $rst[ord_num_orden]);
-        $this->Image('../img/logo_noperti.jpg', 55, 1, 100);
+//        $this->Image('../img/logo_noperti.jpg', 55, 1, 100);
         $this->SetFont('helvetica', 'B', 18);
-        $this->Text($x + 50, $y + 30, "ORDEN PRODUCCION - ECOCAMBRELLA");
+        $this->Text($x + 50, $y + 30, "ORDEN EXTRUSION");
         $this->SetFont('helvetica', 'B', 8);
         $this->Line($x + 1, $y + 32, $x + 209, $y + 32);
         $this->Text($x + 35, $y + 35, "DATOS GENERALES");
@@ -163,7 +163,7 @@ class PDF extends FPDF {
         $this->Text($x + 5, $y + 70, "FECHA ENTREGA : ");
         $this->Text($x + 100, $y + 75, "MERMA: ");
         $this->Text($x + 100, $y + 80, "GRAN TOTAL: ");
-        $this->SetFont('helvetica', '', 8);
+        $this->SetFont('helvetica', 'B', 8);
         $this->Text($x + 22, $y + 40, $rst[ord_num_orden]);
         $this->Text($x + 110, $y + 40, $rst_mp1[mp_referencia]);
         $this->Text($x + 160, $y + 40, "" . $rst[ord_mf1] . " %");
@@ -197,11 +197,11 @@ class PDF extends FPDF {
         $this->Text($x + 180, $y + 75, $rst[ord_merma_peso] . ' Kg');
         $this->Text($x + 180, $y + 80, $rst[ord_tot_fin_peso] . ' Kg');
 
-        $this->SetFont('helvetica', 'B', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->Line($x + 1, $y + 83, $x + 209, $y + 83);
         $this->Text($x + 90, $y + 86, "DETALLE DE PRODUCTO");
         $this->Line($x + 1, $y + 87, $x + 209, $y + 87);
-        $this->SetFont('helvetica', 'B', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->Text($x + 5, $y + 91, "ANCHO TOTAL: ");
         $this->Text($x + 60, $y + 91, "REFILADO: ");
         $this->Text($x + 5, $y + 96, "PRODUCTO PRINCIPAL: ");
@@ -220,7 +220,7 @@ class PDF extends FPDF {
         $this->Text($x + 60, $y + 111, "GRAMAJE: ");
 
 
-        $this->SetFont('helvetica', '', 8);
+        $this->SetFont('helvetica', 'B', 8);
         $this->Text($x + 30, $y + 91, $rst[ord_anc_total] . " M");
         $this->Text($x + 77, $y + 91, $rst[ord_refilado] . " M");
         $this->Text($x + 45, $y + 96, $rst[ord_resina]);
@@ -242,80 +242,76 @@ class PDF extends FPDF {
 
         $this->SetFont('helvetica', 'B', 8);
         $this->Line($x + 1, $y + 113, $x + 209, $y + 113);
-        $this->Text($x + 90, $y + 116, "SET MAQUINAS");
+        $this->Text($x + 90, $y + 116, "CONDICIONES DE OPERACION");
         $this->Line($x + 1, $y + 117, $x + 209, $y + 117);
-        $this->Text($x + 5, $y + 120, "TEMPERATURA");
-        $this->Text($x + 5, $y + 125, "ZONA 1: ");
-        $this->Text($x + 41, $y + 125, "ZONA 2: ");
-        $this->Text($x + 77, $y + 125, "ZONA 3: ");
-        $this->Text($x + 113, $y + 125, "ZONA 4: ");
-        $this->Text($x + 149, $y + 125, "ZONA 5: ");
-        $this->Text($x + 185, $y + 125, "ZONA 6: ");
+
 
         $this->SetFont('helvetica', '', 8);
-        $this->Text($x + 5, $y + 130, "" . $rst[ord_zo1]);
-        $this->Text($x + 41, $y + 130, "" . $rst[ord_zo2]);
-        $this->Text($x + 77, $y + 130, "" . $rst[ord_zo3]);
-        $this->Text($x + 113, $y + 130, "" . $rst[ord_zo4]);
-        $this->Text($x + 149, $y + 130, "" . $rst[ord_zo5]);
-        $this->Text($x + 185, $y + 130, "" . $rst[ord_zo6]);
 
-        $this->SetFont('helvetica', 'B', 8);
-        $this->Text($x + 5, $y + 135, "CONDICIONES DE TABLA");
-        $this->Text($x + 5, $y + 140, "SPINNETER TEMP : ");
-        $this->Text($x + 90, $y + 140, "UPPER ROLLER HEATING ON/ OFF : ");
-        $this->Text($x + 5, $y + 145, "UPPER ROLLER TEMP CONTROLLER : ");
-        $this->Text($x + 90, $y + 145, "UPPER ROLLER OIL PUMP : ");
-        $this->Text($x + 5, $y + 150, "DOWN ROLLER TEMP CONTROLLER : ");
-        $this->Text($x + 90, $y + 150, "DOWN ROLLER HEATING ON/ OFF : ");
-        $this->Text($x + 5, $y + 155, "SPINNETER TEMP CONTROLLER : ");
-        $this->Text($x + 90, $y + 155, "DOWN ROLLER OIL PUMP : ");
-        $this->Text($x + 5, $y + 160, "COOL AIR TEMP: ");
-        $this->Text($x + 90, $y + 160, "SPINNETER ROLLER HEATING ON/ OFF : ");
-        $this->Text($x + 90, $y + 165, "SPINNETER ROLLER OIL PUMP : ");
-        $this->Text($x + 5, $y + 170, "MATERING PUMP : ");
-        $this->Text($x + 5, $y + 175, "SPINNETER BLOWER : ");
-        $this->Text($x + 90, $y + 175, "GSM SETTING : ");
-        $this->Text($x + 5, $y + 180, "SIDE BLOWER : ");
-        $this->Text($x + 90, $y + 180, "AUTO SPEED ADJUST: ");
-        $this->Text($x + 5, $y + 185, "DRAFFTING BLOWER : ");
-        $this->Text($x + 90, $y + 185, "SPEED MODE AUTO : ");
-        $this->Text($x + 5, $y + 190, "LAPPER SPEED: ");
-        $this->Text($x + 5, $y + 195, "MANUAL SPEED SETTING : ");
-        $this->Text($x + 5, $y + 200, "ROLLING MILL : ");
-        $this->Text($x + 5, $y + 205, "WINDING  TENSILITY: ");
-        $this->Text($x + 5, $y + 210, "MASTERBRANCH AUTOSETTING: ");
-        $this->Text($x + 5, $y + 215, "ROLLING MILL UP/DOWN: ");
+        $this->Text($x + 5, $y + 140, "SCREW SPEED ACT. EXTR A.");
+        $this->Text($x + 5, $y + 145, "THOUGHPUT EXTR A.");        
+        $this->Text($x + 5, $y + 150, "MELTPUMP REVOLUTIONS");       
+        $this->Text($x + 5, $y + 155, "SCREW SPEED ACT. EXTR B.");       
+        $this->Text($x + 5, $y + 160, "THOUGHPUT EXTR B.");  
+        $this->Text($x + 5, $y + 165, "SCREW SPEED ACT. EXTR C."); 
+        $this->Text($x + 5, $y + 170, "THOUGHPUT EXTR C.");
+        $this->Text($x + 5, $y + 175, "TOTAL THOUGHPUT");       
+        $this->Text($x + 5, $y + 180, "SOFTBOX");
+        $this->Text($x + 5, $y + 185, "VACUUMBOX");      
+
+        $this->Text($x + 100, $y + 140, "ROLL SPEED SET" ); 
+        $this->Text($x + 100, $y + 145, "ROLLS SPEED ACT." );
+        $this->Text($x + 100, $y + 150, "TEMPERATURE SET" );
+        $this->Text($x + 100, $y + 155, "TEMPERATURE ACT." );
+        $this->Text($x + 100, $y + 160, "TAPER" );
+        $this->Text($x + 100, $y + 165, "INLINE TENSION" );
+        $this->Text($x + 100, $y + 170, "TAPER CURVE TENSION" );
+        $this->Text($x + 100, $y + 175, "START TENSION " );
+        $this->Text($x + 100, $y + 180, "ACT TENSION" );
+        
+        
+        
         $this->Line($x + 5, $y + 218, $x + 209, $y + 218);
         $this->Text($x + 5, $y + 221, "OBSERVACIONES : ");
         $this->Line($x + 5, $y + 231, $x + 209, $y + 231);
+        
 
-        $this->SetFont('helvetica', '', 8);
-        $this->Text($x + 35, $y + 140, $rst[ord_spi_temp]);
-        $this->Text($x + 142, $y + 140, $rst[ord_upp_rol_heating]);
-        $this->Text($x + 60, $y + 145, $rst[ord_upp_rol_tem_controller]);
-        $this->Text($x + 142, $y + 145, $rst[ord_upp_rol_oil_pump]);
-        $this->Text($x + 60, $y + 150, $rst[ord_dow_rol_tem_controller]);
-        $this->Text($x + 142, $y + 150, $rst[ord_dow_rol_heating]);
-        $this->Text($x + 55, $y + 155, $rst[ord_spi_tem_controller]);
-        $this->Text($x + 142, $y + 155, $rst[ord_dow_rol_oil_pump]);
-        $this->Text($x + 30, $y + 160, $rst[ord_coo_air_temp]);
-        $this->Text($x + 149, $y + 160, $rst[ord_spi_rol_heating]);
-        $this->Text($x + 137, $y + 165, $rst[ord_spi_rol_oil_pump]);
-        $this->Text($x + 33, $y + 170, $rst[ord_mat_pump]);
-        $this->Text($x + 37, $y + 175, $rst[ord_spi_blower]);
-        $this->Text($x + 125, $y + 175, $rst[ord_gsm_setting]);
-        $this->Text($x + 30, $y + 180, $rst[ord_sid_blower]);
-        $this->Text($x + 125, $y + 180, $rst[ord_aut_spe_adjust]);
-        $this->Text($x + 38, $y + 185, $rst[ord_dra_blower]);
-        $this->Text($x + 125, $y + 185, $rst[ord_spe_mod_auto]);
-        $this->Text($x + 30, $y + 190, $rst[ord_lap_speed]);
-        $this->Text($x + 45, $y + 195, $rst[ord_man_spe_setting]);
-        $this->Text($x + 30, $y + 200, $rst[ord_rol_mill]);
-        $this->Text($x + 37, $y + 205, $rst[ord_win_tensility]);
-        $this->Text($x + 53, $y + 210, $rst[ord_mas_bra_autosetting]);
-        $this->Text($x + 43, $y + 215, $rst[ord_rol_mil_up_down]);
-        $this->Text($x + 43, $y + 221, $rst[ord_observaciones]);
+
+
+        $this->SetFont('helvetica', 'B', 8);
+        
+        $this->Text($x + 60, $y + 140, $rst[ord_spi_temp]);
+        $this->Text($x + 60, $y + 145, $rst[ord_upp_rol_tem_controller]);        
+        $this->Text($x + 60, $y + 150, $rst[ord_dow_rol_tem_controller]);       
+        $this->Text($x + 60, $y + 155, $rst[ord_spi_tem_controller]);       
+        $this->Text($x + 60, $y + 160, $rst[ord_coo_air_temp]);       
+        $this->Text($x + 60, $y + 165, $rst[ord_mat_pump]);
+        $this->Text($x + 60, $y + 170, $rst[ord_spi_blower]);       
+        $this->Text($x + 60, $y + 175, $rst[ord_sid_blower]);
+        $this->Text($x + 60, $y + 180, $rst[ord_dra_blower]);      
+        $this->Text($x + 60, $y + 185, $rst[ord_lap_speed]);
+
+        $this->Text($x + 150, $y + 140, "" . $rst[ord_zo1]);//11
+        $this->Text($x + 150, $y + 145, "" . $rst[ord_zo2]);//12
+        $this->Text($x + 160, $y + 145, "" . $rst[ord_zo3]);//13
+        $this->Text($x + 170, $y + 145, "" . $rst[ord_zo4]);//14
+        $this->Text($x + 180, $y + 145, "" . $rst[ord_zo5]);//15
+        $this->Text($x + 150, $y + 150, "" . $rst[ord_zo6]);//16
+        $this->Text($x + 160, $y + 150, "" .$rst[ord_dow_rol_oil_pump]);//17
+        $this->Text($x + 170, $y + 150, "" .$rst[ord_spi_rol_heating]);//18
+        $this->Text($x + 150, $y + 155, "" .$rst[ord_spi_rol_oil_pump]);//19
+        $this->Text($x + 160, $y + 155, "" .$rst[ord_gsm_setting]);//20
+        $this->Text($x + 170, $y + 155, "" .$rst[ord_aut_spe_adjust]);
+
+        $this->Text($x + 150, $y + 160, "" .$rst[ord_man_spe_setting]);
+        $this->Text($x + 150, $y + 165, "" . $rst[ord_rol_mill]);
+        $this->Text($x + 150, $y + 170, "" .$rst[ord_win_tensility]);
+        $this->Text($x + 150, $y + 175, "" .$rst[ord_mas_bra_autosetting]);
+        $this->Text($x + 150, $y + 180, "" .$rst[ord_rol_mil_up_down]);
+        $this->Text($x + 60, $y + 221, "" .$rst[ord_observaciones]);        
+        
+  
+
     }
 
 }

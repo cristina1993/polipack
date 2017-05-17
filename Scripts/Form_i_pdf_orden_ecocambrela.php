@@ -42,7 +42,7 @@ $id = $_GET[id];
             <thead>
                 <tr>
                     <th colspan="3" style="height:30px;">
-                        ORDEN PRODUCCION ECOCAMBRELA
+                        ORDEN PRODUCCION 
                         <img class="auxBtn" src="../img/error.png" onclick="cerrar()" />
                     </th>
                 </tr>

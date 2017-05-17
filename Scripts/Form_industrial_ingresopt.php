@@ -8,7 +8,7 @@ if (isset($_REQUEST[mov_documento])) {
 } else {
     $cod = $_GET[sec];
 }
-$cns_pro = $Ing->lista_productos_total($emisor);
+$cns_pro = $Ing->lista_productos_total();
 $cns = $Ing->lista_ingresos_doc($cod);
 ?>
 <!DOCTYPE html>
@@ -42,16 +42,19 @@ $cns = $Ing->lista_ingresos_doc($cod);
                     pro_id = $('#pro_id' + n).html();
                     mov_cantidad = $('#mov_cantidad' + n).html();
                     pro_tbl = $('#pro_tbl' + n).html();
+                    lote = $('#pro_lote' + n).html();
                     data.push(
                             pro_id + '&' +
                             '26' + '&' +
-                            c + '&' +
-                            e + '&' +
+                            '1&' + //cliente
+                            '1&' + //emisor
                             mov_documento.value + '&' +
                             '' + '&' +
                             mov_fecha_trans.value + '&' +
                             mov_cantidad + '&' +
-                            pro_tbl);
+                            pro_tbl + '&' +
+                            lote///mov_pago
+                            );
                 }
                 var fields = Array();
                 $('#encabezado').find(':input').each(function () {
@@ -79,7 +82,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
                     success: function (dt) {
                         if (dt == 0) {
                             loading('hidden');
-                            window.print();
+                            imprimir();
                             cancelar();
                         } else {
                             alert(dt);
@@ -108,7 +111,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
                 } else if (ch0 == 9 && ch1 == 0 && x == 0) { //Tab (Sin lector de Codigo de Barras)
                     load_producto(0)
                 } else if (x == 1 && obj.value.length > 8) {//Desde lote
-                    $('#mov_cantidad').focus();
+                    $('#pro_lote').focus();
                     load_producto(1)
                 }
             }
@@ -117,22 +120,20 @@ $cns = $Ing->lista_ingresos_doc($cod);
             function load_producto(v) {
                 if (v == 1) {
                     vl = $('#pro_codigo').val();
-                    lt = $('#pro_lote').val();
                 } else {
                     vl = $('#pro_codigo').val();
-                    lt = 0;
-                    $('#pro_lote').focus();
-                    $('#pro_descripcion').focus();
                 }
-                $.post("actions.php", {act: 64, id: vl, lt: lt, s: emi},
+                $.post("actions.php", {act: 64, id: vl},
                 function (dt) {
                     dat = dt.split('&');
                     if (dat[0] != '') {
                         $('#pro_codigo').val(dat[0]);
                         $('#pro_descripcion').val(dat[1]);
-                        $('#pro_lote').val(dat[8]);
+                        $('#pro_lote').val('');
                         $('#pro_id').val(dat[9]);
-                        $('#pro_tbl').val(dat[10]);
+                        $('#pro_tbl').val('0');
+                        $('#pro_uni').val(dat[2]);
+                        $('#pro_lote').focus();
                         if ($('#validador').val() == '1') {
                             $('#mov_cantidad').val('1');
                             if (pro_descripcion.value != '' && pro_codigo.value != '' && pro_id.value != '' && (mov_cantidad.value != '' || parseFloat(mov_cantidad.value) != 0)) {
@@ -155,14 +156,6 @@ $cns = $Ing->lista_ingresos_doc($cod);
                 $('#charging').css('visibility', prop);
             }
 
-            function del(doc) {
-                $.post("actions_industrial_ingresopt.php", {op: 1, id: doc}, function (dt) {
-                    if (dt == 0)
-                    {
-                        cancelar();
-                    }
-                })
-            }
             function clonar() {
                 d = 0;
                 n = 0;
@@ -170,16 +163,16 @@ $cns = $Ing->lista_ingresos_doc($cod);
                 if (j > 0) {
                     while (n < j) {
                         n++;
-                        if ($('#pro_id' + n).html() == pro_id.value && $('#pro_tbl' + n).html() == pro_tbl.value) {
+                        if ($('#pro_id' + n).html() == pro_id.value && $('#pro_lote' + n).html() == pro_lote.value) {
                             d = 1;
                             cant = parseFloat($('#mov_cantidad' + n).html()) + parseFloat(mov_cantidad.value);
-                            $('#mov_cantidad' + n).html(cant)
+                            $('#mov_cantidad' + n).html(cant.toFixed(2))
                         }
                     }
                 }
                 if (d == 0) {
                     i = j + 1;
-                    var fila = '<tr class="itm"><td>' + i + '</td><td id="pro_codigo' + i + '">' + pro_codigo.value + '</td><td hidden id="pro_id' + i + '">' + pro_id.value + '</td><td hidden id="pro_tbl' + i + '">' + pro_tbl.value + '</td><td id="pro_lote' + i + '">' + pro_lote.value + '</td><td id="pro_descripcion' + i + '">' + pro_descripcion.value + '</td><td id="mov_cantidad' + i + '" align="right">' + mov_cantidad.value + '</td><td></td></tr>';
+                    var fila = '<tr class="itm"><td>' + i + '</td><td id="pro_codigo' + i + '">' + pro_codigo.value + '</td><td hidden id="pro_id' + i + '">' + pro_id.value + '</td><td hidden id="pro_tbl' + i + '">' + pro_tbl.value + '</td><td id="pro_descripcion' + i + '">' + pro_descripcion.value + '</td><td><input type="text" size="10" readonly id="pro_uni"  />' + pro_uni.value + '</td><td id="pro_lote' + i + '">' + pro_lote.value + '</td><td id="mov_cantidad' + i + '" align="right">' + parseFloat(mov_cantidad.value).toFixed(2) + '</td><td></td></tr>';
                     $('#lista').append(fila);
                 }
                 pro_codigo.value = '';
@@ -188,6 +181,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
                 pro_lote.value = '';
                 pro_descripcion.value = '';
                 mov_cantidad.value = '';
+                pro_uni.value = '';
                 $('#pro_codigo').focus();
                 total();
 
@@ -206,17 +200,20 @@ $cns = $Ing->lista_ingresos_doc($cod);
                     sum = sum + parseFloat(can);
                 }
 
-                $('#total').html(sum);
+                $('#total').html(sum.toFixed(2));
             }
-//            function cambiar() {
-//                if ($('#accion').val() == 1) {
-//                    $('#acciones').html('Unidad');
-//                    $('#validador').val('2');
-//                } else {
-//                    $('#acciones').html('Manual');
-//                    $('#validador').val('1');
-//                }
-//            }
+
+            function imprimir() {
+                $('#head_frm').hide();
+                $('#botones').hide();
+                $('#add').hide();
+                $('.cerrar').hide();
+                window.print();
+                $('#head_frm').show();
+                $('#botones').show();
+                $('#add').show();
+                $('.cerrar').show();
+            }
         </script>
         <style>
             input[type=text]{
@@ -256,7 +253,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
             <table id="tbl_form">
                 <thead>
                     <tr>
-                        <th colspan="7" ><?PHP echo 'INGRESO DE PRODUCTO TERMINADO ' . $bodega ?>
+                        <th colspan="7" ><?PHP echo 'INGRESO DE PRODUCTO TERMINADO '?>
                             <font class="cerrar"  onclick="cancelar()" title="Salir del Formulario">&#X00d7;</font>  
                         </th>
                     </tr>
@@ -273,11 +270,8 @@ $cns = $Ing->lista_ingresos_doc($cod);
                     </tr>
                     <tr>
                         <td colspan="7">
-                            Proveedor:<input type="text" value="<?php echo $bodega ?>"  readonly/>
-                            Destino:<input type="text"  value="<?php echo 'Bodega ' . $bodega ?>" readonly />
-                            <!--<input type="text" size="15" name="validador" id="validador" readonly/>-->
-                            <!--<input type="text" size="15" name="nom_val" id="nom_val" readonly/>-->
-                            <!--<button id="acciones" onclick="cambiar()" value='1'>Manual</button>-->
+                            Proveedor:<input type="text" value="POLIPACK"  readonly/>
+                            Destino:<input type="text"  value="BODEGA PT" readonly />
                             Ingreso:<select id="validador" >
                                 <option value="0">Manual</option>
                                 <option value="1">Unidad</option>
@@ -290,13 +284,14 @@ $cns = $Ing->lista_ingresos_doc($cod);
 
                         <th>Item</th>
                         <th>Codigo</th>
-                        <th>Lote</th>
                         <th>Descripcion</th>
+                        <th>Unidad</th>
+                        <th>Lote</th>
                         <th>Cantidad</th>
                         <th></th>
                     </tr>
                 </thead>
-                <tbody class="tbl_frm_aux" >   
+                <tbody class="tbl_frm_aux" id='head_frm' >   
                     <tr>
                         <td></td>
                         <td>
@@ -304,16 +299,18 @@ $cns = $Ing->lista_ingresos_doc($cod);
                             <input type="hidden" size="10" id="pro_id" />
                             <input type="hidden" size="10" id="pro_tbl" />
                         </td>
-                        <td><input type="text" size="10" id="pro_lote"  onkeypress="caracter(event, this, 1)" /></td>
                         <td><input type="text" size="35" readonly id="pro_descripcion"  /></td>
+                        <td><input type="text" size="10" readonly id="pro_uni"  /></td>
+                        <td><input type="text" size="10" id="pro_lote" maxlength="11"/></td>
                         <td><input type="text" size="10" id="mov_cantidad" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')"/></td>
-                        <td><button />+</button></td>
+                        <td><button id='add' />+</button></td>
                     </tr>
 
                 </tbody>
                 <tbody class="tbl_frm_aux" id="lista" >   
                 </tbody>
                 <tr class="add">
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -325,7 +322,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
             </table>
         </form>
 
-        <table>
+        <table id='botones'>
             <td colspan="3">
                 <?php
                 if ($Prt->add == 0 || $Prt->edition == 0) {
@@ -340,7 +337,7 @@ $cns = $Ing->lista_ingresos_doc($cod);
     <datalist id="productos">
         <?php
         while ($rst_pro = pg_fetch_array($cns_pro)) {
-            echo "<option value='$rst_pro[tbl]$rst_pro[id]' >$rst_pro[codigo] $rst_pro[lote] $rst_pro[descripcion]</option>";
+            echo "<option value='$rst_pro[pro_id]' >$rst_pro[pro_codigo] $rst_pro[pro_descripcion]</option>";
         }
         ?>
     </datalist>

@@ -10,7 +10,7 @@ if (isset($_REQUEST[er])) {
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Noperti</title>
+        <title>POLIPACK</title>
         <meta name="description" content="Index">
         <meta name="author" content="Tikva Systemas">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">   
@@ -134,7 +134,7 @@ if (isset($_REQUEST[er])) {
                 <td>
                     <div id="left-container"> <!-- Left part -->
                         <div id="tags" class="container" > <!-- Tags -->
-                            <img class="img_logo" width="300px" src="img/logo_noperti.jpg" />
+                            <img class="img_logo" width="300px" src="" />
                         </div>
                     </div>
                 </td>

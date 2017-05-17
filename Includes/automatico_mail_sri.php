@@ -9,7 +9,7 @@
         <script>
             $(function () {
                 $('#mensaje').load('envio_mail_factura.php');
-                $('#mensaje').load('envio_mail_nota_credito.php');
+               $('#mensaje').load('envio_mail_nota_credito.php');
 //                $('#mensaje').load('../Includes/envio_mail_nota_debito.php');
 //                $('#mensaje').load('../Includes/envio_mail_retencion.php');
 //                $('#mensaje').load('../Includes/envio_mail_guia.php');

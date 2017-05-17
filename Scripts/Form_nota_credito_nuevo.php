@@ -445,6 +445,10 @@ $vendedor = strtoupper($rst_user[usu_person]);
                         t12 = (t12 * 1 + val * 1);
                         tiva = ((t12 * 1) * 12 / 100);
                     }
+		    if (ob == '14') {
+                        t12 = (t12 * 1 + val * 1);
+                        tiva = ((t12 * 1) * 14 / 100);
+                    }
                     if (ob == '0') {
                         t0 = (t0 * 1 + val * 1);
                     }
@@ -784,7 +788,7 @@ $vendedor = strtoupper($rst_user[usu_person]);
                                 </tr>
                                 <tr>
                                     <td style="width: 100px;" class="td1" colspan="2">
-                                    <td colspan="7" align="right">Subtotal 12%:</td>
+                                    <td colspan="7" align="right">Subtotal :</td>
                                     <td class="sbtls" ><input style="text-align:right" type="text" size="12" id="subtotal12"  value="<?php echo number_format(0, 2) ?>" readonly/></td>
                                     <td></td>
                                 </tr>
@@ -822,7 +826,7 @@ $vendedor = strtoupper($rst_user[usu_person]);
                                 </tr>
                                 <tr>
                                     <td class="td1" colspan="2">
-                                    <td colspan="7" align="right">IVA 12%:</td>
+                                    <td colspan="7" align="right">TOTAL IVA:</td>
                                     <td class="sbtls" ><input type="text" size="12" id="total_iva"  value="<?php echo number_format(0, 2) ?>" style="text-align:right" readonly/></td>
                                     <td></td>
                                 </tr>

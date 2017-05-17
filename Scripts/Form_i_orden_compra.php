@@ -191,7 +191,7 @@ if ($y == 0) {
                             orc_fecha_entrega.value,
                             orc_factura.value,
                             orc_condicion_pago.value,
-                            orc_direccion_entrega.value, '', '', iva)
+                            orc_direccion_entrega.value.toUpperCase(), '', '', iva)
                     $.post("actions.php", {act: 29, 'data[]': data, id: orc_codigo.value},
                     function (dt) {
                         if (dt == 0) {
@@ -247,6 +247,9 @@ if ($y == 0) {
             }
         </script>
         <style>
+            *{
+                text-transform: uppercase;
+            }
             .sbtls{
                 border-left:solid 1px #ccc;
                 border-right:solid 1px #ccc;        
@@ -274,7 +277,6 @@ if ($y == 0) {
                     <td >Fabrica:</td>
                     <td>    
                         <select id="emp_id" onchange="save_head()" style="width:200px"  >
-                            <option value="0">Elija Una Fabrica</option>
                             <?php
                             $cns_emp = $Set->lista_fabricas();
                             while ($rst_emp = pg_fetch_array($cns_emp)) {
@@ -351,7 +353,7 @@ if ($y == 0) {
                 <tr>
                     <th>Item</th>
                     <th>Descripcion</th>
-                    <th>Referencia</th>            
+                    <th>Codigo</th>            
                     <th>Unidad</th>
                     <th>Cantidad</th>
                     <th>Valor_U</th>
@@ -388,8 +390,8 @@ if ($y == 0) {
                 ?>
                 <tr>
                     <td align="right" id="item<?php echo $n ?>"><?php echo $n ?></td>
+                    <td id="referncia<?php echo $n ?>"><?php echo $rst[mp_referencia] ?></td> 
                     <td id="codigo<?php echo $n ?>"><?php echo $rst[mp_codigo] ?></td>
-                    <td id="referncia<?php echo $n ?>"><?php echo $rst[mp_referencia] ?></td>          
                     <td id="unidad<?php echo $n ?>"><?php echo $rst[mp_unidad] ?></td>
                     <td id="cantidad<?php echo $n ?>" align="right"><?php echo number_format($rst[orc_det_cant], 1) ?></td>
                     <td id="v_un<?php echo $n ?>"  align="right"><?php echo number_format($rst[orc_det_vu], 1) ?></td>
@@ -408,7 +410,8 @@ if ($y == 0) {
             }
             $t_desc = $stb * $rst_h[orc_descuento] / 100;
             if ($rst_h[orc_iva] == 0) {
-                $iva12 = ($stb - $t_desc) * 0.12;
+                $iva12 = ($stb - $t_desc) * 0.14;
+//                $iva12 = ($stb - $t_desc) * 0.12;
                 $chk_iva = 'checked';
             } else {
                 $iva12 = 0;
@@ -434,7 +437,7 @@ if ($y == 0) {
             </tr>
             <tr>
                 <td colspan="6" align="right">
-                    <font style="float:right  ">IVA 12%:</font>
+                    <font style="float:right  ">IVA 14%:</font>
                     <input type="checkbox" id="iva_aplica" <?php echo $chk_iva ?> style="float:right" onclick="save_head()"  />                        
                 </td>
                 <td class="sbtls" align="right"><input type="text" size="10" readonly  id="iva1" value="<?php echo number_format($iva12, 2) ?>" /></td>

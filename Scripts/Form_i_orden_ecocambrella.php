@@ -7,6 +7,12 @@ $x = $_GET[x];
 $fec1 = $_GET[desde];
 $fec2 = $_GET[hasta];
 $txt = $_GET[txt];
+$cns_combomp1 = $Set->lista_combo_empa_core('26'); ///EMPA
+$cns_combomp2 = $Set->lista_combo_empa_core('27'); ///core
+$cns_combomp3 = $Set->lista_combo_empa_core('27'); ///des 1
+$cns_combomp4 = $Set->lista_combo_empa_core('27'); ///des 2
+$cns_combomp5 = $Set->lista_combo_empa_core('27'); ///des 3
+$cns_combomp6 = $Set->lista_combo_empa_core('27'); ///des 4
 if (isset($_GET [id])) {
     $rst = pg_fetch_array($Set->lista_una_orden_produccion($id));
     $rst_cli = pg_fetch_array($Set->lista_clientes_codigo($rst[cli_id]));
@@ -19,7 +25,7 @@ if (isset($_GET [id])) {
         $rs_pv = pg_fetch_array($Set->lista_un_det_pedido($_GET[prod]));
         $rst[pro_id] = $rs_pv[pro_id];
         $rst[unidad] = $rs_pv[det_unidad];
-        $rst[ord_num_rollos] = $rs_pv[det_cantidad];    
+        $rst[ord_num_rollos] = $rs_pv[det_cantidad];
         $det = 1;
         $rst[ord_fec_pedido] = $rs_pv[ped_femision];
         $det_id = $_GET[prod];
@@ -31,6 +37,7 @@ if (isset($_GET [id])) {
         $det_id = 0;
     }
     $cns = $Set->lista_orden_produccion();
+    $rst[ord_tornillo] = 1;
     $rst[ord_kg1] = 0;
     $rst[ord_kg2] = 0;
     $rst[ord_kg3] = 0;
@@ -44,7 +51,7 @@ if (isset($_GET [id])) {
     $rst[ord_mf5] = 0;
     $rst[ord_mf6] = 0;
     $rst[ord_fec_entrega] = date("Y-m-d");
-    $rst[ord_anc_total] = '2.7';
+    $rst[ord_anc_total] = '1.8';
     $rst[ord_pri_ancho] = 0;
     $rst[ord_pri_carril] = 0;
     $rst[ord_pri_faltante] = 0;
@@ -61,6 +68,29 @@ if (isset($_GET [id])) {
     $rst[ord_tot_fin_peso] = '0';
     $rst[ord_kgtotal] = '0.0';
     $rst[ord_mftotal] = '0.0';
+    $rst[pro_mp1] = 0;
+    $rst[pro_mp2] = 0;
+    $rst[pro_mp3] = 0;
+    $rst[pro_mp4] = 0;
+    $rst[pro_mp5] = 0;
+    $rst[pro_mp6] = 0;
+    $rst['pro_mf1'] = 0;
+    $rst['pro_mf2'] = 0;
+    $rst['pro_mf3'] = 0;
+    $rst['pro_mf4'] = 0;
+    $rst['opp_kg1'] = 0;
+    $rst['opp_kg2'] = 0;
+    $rst['opp_kg3'] = 0;
+    $rst['opp_kg4'] = 0;
+    $rst['opp_kg5'] = 0;
+    $rst['opp_kg6'] = 0;
+    $rst['mp_cnt1'] = 0;
+    $rst['mp_cnt2'] = 0;
+    $rst['mp_cnt3'] = 0;
+    $rst['mp_cnt4'] = 0;
+    $rst['mp_cnt5'] = 0;
+    $rst['mp_cnt6'] = 0;
+    $rst['opp_velocidad'] = 0;
     $rst_sec = pg_fetch_array($Set->lista_secuencial_orden_produccion());
     if (!empty($rst_sec)) {
         $cod = explode('-', $rst_sec[ord_num_orden]);
@@ -82,8 +112,8 @@ if (isset($_GET [id])) {
         $tx_trs = "";
     }
     $rst['ord_num_orden'] = $cod . '-' . $tx_trs . $sec;
-    $nombre = 'NOPERTI CIA LTDA';
-    $cli_id = '71763';
+    $nombre = 'POLIPACK';
+    $cli_id = '1';
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
@@ -114,12 +144,18 @@ if (isset($_GET [id])) {
                 ord_kg4.value = 0;
                 ord_kg5.value = 0;
                 ord_kg6.value = 0;
-                ord_mf1.value = 0;
-                ord_mf2.value = 0;
-                ord_mf3.value = 0;
-                ord_mf4.value = 0;
-                ord_mf5.value = 0;
-                ord_mf6.value = 0;
+                ord_mp1.value = '0';
+                ord_mp2.value = '0';
+                ord_mp3.value = '0';
+                ord_mp4.value = '0';
+                ord_mp5.value = '0';
+                ord_mp6.value = '0';
+                ord_mf1.value = '0';
+                ord_mf2.value = '0';
+                ord_mf3.value = '0';
+                ord_mf4.value = '0';
+                ord_mf5.value = '0';
+                ord_mf6.value = '0';
                 ord_mftotal.value = 0;
                 ord_kgtotal.value = 0;
                 ord_pri_ancho.value = 0;
@@ -132,7 +168,7 @@ if (isset($_GET [id])) {
                 ord_largo.value = 0;
                 ord_gramaje.value = 0;
                 ord_refilado.value = 0.15;
-                ord_anc_total.value = 2.7;
+                ord_anc_total.value = 1.8;
                 ord_pro_principal.value = pro_id.value;
                 ord_zo1.value = 0;
                 ord_zo2.value = 0;
@@ -164,6 +200,13 @@ if (isset($_GET [id])) {
                 ord_gsm_setting.value = 0;
                 ord_aut_spe_adjust.value = 0;
                 ord_spe_mod_auto.value = 0;
+                ord_tornillo.value = 1;
+                ord_bodega.value = '';
+                ord_peso.value = 0;
+                ord_gran_tot.value = 0;
+                ord_kgtotal1.value = 0;
+                ord_gran_tot_peso.value = 0;
+                ord_num_rollos.value = 0;
                 calculo();
             }
 
@@ -194,6 +237,11 @@ if (isset($_GET [id])) {
                     cli_id.focus();
                     limpiar();
                     cli_id.style.borderColor = "red";
+                } else if (ord_bodega.value == "") {
+                    alert('La bodega es un campo obligatorio.');
+                    ord_bodega.focus();
+                    limpiar();
+                    ord_bodega.style.borderColor = "red";
                 } else if (pro_id.value == 0) {
                     alert('El Producto es un campo obligatorio.');
                     pro_id.focus();
@@ -309,7 +357,70 @@ if (isset($_GET [id])) {
                             ord_merma_peso.value,
                             ord_gran_tot.value,
                             ord_gran_tot_peso.value,
-                            det_id
+                            det_id,
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            ord_tornillo.value,
+                            ord_bodega.value,
+                            pro_mp1.value,
+                            pro_mp2.value,
+                            pro_mp3.value,
+                            pro_mp4.value,
+                            pro_mp5.value,
+                            pro_mp6.value,
+                            pro_mf1.value,
+                            pro_mf2.value,
+                            pro_mf3.value,
+                            mp_cnt1.value,
+                            opp_kg2.value,
+                            opp_kg3.value,
+                            opp_kg4.value,
+                            opp_kg5.value,
+                            opp_kg6.value,
+                            opp_velocidad.value,
+                            mp_cnt1.value,
+                            mp_cnt2.value,
+                            mp_cnt3.value,
+                            mp_cnt4.value,
+                            mp_cnt5.value,
+                            mp_cnt6.value
                             );
                     var fields = Array();
                     $("#tbl_form").find(':input').each(function () {
@@ -362,6 +473,7 @@ if (isset($_GET [id])) {
             function calculo_peso(a) {
                 peso = $("#ord_peso").val();
                 pro = $("#pro_id").val();
+
                 switch (a)
                 {
                     case 0:
@@ -371,18 +483,19 @@ if (isset($_GET [id])) {
                         }
                         break;
                     case 1:
+
                         if ($("#ord_peso").val() == "" || ($("#ord_peso").val() == 0)) {
                             ord_kgtotal.value = 0;
                         } else {
                             uni = $('#unidad').val();
-                            if(uni == 1){
+                            if (uni == 1) {
                                 num_rollos = ord_num_rollos.value;
-                            } else if(uni == 2){
+                            } else if (uni == 2) {
                                 gran_peso_kg_total = ord_num_rollos.value * 1 + ord_merma_peso.value * 1;
                                 n_rollos = gran_peso_kg_total / peso;
                                 num_rollos = Math.ceil(n_rollos.toFixed(2));
                                 $('#ord_num_rollos').val(num_rollos);
-                            } else if (uni == 3){
+                            } else if (uni == 3) {
                                 totpeso_rollo = ((ord_anc_total.value * ord_num_rollos.value * ord_gramaje.value) / 1000).toFixed(2);
                                 totpeso2 = ((ord_anc_total.value * ord_largo.value * ord_gramaje.value) / 1000).toFixed(2);
                                 n_rollos1 = totpeso_rollo / totpeso2;
@@ -409,7 +522,7 @@ if (isset($_GET [id])) {
 
             function validacion() {
                 n = 0;
-                totpeso = ((ord_anc_total.value * ord_largo.value * ord_gramaje.value) / 1000).toFixed(2);
+                totpeso = ((ord_pri_ancho.value * ord_pri_carril.value * ord_largo.value * ord_gramaje.value) / 1000).toFixed(2);
                 rollos_madre_prod = (ord_num_rollos.value / ord_pri_carril.value);
                 kgtotal = (totpeso * rollos_madre_prod).toFixed(2);
                 while (n < 6) {
@@ -425,7 +538,7 @@ if (isset($_GET [id])) {
                 }
                 calculo_porcentage();
             }
-            function calculo() {
+            function calculo(c) {
                 if ((ord_anc_total.value * 1) < (ord_pri_ancho.value * 1)) {
                     alert(' - Tome en cuenta que no puede ingresar un ANCHO menor al ANCHO del producto principal');
                     ord_anc_total.value = "0";
@@ -441,33 +554,42 @@ if (isset($_GET [id])) {
                     document.getElementById("ord_pro_secundario").disabled = false;
                 } else {
                     ord_anc_total.style.borderColor = "";
-                    ord_pri_carril.value = (((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value) - (((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value) - parseInt((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value))).toFixed(2);
-                    ord_pri_faltante.value = (ord_anc_total.value - (ord_pri_ancho.value * ord_pri_carril.value) - (ord_refilado.value) * 2).toFixed(2);
-                    if (ord_pri_faltante.value == 'NaN') {
-                        ord_pri_faltante.value = '';
+                    if (c == null) {
+                        ord_pri_carril.value = (((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value) - (((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value) - parseInt((ord_anc_total.value - (2 * ord_refilado.value)) / ord_pri_ancho.value))).toFixed(2);
+                    }
+                    faltante = (ord_anc_total.value - (ord_pri_ancho.value * ord_pri_carril.value) - (ord_refilado.value) * 2).toFixed(2);
+
+                    if (faltante == 'NaN') {
+                        faltante = '0';
                     }
                     if (ord_pri_carril.value == 'NaN') {
-                        ord_pri_carril.value = '';
+                        ord_pri_carril.value = '0';
                     }
-                    $.post("actions.php", {act: 52, faltante: ord_pri_faltante.value, gramaje: ord_gramaje.value},
-                    function (dt) {
-                        $('#ord_pro_secundario').html(dt);
-                        document.getElementById("ord_pro_secundario").disabled = false;
-                        z = $('#ord_pro_secundario').val();
-                        if (z > 0) {
-                            despliegue_ancho_producto_secundario(z);
-                        } else if (ord_pri_faltante.value == 0.0 || ord_pri_faltante.value == 0) {
-                            ord_sec_ancho.value = 0;
-                            ord_sec_carril.value = 0;
-                            ord_rep_ancho.value = 0;
-                            ord_rep_carril.value = 0;
-                        } else {
-                            ord_sec_ancho.value = 0;
-                            ord_sec_carril.value = 0;
-                            ord_rep_ancho.value = ord_pri_faltante.value;
-                            ord_rep_carril.value = 1;
-                        }
-                    });
+                    if (faltante < 0) {
+                        alert('Sobrepasa el ancho total');
+                        calculo();
+                    } else {
+                        ord_pri_faltante.value = faltante;
+                        $.post("actions.php", {act: 52, faltante: ord_pri_faltante.value, gramaje: ord_gramaje.value},
+                        function (dt) {
+                            $('#ord_pro_secundario').html(dt);
+                            document.getElementById("ord_pro_secundario").disabled = false;
+                            z = $('#ord_pro_secundario').val();
+                            if (z > 0) {
+                                despliegue_ancho_producto_secundario(z);
+                            } else if (ord_pri_faltante.value == 0.0 || ord_pri_faltante.value == 0) {
+                                ord_sec_ancho.value = 0;
+                                ord_sec_carril.value = 0;
+                                ord_rep_ancho.value = 0;
+                                ord_rep_carril.value = 0;
+                            } else {
+                                ord_sec_ancho.value = 0;
+                                ord_sec_carril.value = 0;
+                                ord_rep_ancho.value = ord_pri_faltante.value;
+                                ord_rep_carril.value = 1;
+                            }
+                        });
+                    }
                 }
             }
             function despliegue_ancho_producto_secundario(id)
@@ -530,175 +652,175 @@ if (isset($_GET [id])) {
                         dat = dt.split('&');
                         var a = '<?php echo $id ?>';
                         if (a.length == 0) {
-                            $('#ord_mp1,#ord_mp2,#ord_mp3,#ord_mp4,#ord_mp5,#ord_mp6').html(dat[48]);
-                            ord_pri_ancho.value = dat[0];
-                            ord_mp1.value = dat[1];
-                            ord_mp2.value = dat[2];
-                            ord_mp3.value = dat[3];
-                            ord_mp4.value = dat[4];
-                            ord_mp5.value = dat[5];
-                            ord_mp6.value = dat[6];
-                            ord_mf1.value = dat[7];
-                            ord_mf2.value = dat[8];
-                            ord_mf3.value = dat[9];
-                            ord_mf4.value = dat[10];
-                            ord_mf5.value = dat[11];
-                            ord_mf6.value = dat[12];
-                            ord_mftotal.value = dat[13];
-                            ord_largo.value = dat[14];
-                            ord_gramaje.value = dat[15];
-                            ord_peso.value = dat[16];
-                            ord_peso.value = dat[16];
+                            $('#ord_mp1,#ord_mp2,#ord_mp3,#ord_mp4,#ord_mp5,#ord_mp6').html(dat[48]);/// combos de materias primas formulacion
+                            ord_pri_ancho.value = dat[0];/// ancho prod principal
+                            ord_mp1.value = dat[1];// materia prima 1
+                            ord_mp2.value = dat[2];// materia prima 2
+                            ord_mp3.value = dat[3];// materia prima 3
+                            ord_mp4.value = dat[4];// materia prima 4
+                            ord_mp5.value = dat[5];// materia prima 5
+                            ord_mp6.value = dat[6];// materia prima 6
+                            ord_mf1.value = dat[7];// porcentaje mp 1
+                            ord_mf2.value = dat[8];// porcentaje mp 2
+                            ord_mf3.value = dat[9];// porcentaje mp 3
+                            ord_mf4.value = dat[10];// porcentaje mp 4
+                            ord_mf5.value = dat[11];// porcentaje mp 5
+                            ord_mf6.value = dat[12];// porcentaje mp 6
+                            ord_mftotal.value = dat[13];// porcentaje mp total
+                            ord_largo.value = dat[14];// largo
+                            ord_gramaje.value = dat[15];//gramaje
+                            ord_peso.value = dat[16];// peso
                             ord_zo1.value = (dat[18]);
-                            if (dat[18] == "") {
+                            if (dat[18] == "") {///Roll Speed set
                                 $('#ord_zo1').val(0);
                             } else {
                                 $('#ord_zo1').val(dat[18]);
                             }
-                            if (dat[19] == "") {
+                            if (dat[19] == "") {///rolls speed act1.
                                 $('#ord_zo2').val(0);
                             } else {
                                 $('#ord_zo2').val(dat[19]);
                             }
-                            if (dat[20] == "") {
+                            if (dat[20] == "") {///rolls speed act2.
                                 $('#ord_zo3').val(0);
                             } else {
                                 $('#ord_zo3').val(dat[20]);
                             }
-                            if (dat[21] == "") {
+                            if (dat[21] == "") {///rolls speed act3.
                                 $('#ord_zo4').val(0);
                             } else {
                                 $('#ord_zo4').val(dat[21]);
                             }
-                            if (dat[22] == "") {
+                            if (dat[22] == "") {///rolls speed act4.
                                 $('#ord_zo5').val(0);
                             } else {
                                 $('#ord_zo5').val(dat[22]);
                             }
-                            if (dat[23] == "") {
+                            if (dat[23] == "") {///Temperature set1
                                 $('#ord_zo6').val(0);
                             } else {
                                 $('#ord_zo6').val(dat[23]);
                             }
-                            if (dat[20] == "") {
+                            //////////////////////////////
+                            if (dat[24] == "") {  ///Screw speed act.Extr A.
                                 $('#ord_spi_temp').val(0);
                             } else {
-                                $('#ord_spi_temp').val(dat[20]);
+                                $('#ord_spi_temp').val(dat[24]);
                             }
-                            if (dat[24] == "") {
+                            if (dat[25] == "") {  /// Thoughput Extr A.
                                 $('#ord_upp_rol_tem_controller').val(0);
                             } else {
-                                $('#ord_upp_rol_tem_controller').val(dat[24]);
+                                $('#ord_upp_rol_tem_controller').val(dat[25]);
                             }
-                            if (dat[25] == "") {
+                            if (dat[26] == "") {/// meltpump Revolutions
                                 $('#ord_dow_rol_tem_controller').val(0);
                             } else {
-                                $('#ord_dow_rol_tem_controller').val(dat[25]);
+                                $('#ord_dow_rol_tem_controller').val(dat[26]);
                             }
-                            if (dat[26] == "") {
+                            if (dat[27] == "") {/// Screw speed act Extr. B 
                                 $('#ord_spi_tem_controller').val(0);
                             } else {
-                                $('#ord_spi_tem_controller').val(dat[26]);
+                                $('#ord_spi_tem_controller').val(dat[27]);
                             }
-                            if (dat[27] == "") {
+                            if (dat[28] == "") {/// Total throughputh Extr. B 
                                 $('#ord_coo_air_temp').val(0);
                             } else {
-                                $('#ord_coo_air_temp').val(dat[27]);
+                                $('#ord_coo_air_temp').val(dat[28]);
                             }
-                            if (dat[28] == "") {
+                            if (dat[35] == "") {///
                                 $('#ord_upp_rol_heating').val(0);
                             } else {
-                                $('#ord_upp_rol_heating').val(dat[28]);
+                                $('#ord_upp_rol_heating').val(dat[35]);
                             }
-                            if (dat[29] == "") {
+                            if (dat[36] == "") {///
                                 $('#ord_upp_rol_oil_pump').val(0);
                             } else {
-                                $('#ord_upp_rol_oil_pump').val(dat[29]);
+                                $('#ord_upp_rol_oil_pump').val(dat[36]);
                             }
-                            if (dat[30] == "") {
+                            if (dat[31] == "") {///
                                 $('#ord_dow_rol_heating').val(0);
                             } else {
                                 $('#ord_dow_rol_heating').val(dat[30]);
                             }
-                            if (dat[31] == "") {
+                            if (dat[32] == "") {///Temperature set2
                                 $('#ord_dow_rol_oil_pump').val(0);
                             } else {
-                                $('#ord_dow_rol_oil_pump').val(dat[31]);
+                                $('#ord_dow_rol_oil_pump').val(dat[32]);
                             }
-                            if (dat[33] == "") {
+                            if (dat[33] == "") {///Temperature set3
                                 $('#ord_spi_rol_heating').val(0);
                             } else {
-                                $('#ord_spi_rol_heating').val(dat[32]);
+                                $('#ord_spi_rol_heating').val(dat[33]);
                             }
-                            if (dat[33] == "") {
+                            if (dat[34] == "") {///Terperature Act1.
                                 $('#ord_spi_rol_oil_pump').val(0);
                             } else {
-                                $('#ord_spi_rol_oil_pump').val(dat[33]);
+                                $('#ord_spi_rol_oil_pump').val(dat[34]);
                             }
-                            if (dat[34] == "") {
+                            if (dat[35] == "") {///Screw speed act Extr. C
                                 $('#ord_mat_pump').val(0);
                             } else {
-                                $('#ord_mat_pump').val(dat[34]);
+                                $('#ord_mat_pump').val(dat[35]);
                             }
-                            if (dat[35] == "") {
+                            if (dat[36] == "") {///Total throughputh Extr. C 
                                 $('#ord_spi_blower').val(0);
                             } else {
-                                $('#ord_spi_blower').val(dat[35]);
+                                $('#ord_spi_blower').val(dat[36]);
                             }
-                            if (dat[36] == "") {
+                            if (dat[37] == "") {///Total throughputh
                                 $('#ord_sid_blower').val(0);
                             } else {
-                                $('#ord_sid_blower').val(dat[36]);
+                                $('#ord_sid_blower').val(dat[37]);
                             }
-                            if (dat[37] == "") {
+                            if (dat[38] == "") {///Softbox 
                                 $('#ord_dra_blower').val(0);
                             } else {
-                                $('#ord_dra_blower').val(dat[37]);
+                                $('#ord_dra_blower').val(dat[38]);
                             }
-                            if (dat[38] == "") {
+                            if (dat[39] == "") {///Terperature Act2.
                                 $('#ord_gsm_setting').val(0);
                             } else {
-                                $('#ord_gsm_setting').val(dat[38]);
+                                $('#ord_gsm_setting').val(dat[39]);
                             }
-                            if (dat[39] == "") {
+                            if (dat[40] == "") {///Terperature Act3.
                                 $('#ord_aut_spe_adjust').val(0);
                             } else {
-                                $('#ord_aut_spe_adjust').val(dat[39]);
+                                $('#ord_aut_spe_adjust').val(dat[40]);
                             }
-                            if (dat[40] == "") {
+                            if (dat[41] == "") {///
                                 $('#ord_spe_mod_auto').val(0);
                             } else {
-                                $('#ord_spe_mod_auto').val(dat[40]);
+                                $('#ord_spe_mod_auto').val(dat[41]);
                             }
-                            if (dat[41] == "") {
+                            if (dat[42] == "") {///Vacuumbox 
                                 $('#ord_lap_speed').val(0);
                             } else {
-                                $('#ord_lap_speed').val(dat[41]);
+                                $('#ord_lap_speed').val(dat[42]);
                             }
-                            if (dat[42] == "") {
+                            if (dat[43] == "") {///Taper
                                 $('#ord_man_spe_setting').val(0);
                             } else {
-                                $('#ord_man_spe_setting').val(dat[42]);
+                                $('#ord_man_spe_setting').val(dat[43]);
                             }
-                            if (dat[43] == "") {
+                            if (dat[44] == "") {///Inline tension 
                                 $('#ord_rol_mill').val(0);
                             } else {
-                                $('#ord_rol_mill').val(dat[43]);
+                                $('#ord_rol_mill').val(dat[44]);
                             }
-                            if (dat[44] == "") {
+                            if (dat[45] == "") {///Taper Curve tension 
                                 $('#ord_win_tensility').val(0);
                             } else {
-                                $('#ord_win_tensility').val(dat[44]);
+                                $('#ord_win_tensility').val(dat[45]);
                             }
-                            if (dat[44] == "") {
+                            if (dat[46] == "") {///Start Tension
                                 $('#ord_mas_bra_autosetting').val(0);
                             } else {
-                                $('#ord_mas_bra_autosetting').val(dat[44]);
+                                $('#ord_mas_bra_autosetting').val(dat[46]);
                             }
-                            if (dat[45] == "") {
+                            if (dat[47] == "") {///ACT tension 
                                 $('#ord_rol_mil_up_down').val(0);
                             } else {
-                                $('#ord_rol_mil_up_down').val(dat[45]);
+                                $('#ord_rol_mil_up_down').val(dat[47]);
                             }
                             calculo();
                             if (det != '') {
@@ -771,6 +893,163 @@ if (isset($_GET [id])) {
                 ord_merma_peso.value = (((ord_kgtotal1.value * 1) * (ord_merma.value * 1)) / 100).toFixed(2);
                 ord_gran_tot_peso.value = ((ord_kgtotal1.value * 1) + (ord_merma_peso.value * 1)).toFixed(2);
                 ord_kgtotal.value = ord_gran_tot_peso.value;
+                calculo_empaque();
+
+            }
+
+            function load_tornillo(obj) {
+                if (pro_id.value == 0) {
+                    limpiar_datos_detalle();
+                } else {
+                    $.post("actions.php", {act: 85, id: pro_id.value, tornillo: obj.value},
+                    function (dt) {
+                        dat = dt.split('&');
+                        ord_mp1.value = dat[0].trim();// materia prima 1
+                        ord_mp2.value = dat[1];// materia prima 2
+                        ord_mp3.value = dat[2];// materia prima 3
+                        ord_mp4.value = dat[3];// materia prima 4
+                        ord_mp5.value = dat[4];// materia prima 5
+                        ord_mp6.value = dat[5];// materia prima 6
+                        ord_mf1.value = dat[6];// porcentaje mp 1
+                        ord_mf2.value = dat[7];// porcentaje mp 2
+                        ord_mf3.value = dat[8];// porcentaje mp 3
+                        ord_mf4.value = dat[9];// porcentaje mp 4
+                        ord_mf5.value = dat[10];// porcentaje mp 5
+                        ord_mf6.value = dat[11];// porcentaje mp 6
+                        ord_mftotal.value = dat[12];// porcentaje mp total
+                        validacion();
+                    });
+                }
+            }
+
+            function load_datos_mp(obj) {
+                n = obj.lang;
+                $.post("actions_padding.php", {op: 5, id: obj.value},
+                function (dt) {
+                    dat = dt.split('&');
+                    if (dt.length != 0) {
+                        $('#mp_kg' + n).val(dat[0]);
+                        calculo_empaque();
+                    }
+                });
+            }
+
+            function calculo_empaque() {
+
+                if ($("#ord_num_rollos").val().length == 0) {
+                    cnt = 0;
+                } else {
+                    cnt = parseFloat($("#ord_num_rollos").val());
+                }
+
+                if ($("#opp_velocidad").val().length == 0) {
+                    r = 0;
+                } else {
+                    r = parseFloat($("#opp_velocidad").val());
+                }
+
+
+                if ($("#mp_cnt1").val().length == 0) {
+                    pemp = 0;
+                } else {
+                    pemp = parseFloat($("#mp_cnt1").val());
+                }
+                if ($("#mp_cnt2").val().length == 0) {
+                    pemp2 = 0;
+                } else {
+                    pemp2 = parseFloat($("#mp_cnt2").val());
+                }
+
+                if ($("#mp_cnt3").val().length == 0) {
+                    pemp3 = 0;
+                } else {
+                    pemp3 = parseFloat($("#mp_cnt3").val());
+                }
+                if ($("#mp_cnt4").val().length == 0) {
+                    pemp4 = 0;
+                } else {
+                    pemp4 = parseFloat($("#mp_cnt4").val());
+                }
+                if ($("#mp_cnt5").val().length == 0) {
+                    pemp5 = 0;
+                } else {
+                    pemp5 = parseFloat($("#mp_cnt5").val());
+                }
+                if ($("#mp_cnt6").val().length == 0) {
+                    pemp6 = 0;
+                } else {
+                    pemp6 = parseFloat($("#mp_cnt6").val());
+                }
+                if ($("#mp_kg1").val().length == 0) {
+                    okg1 = 0;
+                } else {
+                    okg1 = parseFloat($("#mp_kg1").val());
+                }
+                if ($("#mp_kg2").val().length == 0) {
+                    okg2 = 0;
+                } else {
+                    okg2 = parseFloat($("#mp_kg2").val());
+                }
+                if ($("#mp_kg3").val().length == 0) {
+                    okg3 = 0;
+                } else {
+                    okg3 = parseFloat($("#mp_kg3").val());
+                }
+                if ($("#mp_kg4").val().length == 0) {
+                    okg4 = 0;
+                } else {
+                    okg4 = parseFloat($("#mp_kg4").val());
+                }
+                if ($("#mp_kg5").val().length == 0) {
+                    okg5 = 0;
+                } else {
+                    okg5 = parseFloat($("#mp_kg5").val());
+                }
+                if ($("#mp_kg6").val().length == 0) {
+                    okg6 = 0;
+                } else {
+                    okg6 = parseFloat($("#mp_kg6").val());
+                }
+
+                ///cantidad de empaque
+                if (cnt != '0' && r != '0') {
+                    ct1 = cnt / r;
+                } else {
+                    ct1 = 0;
+                }
+                d = ct1.toString().split('.');
+                if (parseFloat(d[1]) > 0) {
+                    cnt1 = ct1 + 1;
+                } else {
+                    cnt1 = ct1;
+                }
+                $("#mp_cnt1").val(cnt1.toFixed());
+                $("#mp_cnt2").val(cnt);
+
+                pt1 = cnt1 * okg1;
+                pt2 = okg2 * cnt;
+                pt3 = pemp3 * okg3;
+                pt4 = pemp4 * okg4;
+                pt5 = pemp5 * okg5;
+                pt6 = pemp6 * okg6;
+                $("#opp_kg1").val(pt1.toFixed(2));
+                $("#opp_kg2").val(pt2.toFixed(2));
+                $("#opp_kg3").val(pt3.toFixed(2));
+                $("#opp_kg4").val(pt4.toFixed(2));
+                $("#opp_kg5").val(pt5.toFixed(2));
+                $("#opp_kg6").val(pt6.toFixed(2));
+                ///peso Material
+                pmat = parseFloat($("#ord_kgtotal").val());
+                $("#pro_mf1").val(pmat.toFixed(2));
+
+                ///peso Insumos
+
+                pins = pt1 + pt2 + pt3 + pt4 + pt5 + pt6;
+                $("#pro_mf2").val(pins.toFixed(2));
+
+                ///peso Total
+                ptotal = pmat + pins;
+                $("#pro_mf3").val(ptotal.toFixed(2));
 
             }
         </script>
@@ -787,19 +1066,34 @@ if (isset($_GET [id])) {
             <thead>
                 <tr>
                     <th colspan="3" >
-                        Orden de Producción Ecocambrella
+                        Orden de Producción
                         <font class="cerrar"  onclick="cancelar()" title="Salir del Formulario">&#X00d7;</font>
                     </th>
                 </tr>
             </thead>
             <tr>  
                 <td colspan="2"  class="sbtitle" >DATOS GENERALES</td>
-                <td class="sbtitle" >MIX DE FIBRAS</td>
+                <td class="sbtitle" >FORMULACION</td>
             </tr>
             <tr>
                 <td>Orden # :</td>
                 <td><input readonly type="text" name="ord_num_orden" id="ord_num_orden" size="20" value="<?php echo $rst['ord_num_orden'] ?>" /></td>                     
+            </tr>
+            <tr>
+                <td>Bodega:</td>
+                <td><select name="ord_bodega" id="ord_bodega"style="width:200px">
+                        <option value="">SELECCIONE</option>
+                        <option value="1">SEMIELABORADO</option>
+                        <option value="2">TERMINADO</option>
+                    </select>
+                </td>
+
                 <td rowspan="6">
+                    Tornillo:<select name="ord_tornillo" id="ord_tornillo"style="width:50px" onchange="load_tornillo(this)">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select><br>
                     <select name="ord_mp1" id="ord_mp1"style="width:180px">
                     </select>
                     <input onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" onchange="validacion()" type="text" name="ord_mf1" id="ord_mf1" size="10" style="text-align:right" value="<?php echo $rst[ord_mf1] ?>" /> %
@@ -832,17 +1126,20 @@ if (isset($_GET [id])) {
 
             </tr>
             <script>
+                document.getElementById("ord_bodega").value = '<?php echo $rst[ord_bodega] ?>';
+                document.getElementById("ord_tornillo").value = '<?php echo $rst[ord_tornillo] ?>';
                 document.getElementById("ord_mp1").value = '<?php echo $rst[ord_mp1] ?>';
                 document.getElementById("ord_mp2").value = '<?php echo $rst[ord_mp2] ?>';
                 document.getElementById("ord_mp3").value = '<?php echo $rst[ord_mp3] ?>';
                 document.getElementById("ord_mp4").value = '<?php echo $rst[ord_mp4] ?>';
                 document.getElementById("ord_mp5").value = '<?php echo $rst[ord_mp5] ?>';
-                document.getElementById("ord_mp6").value = '<?php echo $rst[ord_mp6] ?>';</script>
+                document.getElementById("ord_mp6").value = '<?php echo $rst[ord_mp6] ?>';
+            </script>
             <tr>
                 <td>Cliente :</td>
                 <td>
                     <input type="hidden" id="cli_id" value="<?php echo $cli_id ?>"/>
-                    <input type="text" id="nombre" list="clientes" size="50" onchange="load_cliente(this)" value="<?php echo $nombre ?>"/>
+                    <input type="text" id="nombre" list="clientes" size="30" onchange="load_cliente(this)" value="<?php echo $nombre ?>"/>
                 </td>
             </tr>
             <tr>
@@ -907,6 +1204,129 @@ if (isset($_GET [id])) {
 
             </tr>
             <tr>
+                <td colspan="2" class="sbtitle" > EMPAQUE</td>
+            </tr>
+            <tr>
+                <td>EMPAQUE:</td>
+                <td>
+                    <select id="pro_mp1" onchange="load_datos_mp(this)" lang="1" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo = pg_fetch_array($cns_combomp1)) {
+                            echo "<option value='$rst_combo[mp_id]' >$rst_combo[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10"  hidden id="mp_cnt1"  value="<?php echo $rst['mp_cnt1'] ?>"/>
+                    <input type="text" size="10"  hidden id="mp_kg1"  value="<?php echo round($rst['opp_kg1'] / $rst['mp_cnt1'], 2) ?>"/>
+                    <input type="text" size="10"  hidden id="opp_kg1"  value="<?php echo $rst['opp_kg1'] ?>"/>
+                </td>
+            </tr> 
+            <tr>
+                <td>ROLLOS POR EMPAQUE:</td>
+                <td><input type="text" size="10"  id="opp_velocidad"  value="<?php echo $rst['opp_velocidad'] ?>" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" onchange="calculo_empaque()"/></td>
+            </tr>
+            <tr>
+                <td>CORE:</td>
+                <td>
+                    <select id="pro_mp2" onchange="load_datos_mp(this)" lang="2" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo2 = pg_fetch_array($cns_combomp2)) {
+                            echo "<option value='$rst_combo2[mp_id]' >$rst_combo2[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10" hidden id="mp_cnt2"  value="<?php echo $rst['mp_cnt2'] ?>"/>
+                    <input type="text" size="10" hidden id="mp_kg2"  value="<?php echo round($rst['opp_kg2'] / $rst['mp_cnt2'], 2) ?>"/>
+                    <input type="text" size="10" hidden id="opp_kg2"  value="<?php echo $rst['opp_kg2'] ?>"/>
+                </td>
+            </tr> 
+            <tr>
+                <td></td>
+                <td>
+                    <select id="pro_mp3" onchange="load_datos_mp(this)" lang="3" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo3 = pg_fetch_array($cns_combomp3)) {
+                            echo "<option value='$rst_combo3[mp_id]' >$rst_combo3[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10"  id="mp_cnt3"   value="<?php echo $rst['mp_cnt3'] ?>" onchange="load_datos_mp(this)"/>
+                    <input type="text" size="10" hidden id="mp_kg3"  value="<?php echo round($rst['opp_kg3'] / $rst['mp_cnt3'], 2) ?>"/>
+                    <input type="text" size="10" hidden id="opp_kg3"  value="<?php echo $rst['opp_kg3'] ?>"/>
+                </td>
+            </tr> 
+            <tr>
+                <td></td>
+                <td>
+                    <select id="pro_mp4" onchange="load_datos_mp(this)" lang="4" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo4 = pg_fetch_array($cns_combomp4)) {
+                            echo "<option value='$rst_combo4[mp_id]' >$rst_combo4[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10"  id="mp_cnt4"  value="<?php echo $rst['mp_cnt4'] ?>" onchange="load_datos_mp(this)"/>
+                    <input type="text" size="10" hidden id="mp_kg4"  value="<?php echo round($rst['opp_kg4'] / $rst['mp_cnt4'], 2) ?>"/>
+                    <input type="text" size="10" hidden id="opp_kg4"  value="<?php echo $rst['opp_kg4'] ?>"/>
+                </td>
+            </tr> 
+            <tr>
+                <td></td>
+                <td>
+                    <select id="pro_mp5" onchange="load_datos_mp(this)" lang="5" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo5 = pg_fetch_array($cns_combomp5)) {
+                            echo "<option value='$rst_combo5[mp_id]' >$rst_combo5[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10"  id="mp_cnt5"  value="<?php echo $rst['mp_cnt5'] ?>" onchange="load_datos_mp(this)"/>
+                    <input type="text" size="10" hidden id="mp_kg5"  value="<?php echo round($rst['opp_kg5'] / $rst['mp_cnt5'], 2) ?>"/>
+                    <input type="text" size="10" hidden id="opp_kg5"  value="<?php echo $rst['opp_kg5'] ?>"/>
+                </td></tr> 
+            <tr>
+                <td></td>
+                <td>
+                    <select id="pro_mp6" onchange="load_datos_mp(this)" lang="6" >
+                        <option value="0">Seleccione</option>
+                        <?php
+                        while ($rst_combo6 = pg_fetch_array($cns_combomp6)) {
+                            echo "<option value='$rst_combo6[mp_id]' >$rst_combo6[mp_referencia]</option>";
+                        }
+                        ?>  
+                    </select>
+                    <input type="text" size="10"  id="mp_cnt6" value="<?php echo $rst['mp_cnt6'] ?>" onchange="load_datos_mp(this)"/>
+                    <input type="text" size="10" hidden id="mp_kg6"  value="<?php echo round($rst['opp_kg6'] / $rst['mp_cnt6'], 2) ?>"/>
+                    <input type="text" size="10" hidden id="opp_kg6" value="<?php echo $rst['opp_kg6'] ?>"/>
+                </td>                            </tr> 
+            <tr>
+                <td>PESO MATERIAL:</td>
+                <td><input type="text" size="10"  id="pro_mf1"  readonly value="<?php echo $rst['pro_mf1'] ?>" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" />kg</td>
+            </tr>
+            <tr>
+                <td>PESO INSUMOS:</td>
+                <td><input type="text" size="10"  id="pro_mf2"  readonly value="<?php echo $rst['pro_mf2'] ?>" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" />kg</td>
+            </tr>
+            <tr>
+                <td>PESO TOTAL:</td>
+                <td><input type="text" size="10"  id="pro_mf3"  readonly value="<?php echo $rst['pro_mf3'] ?>" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" />kg</td>
+            </tr>
+            <script>
+                document.getElementById("pro_mp1").value = '<?php echo $rst[pro_mp1] ?>';
+                document.getElementById("pro_mp2").value = '<?php echo $rst[pro_mp2] ?>';
+                document.getElementById("pro_mp3").value = '<?php echo $rst[pro_mp3] ?>';
+                document.getElementById("pro_mp4").value = '<?php echo $rst[pro_mp4] ?>';
+                document.getElementById("pro_mp5").value = '<?php echo $rst[pro_mp5] ?>';
+                document.getElementById("pro_mp6").value = '<?php echo $rst[pro_mp6] ?>';
+            </script>
+
+
+            <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
@@ -936,7 +1356,7 @@ if (isset($_GET [id])) {
                 Ancho :
                 <input readonly style="text-align:right" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" type="text" name="ord_pri_ancho" id="ord_pri_ancho" size="6" value="<?php echo $rst[ord_pri_ancho] ?>"/> m
                 Carriles :
-                <input readonly style="text-align:right" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" type="text" name="ord_pri_carril" id="ord_pri_carril" size="6" value="<?php echo $rst[ord_pri_carril] ?>" />
+                <input style="text-align:right" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" type="text" name="ord_pri_carril" id="ord_pri_carril" size="8" value="<?php echo $rst[ord_pri_carril] ?>" onchange="calculo(1)" />
                 Faltante :
                 <input readonly style="text-align:right" onkeyup="this.value = this.value.replace(/[^0-9.]/, '');" type="text" name="ord_pri_faltante" id="ord_pri_faltante" size="6" value="<?php echo $rst[ord_pri_faltante] ?>"/> m<br />
                 Ancho :
@@ -988,119 +1408,147 @@ if (isset($_GET [id])) {
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td colspan="3" class="sbtitle" > Set Maquinas </td>
+                <td colspan="3" class="sbtitle" >Condiciones de Operacion</td>
             </tr>
+
             <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
+
+
             <tr>
-                <td colspan="3" align="center">Temperatura</td>
-            </tr>
-            <tr>
-                <td colspan="3" id="ttl_zone" >
+
+                <td colspan="2" id="ttl_zone" >
                     <table style="width:100% ">
                         <tr>
-                            <td align="center">Zona 1:</td>
-                            <td align="center">Zona 2:</td>
-                            <td align="center">Zona 3:</td>
-                            <td align="center">Zona 4:</td>
-                            <td align="center">Zona 5:</td>
-                            <td align="center">Zona 6:</td>
+                            <td align="left">Screw speed act.Extr A. </td>
+                            <td><input type="text" name="ord_spi_temp" id="ord_spi_temp" size=20" value="<?php echo $rst[ord_spi_temp] ?>" /></td>
+                            <td align="left">rpm</td>
+                        </tr>
+                        <tr>                        
+                            <td align="left">Thoughput Extr A.</td>
+                            <td><input type="text" name="ord_upp_rol_tem_controller" id="ord_upp_rol_tem_controller" size="20" value="<?php echo $rst[ord_upp_rol_tem_controller] ?>" /></td>
+                            <td align="left">kg/hr</td>
+
+                        </tr>        
+                        <tr> 
+                            <td align="left">meltpump Revolutions</td>
+                            <td><input type="text"  name="ord_dow_rol_tem_controller" id="ord_dow_rol_tem_controller" size="20" value="<?php echo $rst[ord_dow_rol_tem_controller] ?>" /></td>
+                            <td align="left">rpm</td>
+                        </tr>   
+                        <tr> 
+                            <td align="left">Screw speed act Extr. B </td>
+                            <td><input type="text" name="ord_spi_tem_controller" id="ord_spi_tem_controller" size="20" value="<?php echo $rst[ord_spi_tem_controller] ?>" /></td>
+                            <td align="left">rpm</td>
+                        </tr>     
+                        <tr> 
+                            <td align="left"> Total throughputh Extr. B </td>
+                            <td><input type="text" name="ord_coo_air_temp" id="ord_coo_air_temp" size="20" value="<?php echo $rst[ord_coo_air_temp] ?>" /></td>
+                            <td align="left">kg/hr</td>
+                        </tr>  
+
+                        <tr>
+                            <td>Screw speed act Extr. C</td>
+                            <td><input type="text" name="ord_mat_pump" id="ord_mat_pump" size=20" value="<?php echo $rst[ord_mat_pump] ?>" /></td>
+                            <td align="left">rpm</td>
+                        </tr>
+
+                        <tr>
+                            <td>Total throughputh Extr. C </td>
+                            <td><input type="text" name="ord_spi_blower" id="ord_spi_blower" size="20" value="<?php echo $rst[ord_spi_blower] ?>" /></td>
+                            <td align="left">rpm</td>
                         </tr>
                         <tr>
+                            <td>Total throughputh</td>
+                            <td><input type="text" name="ord_sid_blower" id="ord_sid_blower" size="20" value="<?php echo $rst[ord_sid_blower] ?>" /></td>
+                            <td align="left">kg/hr</td>
+                        </tr>
+                        <tr>
+                            <td>Softbox </td>
+                            <td><input type="text" name="ord_dra_blower" id="ord_dra_blower" size="20" value="<?php echo $rst[ord_dra_blower] ?>" /></td>
+                            <td hidden >text <input style="float:right " type="text" name="ord_spe_mod_auto" id="ord_spe_mod_auto" size="20" value="<?php echo $rst[ord_spe_mod_auto] ?>" /></td>
+                            <td align="left">Hz</td>                        
+                        </tr>
+                        <tr>
+                            <td>Vacuumbox </td>
+                            <td><input type="text" name="ord_lap_speed" id="ord_lap_speed" size=20" value="<?php echo $rst[ord_lap_speed] ?>" /></td>
+                            <td align="left">Hz</td> 
+                        </tr>
+
+                    </table>
+                </td>     
+                <td colspan="2" id="ttl_zone" >
+                    <table style="width:100% ">
+                        <tr>
+                            <td align="center"></td>
+                            <td align="center">Chill C1</td>
+                            <td align="center">Chill C2</td>
+                            <td align="center">T1</td>
+                            <td align="center">B1</td>
+                            <td align="center"></td>     
+                        </tr>
+                        <tr>
+                            <td align="left">Roll Speed set</td>
                             <td><input type="text" name="ord_zo1" id="ord_zo1" size="10"  value="<?php echo $rst[ord_zo1] ?>" /></td>
+                            <td align="center"> </td>
+                            <td align="center"> </td>
+                            <td align="center"> </td>
+                            <td align="center">m/min</td>
+                        </tr>
+                        <tr>                        
+                            <td align="left">rolls speed act.</td>
                             <td><input type="text" name="ord_zo2" id="ord_zo2"  size="10" value="<?php echo $rst[ord_zo2] ?>" /></td>
                             <td><input type="text" name="ord_zo3" id="ord_zo3"  size="10" value="<?php echo $rst[ord_zo3] ?>" /></td>
                             <td><input type="text" name="ord_zo4" id="ord_zo4"  size="10" value="<?php echo $rst[ord_zo4] ?>" /></td>
                             <td><input type="text" name="ord_zo5" id="ord_zo5"  size="10" value="<?php echo $rst[ord_zo5] ?>" /></td>
+                            <td align="left">m/min</td>
+
+                        </tr>        
+                        <tr> 
+                            <td align="left">Temperature set</td>
                             <td><input type="text" name="ord_zo6" id="ord_zo6"  size="10" value="<?php echo $rst[ord_zo6] ?>" /></td>
+                            <td><input type="text" name=="ord_dow_rol_oil_pump" id="ord_dow_rol_oil_pump"  size="10" value="<?php echo $rst[ord_dow_rol_oil_pump] ?>" /></td>
+                            <td><input type="text" name="ord_spi_rol_heating" id="ord_spi_rol_heating" size="10" value="<?php echo $rst[ord_spi_rol_heating] ?>" /></td>
+                            <td align="center"></td>
+                            <td align="left">C</td>
+                        </tr>   
+                        <tr> 
+                            <td align="left">Terperature Act.</td>
+                            <td><input type="text" name="ord_spi_rol_oil_pump" id="ord_spi_rol_oil_pump" size="10" value="<?php echo $rst[ord_spi_rol_oil_pump] ?>" /></td>
+                            <td><input type="text" name="ord_gsm_setting" id="ord_gsm_setting" size="10" value="<?php echo $rst[ord_gsm_setting] ?>" /></td>
+                            <td><input type="text" name="ord_aut_spe_adjust" id="ord_aut_spe_adjust" size="10" value="<?php echo $rst[ord_aut_spe_adjust] ?>" /></td>
+                            <td align="center"></td>
+                            <td align="left">C</td>
+                        </tr>     
+
+                        <tr>
+                            <td>Taper</td>
+                            <td><input type="text" name="ord_man_spe_setting" id="ord_man_spe_setting" size="10" value="<?php echo $rst[ord_man_spe_setting] ?>" /></td>
+                            <td hidden>text <input style="float:right " type="text" name="ord_upp_rol_oil_pump" id="ord_upp_rol_oil_pump" size="20" value="<?php echo $rst[ord_upp_rol_oil_pump] ?>" /></td>
                         </tr>
+                        <tr>
+                            <td>Inline tension </td>
+                            <td><input  type="text" name="ord_rol_mill" id="ord_rol_mill" size="10" value="<?php echo $rst[ord_rol_mill] ?>" /></td>
+                            <td hidden>text <input style="float:right " type="text" name="ord_upp_rol_heating" id="ord_upp_rol_heating" size="20" value="<?php echo $rst[ord_upp_rol_heating] ?>" /></td> 
+                        </tr>
+                        <tr>
+                            <td>Taper Curve tension </td>
+                            <td><input type="text" name="ord_win_tensility" id="ord_win_tensility" size="10" value="<?php echo $rst[ord_win_tensility] ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td>Start Tension</td>
+                            <td><input type="text" name="ord_mas_bra_autosetting" id="ord_mas_bra_autosetting" size="10" value="<?php echo $rst[ord_mas_bra_autosetting] ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td>ACT tension </td>
+                            <td><input type="text" name="ord_rol_mil_up_down" id="ord_rol_mil_up_down" size="10" value="<?php echo $rst[ord_rol_mil_up_down] ?>" /></td>
+                            <td hidden >text<input style="float:right " type="text" name="ord_dow_rol_heating" id="ord_dow_rol_heating" size="20" value="<?php echo $rst[ord_dow_rol_heating] ?>" /></td>
+                        </tr>                         
                     </table>
 
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">&nbsp;</td>
-            </tr>
-            <tr>
-                <td align="center" style="height:30px " colspan="3">Condiciones de Tabla</td>
+                </td>       
             </tr>
 
-            <tr>
-                <td>Spinneter Temp : </td>
-                <td><input type="text" name="ord_spi_temp" id="ord_spi_temp" size=20" value="<?php echo $rst[ord_spi_temp] ?>" /></td>
-                <td>Upper Roller Heating On/ Off: <input style="float:right " type="text" name="ord_upp_rol_heating" id="ord_upp_rol_heating" size="20" value="<?php echo $rst[ord_upp_rol_heating] ?>" /></td>         
-            </tr>
-            <tr>
-                <td>Upper Roller Temp Controller: </td>
-                <td><input type="text" name="ord_upp_rol_tem_controller" id="ord_upp_rol_tem_controller" size="20" value="<?php echo $rst[ord_upp_rol_tem_controller] ?>" /></td>
-                <td>Upper Roller Oil Pump:<input style="float:right " type="text" name="ord_upp_rol_oil_pump" id="ord_upp_rol_oil_pump" size="20" value="<?php echo $rst[ord_upp_rol_oil_pump] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Down Roller Temp Controller: </td>
-                <td><input type="text" name="ord_dow_rol_tem_controller" id="ord_dow_rol_tem_controller" size="20" value="<?php echo $rst[ord_dow_rol_tem_controller] ?>" /></td>
-                <td>Down Roller Heating On/ Off:<input style="float:right " type="text" name="ord_dow_rol_heating" id="ord_dow_rol_heating" size="20" value="<?php echo $rst[ord_dow_rol_heating] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Spinneter Temp Controller: </td>
-                <td><input type="text" name="ord_spi_tem_controller" id="ord_spi_tem_controller" size="20" value="<?php echo $rst[ord_spi_tem_controller] ?>" /></td>
-                <td>Down Roller Oil Pump :<input style="float:right " type="text" name="ord_dow_rol_oil_pump" id="ord_dow_rol_oil_pump" size="20" value="<?php echo $rst[ord_dow_rol_oil_pump] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Cool Air Temp: </td>
-                <td><input type="text" name="ord_coo_air_temp" id="ord_coo_air_temp" size="20" value="<?php echo $rst[ord_coo_air_temp] ?>" /></td>
-                <td>Spinneter Roller Heating On/ Off: <input style="float:right " type="text" name="ord_spi_rol_heating" id="ord_spi_rol_heating" size="20" value="<?php echo $rst[ord_spi_rol_heating] ?>" /></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td>Spinneter Roller Oil Pump: <input style="float:right " type="text" name="ord_spi_rol_oil_pump" id="ord_spi_rol_oil_pump" size="20" value="<?php echo $rst[ord_spi_rol_oil_pump] ?>" /></td>
-            </tr>
-            <!--///gggg-->
-            <tr>
-                <td>Matering Pump : </td>
-                <td><input type="text" name="ord_mat_pump" id="ord_mat_pump" size=20" value="<?php echo $rst[ord_mat_pump] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Spinneter Spinneter Temp : </td>
-                <td><input type="text" name="ord_spi_blower" id="ord_spi_blower" size="20" value="<?php echo $rst[ord_spi_blower] ?>" /></td>
-                <td>GSM Setting :<input style="float:right " type="text" name="ord_gsm_setting" id="ord_gsm_setting" size="20" value="<?php echo $rst[ord_gsm_setting] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Side Blower : </td>
-                <td><input type="text" name="ord_sid_blower" id="ord_sid_blower" size="20" value="<?php echo $rst[ord_sid_blower] ?>" /></td>
-                <td>Auto Speed Adjust : <input style="float:right " type="text" name="ord_aut_spe_adjust" id="ord_aut_spe_adjust" size="20" value="<?php echo $rst[ord_aut_spe_adjust] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Draffting Blower : </td>
-                <td><input type="text" name="ord_dra_blower" id="ord_dra_blower" size="20" value="<?php echo $rst[ord_dra_blower] ?>" /></td>
-                <td>Speed Mode Auto : <input style="float:right " type="text" name="ord_spe_mod_auto" id="ord_spe_mod_auto" size="20" value="<?php echo $rst[ord_spe_mod_auto] ?>" /></td>
-            </tr>
-            <!--fsdfdsf-->
-            <tr>
-                <td>Lapper Speed : </td>
-                <td><input type="text" name="ord_lap_speed" id="ord_lap_speed" size=20" value="<?php echo $rst[ord_lap_speed] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Manual Speed Setting : </td>
-                <td><input type="text" name="ord_man_spe_setting" id="ord_man_spe_setting" size="20" value="<?php echo $rst[ord_man_spe_setting] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Rolling Mill  : </td>
-                <td><input  type="text" name="ord_rol_mill" id="ord_rol_mill" size="20" value="<?php echo $rst[ord_rol_mill] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Winding  Tensility : </td>
-                <td><input type="text" name="ord_win_tensility" id="ord_win_tensility" size="20" value="<?php echo $rst[ord_win_tensility] ?>" /></td>
-            </tr>
-            <tr>
-                <td>MasterBranch Autosetting : </td>
-                <td><input type="text" name="ord_mas_bra_autosetting" id="ord_mas_bra_autosetting" size="20" value="<?php echo $rst[ord_mas_bra_autosetting] ?>" /></td>
-            </tr>
-            <tr>
-                <td>Rolling Mill Up/Down : </td>
-                <td><input type="text" name="ord_rol_mil_up_down" id="ord_rol_mil_up_down" size="20" value="<?php echo $rst[ord_rol_mil_up_down] ?>" /></td>
-            </tr>
             <tr>
                 <td>Observaciones:</td>
                 <td colspan="2" ><textarea name="ord_observaciones" id="ord_observaciones" style="width:100%"><?php echo $rst[ord_observaciones] ?></textarea>

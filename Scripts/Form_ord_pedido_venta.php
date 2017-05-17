@@ -11,7 +11,7 @@ $f2 = $_GET[fecha2];
 $e = $_GET[ped_estado];
 if (isset($_GET[id])) {
     $id = $_GET[id];
-    $x = $_GET[x];
+    $x = 1;
     $rst_enc = pg_fetch_array($Docs->lista_un_registro($id));
     $cns_det = $Docs->lista_detalle_registro_pedido($id);
     $cns_pag = $Docs->lista_pagos_registro_pedido($id);
@@ -61,6 +61,7 @@ $cns_vnd = $Docs->lista_vendedores();
             mod = '<?php echo $mod_id ?>';
             $(function () {
                 $('#usu_id').val(<?php echo $rst[usu_id] ?>);
+                $('#ped_vendedor').val(<?php echo $rst[usu_id] ?>);
 
                 $('#frm_detalle').submit(function (e) {
                     e.preventDefault();
@@ -162,7 +163,7 @@ $cns_vnd = $Docs->lista_vendedores();
                         ped_nom_cliente.value,
                         ped_dir_cliente.value,
                         ped_tel_cliente.value,
-                        ped_email_cliente.value,
+                        ped_email_cliente.value.toLowerCase(),
                         ped_parroquia_cliente.value,
                         ped_ciu_cliente.value,
                         ped_pais_cliente.value,
@@ -190,8 +191,8 @@ $cns_vnd = $Docs->lista_vendedores();
                     ndet++;
                     if ($('#det_cod_producto' + ndet).val() != null) {
                         codigo = $('#det_cod_producto' + ndet).val();
-                        lote = $('#det_lote' + ndet).val();
-                        cod_aux = $('#det_cod_auxiliar' + ndet).val();
+                        lote = $('#cntcaja' + ndet).val();
+                        cod_aux = $('#det_core' + ndet).val();
                         descripcion = $('#det_descripcion' + ndet).val();
                         cantidad = $('#det_cantidad' + ndet).val();
                         vunit = $('#det_vunit' + ndet).val();
@@ -199,9 +200,10 @@ $cns_vnd = $Docs->lista_vendedores();
                         descuento_mone = $('#det_descuento_moneda' + ndet).val();
                         total = $('#det_total' + ndet).val();
                         impuesto = $('#det_impuesto' + ndet).val();
-                        pro_id = $('#pro_id' + ndet).val().substring(1);
-                        tab = $('#pro_id' + ndet).val().substring(0, 1);
+                        pro_id = $('#pro_id' + ndet).val();
+                        tab = 0;
                         unidad = $('#det_unidad' + ndet).val();
+                        observacion = $('#det_observacion' + ndet).val().toUpperCase();
                         detalle.push(codigo + '&' +
                                 lote + '&' +
                                 cod_aux + '&' +
@@ -214,7 +216,8 @@ $cns_vnd = $Docs->lista_vendedores();
                                 impuesto + '&' +
                                 pro_id + '&' +
                                 tab + '&' +
-                                unidad
+                                unidad + '&' +
+                                observacion
                                 );
                     }
                 }
@@ -276,31 +279,33 @@ $cns_vnd = $Docs->lista_vendedores();
                                 $('#ped_nom_cliente').focus();
                                 $('#ped_nom_cliente').css('border', 'solid 2px red');
                                 return_v = 1;
-                            } else if (ped_dir_cliente.value.length == 0) {
-                                $('#ped_dir_cliente').focus();
-                                $('#ped_dir_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (ped_tel_cliente.value.length == 0) {
-                                $('#ped_tel_cliente').focus();
-                                $('#ped_tel_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (ped_email_cliente.value.length == 0) {
-                                $('#ped_email_cliente').focus();
-                                $('#ped_email_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (ped_parroquia_cliente.value.length == 0) {
-                                $('#ped_parroquia_cliente').focus();
-                                $('#ped_parroquia_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (ped_ciu_cliente.value.length == 0) {
-                                $('#ped_ciu_cliente').focus();
-                                $('#ped_ciu_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (ped_pais_cliente.value.length == 0) {
-                                $('#ped_pais_cliente').focus();
-                                $('#ped_pais_cliente').css('border', 'solid 2px red');
-                                return_v = 1;
-                            } else if (i != 0) {
+                            }
+//                            else if (ped_dir_cliente.value.length == 0) {
+//                                $('#ped_dir_cliente').focus();
+//                                $('#ped_dir_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } else if (ped_tel_cliente.value.length == 0) {
+//                                $('#ped_tel_cliente').focus();
+//                                $('#ped_tel_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } else if (ped_email_cliente.value.length == 0) {
+//                                $('#ped_email_cliente').focus();
+//                                $('#ped_email_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } else if (ped_parroquia_cliente.value.length == 0) {
+//                                $('#ped_parroquia_cliente').focus();
+//                                $('#ped_parroquia_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } else if (ped_ciu_cliente.value.length == 0) {
+//                                $('#ped_ciu_cliente').focus();
+//                                $('#ped_ciu_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } else if (ped_pais_cliente.value.length == 0) {
+//                                $('#ped_pais_cliente').focus();
+//                                $('#ped_pais_cliente').css('border', 'solid 2px red');
+//                                return_v = 1;
+//                            } 
+                            else if (i != 0) {
                                 while (n < i) {
                                     n++;
                                     if ($('#det_cod_producto' + n).val() != null) {
@@ -394,6 +399,15 @@ $cns_vnd = $Docs->lista_vendedores();
                     } else {
                         alert('Cliente no existe \n Cree uno Nuevo??');
                         $('#ped_nom_cliente').focus();
+                        $('#ped_nom_cliente').val('');
+                        $('#ped_dir_cliente').val('');
+                        $('#ped_tel_cliente').val('');
+                        $('#ped_email_cliente').val('');
+                        $('#ped_parroquia_cliente').val('');
+                        $('#ped_ciu_cliente').val('');
+                        $('#ped_pais_cliente').val('');
+                        $('#cli_id').val('');
+                        $('#tipo_cliente').val('');
                     }
                 });
             }
@@ -404,6 +418,15 @@ $cns_vnd = $Docs->lista_vendedores();
                     if (dt == 0) {
                         alert('Cliente no existe \n Cree uno Nuevo??');
                         $('#ped_nom_cliente').focus();
+                        $('#ped_nom_cliente').val('');
+                        $('#ped_dir_cliente').val('');
+                        $('#ped_tel_cliente').val('');
+                        $('#ped_email_cliente').val('');
+                        $('#ped_parroquia_cliente').val('');
+                        $('#ped_ciu_cliente').val('');
+                        $('#ped_pais_cliente').val('');
+                        $('#cli_id').val('');
+                        $('#tipo_cliente').val('');
                     } else {
                         dat = dt.split('&');
                         if (dat[10] == 0 || dat[10] == 2) {
@@ -489,8 +512,8 @@ $cns_vnd = $Docs->lista_vendedores();
                         tp = 0;
                         d = 0;
                         t = 0;
-                        $("#det_descuento_moneda" + n).val(d.toFixed(4));
-                        $("#det_total" + n).val(t.toFixed(4));
+                        $("#det_descuento_moneda" + n).val(d.toFixed(2));
+                        $("#det_total" + n).val(t.toFixed(2));
                     } else {
                         c = $("#det_cantidad" + n).val();
                         v = $("#det_vunit" + n).val();
@@ -500,15 +523,15 @@ $cns_vnd = $Docs->lista_vendedores();
                             alert('El descuento no puede ser mayor a 100%');
                             $('#det_descuento_porcentaje' + n).css({borderColor: "red"});
                             $('#det_descuento_porcentaje' + n).val(0);
-                            $("#det_descuento_moneda" + n).val(de.toFixed(4));
+                            $("#det_descuento_moneda" + n).val(de.toFixed(2));
                             $('#det_descuento_porcentaje' + n).focus();
                             calculo();
                         } else {
                             tp = (c * v);
                             d = (tp * dp / 100);
                             t = (c * v) - d;
-                            $("#det_descuento_moneda" + n).val(d.toFixed(4));
-                            $("#det_total" + n).val(t.toFixed(4));
+                            $("#det_descuento_moneda" + n).val(d.toFixed(2));
+                            $("#det_total" + n).val(t.toFixed(2));
                         }
                     }
                 }
@@ -531,6 +554,9 @@ $cns_vnd = $Docs->lista_vendedores();
                     desc += ($("#det_descuento_moneda" + n).val() * 1)
 
                     switch ($("#det_impuesto" + n).val()) {
+                        case '14':
+                            sbt12 += ($("#det_total" + n).val() * 1);
+                            break;
                         case '12':
                             sbt12 += ($("#det_total" + n).val() * 1);
                             break;
@@ -546,16 +572,16 @@ $cns_vnd = $Docs->lista_vendedores();
                     }
                 }
                 sbt = (sbt12 + sbt0 + sbtno + sbtex);
-                iva = (sbt12 * 0.12);
+                iva = (sbt12 * 0.14);
                 gtot = (sbt + iva + ($("#ped_ice").val() * 1) + ($("#ped_irbpnr").val() * 1) + ($("#ped_propina").val() * 1));
-                $("#ped_sbt12").val(sbt12.toFixed(4));
-                $("#ped_sbt0").val(sbt0.toFixed(4));
-                $("#ped_sbt_noiva").val(sbtno.toFixed(4));
-                $("#ped_sbt_excento").val(sbtex.toFixed(4));
-                $("#ped_sbt").val(sbt.toFixed(4));
-                $("#ped_tdescuento").val(desc.toFixed(4));
-                $("#ped_iva12").val(iva.toFixed(4));
-                $("#ped_total").val((gtot * 1).toFixed(4));
+                $("#ped_sbt12").val(sbt12.toFixed(2));
+                $("#ped_sbt0").val(sbt0.toFixed(2));
+                $("#ped_sbt_noiva").val(sbtno.toFixed(2));
+                $("#ped_sbt_excento").val(sbtex.toFixed(2));
+                $("#ped_sbt").val(sbt.toFixed(2));
+                $("#ped_tdescuento").val(desc.toFixed(2));
+                $("#ped_iva12").val(iva.toFixed(2));
+                $("#ped_total").val((gtot * 1).toFixed(2));
                 calculo_total_pago();
             }
 
@@ -565,21 +591,22 @@ $cns_vnd = $Docs->lista_vendedores();
             }
 
             function list_productos(obj) {
-                id = obj.value;
+//                id = obj.value;
+                id = 0;
                 if (id == 1 || id == 10) {
                     rdn = false;
                 } else {
                     rdn = true;
                 }
 
-                if (id == 4 || id == 6 || id == 7 || id == 8) {
-                    ciu = 'GUAYAQUIL';
-                } else if (id == 5) {
-                    ciu = 'MACHALA';
-                } else {
-                    ciu = 'QUITO';
-                }
-                $('#ped_ciu_cliente').val(ciu);
+//                if (id == 4 || id == 6 || id == 7 || id == 8) {
+//                    ciu = 'GUAYAQUIL';
+//                } else if (id == 5) {
+//                    ciu = 'MACHALA';
+//                } else {
+//                    ciu = 'QUITO';
+//                }
+//                $('#ped_ciu_cliente').val(ciu);
 
 
                 $('.pg_input').each(function () {
@@ -594,9 +621,9 @@ $cns_vnd = $Docs->lista_vendedores();
 
                 $('.dt_input').each(function () {
                     var pts = this.id.match(/(\D+)(\d+)$/);
-                    if (pts[1] == 'det_vunit') {
-                        this.readOnly = rdn;
-                    }
+//                    if (pts[1] == 'det_vunit') {
+//                        this.readOnly = rdn;
+//                    }
                 })
                 $.post('actions_ord_pedido_venta.php', {op: 2, id: id}, function (dt) {
                     dat = dt.split('&&');
@@ -609,35 +636,37 @@ $cns_vnd = $Docs->lista_vendedores();
                 j = obj.lang;
                 var ch0 = e.keyCode;
                 var ch1 = e.which;
-                if (ch0 == 0 && ch1 == 46 && x == 0) { //Punto (Con lector de Codigo de Barras)
-
-                    $('#det_descripcion' + j).focus();
-
-                    $(obj).autocomplete({
-                        minLength: 0,
-                        source: ''
-                    });
-
-
-                } else if (ch0 == 9 && ch1 == 0 && x == 0) { //Tab (Sin lector de Codigo de Barras)
+//                if (ch0 == 0 && ch1 == 46 && x == 0) { //Punto (Con lector de Codigo de Barras)
+//
+//                    $('#det_descripcion' + j).focus();
+//
+//                    $(obj).autocomplete({
+//                        minLength: 0,
+//                        source: ''
+//                    });
+//
+//
+//                } else 
+                if (ch0 == 9 && ch1 == 0 && x == 0) { //Tab (Sin lector de Codigo de Barras)
                     $('#det_descripcion' + j).focus();
                     v = 0;
                     load_producto(j, v);
-                } else if (x == 1 && obj.value.length > 8) {//Desde lote
-                    $('#det_cantidad' + j).focus();
-                    v = 1;
-                    load_producto(j, v);
                 }
+//                else if (x == 1 && obj.value.length > 8) {//Desde lote
+//                    $('#det_cantidad' + j).focus();
+//                    v = 1;
+//                    load_producto(j, v);
+//                }
             }
 
             function load_producto(j, v) {
-                if (v == 1) {
-                    vl = $('#det_cod_producto' + j).val();
-                    lt = $('#det_lote' + j).val();
-                } else {
-                    vl = $('#det_cod_producto' + j).val();
-                    lt = 0;
-                }
+//                if (v == 1) {
+                vl = $('#det_cod_producto' + j).val();
+//                    lt = $('#det_lote' + j).val();
+//                } else {
+//                    vl = $('#det_cod_producto' + j).val();
+//                    lt = 0;
+//                }
                 $('.itm').each(function () {
                     pro = $('#pro_id' + this.value).val();
                     pro2 = $('#det_cod_producto' + j).val();
@@ -650,13 +679,14 @@ $cns_vnd = $Docs->lista_vendedores();
                     }
                 });
 
-                $.post("actions.php", {act: 64, id: vl, lt: lt, s: ped_local.value},
+//                $.post("actions.php", {act: 64, id: vl, lt: lt, s: ped_local.value},
+                $.post("actions.php", {act: 64, id: vl},
                 function (dt) {
                     dat = dt.split('&');
                     unidad = dat[2];
                     $('#det_cod_producto' + j).val(dat[0]);
                     $('#det_descripcion' + j).val(dat[1]);
-                    if(unidad == ''){
+                    if (unidad == '') {
                         uni = 'UNIDAD';
                         $('#det_unidad' + j).attr('disabled', true);
                     } else {
@@ -667,8 +697,8 @@ $cns_vnd = $Docs->lista_vendedores();
                     $('#det_impuesto' + j).val(dat[4]);
                     $('#det_descuento_moneda' + j).val(0);
                     $('#det_cantidad' + j).val(0);
-//                    $('#det_cod_auxiliar' + j).val(dat[7]);
-                    $('#pro_id' + j).val(dat[10] + dat[9]);
+                    $('#cntcaja' + j).val(1);
+                    $('#pro_id' + j).val(dat[9]);
                     $('#det_lote' + j).val(dat[8]); ///comentar para codigo ean
 
                     if (dat[7] == '') {
@@ -679,7 +709,7 @@ $cns_vnd = $Docs->lista_vendedores();
 
                     if (dat[3] == '') {
                         $('#det_vunit' + j).val(0);
-                        $('#det_impuesto' + j).val('12');
+                        $('#det_impuesto' + j).val('14');
                     } else {
                         $('#det_vunit' + j).val(dat[3]);
                     }
@@ -742,22 +772,22 @@ $cns_vnd = $Docs->lista_vendedores();
                 });
             }
 
-            function inventario(obj) {
-                n = obj.lang;
-                bdgs = $('#ped_ruc_cc_cliente').val();
-                emi = $('#ped_local').val();
-                if (emi != 1 && emi != 10) {
-                    if (bdgs != 'NOPERTI001' && bdgs != 'NOPERTI002' && bdgs != 'NOPERTI003' && bdgs != 'NOPERTI004' && bdgs != 'NOPERTI005' && bdgs != 'NOPERTI006' && bdgs != 'NOPERTI007' && bdgs != 'NOPERTI008' && bdgs != 'NOPERTI009' && bdgs != 'NOPERTI010' && bdgs != 'NOPERTI011' && bdgs != 'NOPERTI012' && bdgs != 'NOPERTI013' && bdgs != 'NOPERTI014') {
-                        if (parseFloat($('#inventario' + n).val()) < parseFloat($(obj).val())) {
-                            alert('NO SE PUEDE REGISTRAR LA CANTIDAD\n ES MAYOR QUE EL INVENTARIO');
-                            $(obj).val('');
-                            $(obj).focus();
-                            $(obj).css({borderColor: "red"});
-                            calculo();
-                        }
-                    }
-                }
-            }
+//            function inventario(obj) {
+//                n = obj.lang;
+//                bdgs = $('#ped_ruc_cc_cliente').val();
+//                emi = $('#ped_local').val();
+//                if (emi != 1 && emi != 10) {
+//                    if (bdgs != 'NOPERTI001' && bdgs != 'NOPERTI002' && bdgs != 'NOPERTI003' && bdgs != 'NOPERTI004' && bdgs != 'NOPERTI005' && bdgs != 'NOPERTI006' && bdgs != 'NOPERTI007' && bdgs != 'NOPERTI008' && bdgs != 'NOPERTI009' && bdgs != 'NOPERTI010' && bdgs != 'NOPERTI011' && bdgs != 'NOPERTI012' && bdgs != 'NOPERTI013' && bdgs != 'NOPERTI014') {
+//                        if (parseFloat($('#inventario' + n).val()) < parseFloat($(obj).val())) {
+//                            alert('NO SE PUEDE REGISTRAR LA CANTIDAD\n ES MAYOR QUE EL INVENTARIO');
+//                            $(obj).val('');
+//                            $(obj).focus();
+//                            $(obj).css({borderColor: "red"});
+//                            calculo();
+//                        }
+//                    }
+//                }
+//            }
 
             function loading(prop) {
                 $('#cargando').css('visibility', prop);
@@ -807,56 +837,57 @@ $cns_vnd = $Docs->lista_vendedores();
                     cli_id = $('#cli_id').val();
                     cli = $('#cliente').val();
 
-                    if (ruc == 'NOPERTI001' || ruc == 'NOPERTI002' || ruc == 'NOPERTI003' || ruc == 'NOPERTI004' || ruc == 'NOPERTI005' || ruc == 'NOPERTI006' || ruc == 'NOPERTI007' || ruc == 'NOPERTI008' || ruc == 'NOPERTI009' || ruc == 'NOPERTI010' || ruc == 'NOPERTI011' || ruc == 'NOPERTI012' || ruc == 'NOPERTI013' || ruc == 'NOPERTI014') {
-                        if (cli_id == cli) {
-                            alert('Elija un cliente diferente al Local seleccionado');
-                            $('#ped_ruc_cc_cliente').val('');
-                            $('#ped_nom_cliente').val('');
-                            $('#ped_dir_cliente').val('');
-                            $('#ped_tel_cliente').val('');
-                            $('#ped_email_cliente').val('');
-                            $('#ped_parroquia_cliente').val('');
-                            $('#ped_ciu_cliente').val('');
-                            $('#ped_pais_cliente').val('');
-                            rdn = true;
-                        } else if (loc != 0 && vend != 0 && ruc != '' && nom != '') {
-                            $('#ped_femision').attr('disabled', true),
-                                    $('#im-reg_femision').hide();
-                            $('#ped_local').attr('disabled', true);
-                            $('#ped_ruc_cc_cliente').attr('disabled', true);
-                            $('#ped_nom_cliente').attr('disabled', true);
-                            $('#ped_dir_cliente').attr('disabled', true);
-                            $('#ped_tel_cliente').attr('disabled', true);
-                            $('#ped_email_cliente').attr('disabled', true);
-                            $('#ped_parroquia_cliente').attr('disabled', true);
-                            $('#ped_ciu_cliente').attr('disabled', true);
-                            $('#ped_pais_cliente').attr('disabled', true);
-                            $('#confirmar').attr('disabled', true);
-                            rdn = false;
-                        } else {
-                            alert('Falta de ingresar un campos del encabezado \n del Pedido de Venta');
-                            rdn = true;
-                        }
+//                    if (ruc == 'NOPERTI001' || ruc == 'NOPERTI002' || ruc == 'NOPERTI003' || ruc == 'NOPERTI004' || ruc == 'NOPERTI005' || ruc == 'NOPERTI006' || ruc == 'NOPERTI007' || ruc == 'NOPERTI008' || ruc == 'NOPERTI009' || ruc == 'NOPERTI010' || ruc == 'NOPERTI011' || ruc == 'NOPERTI012' || ruc == 'NOPERTI013' || ruc == 'NOPERTI014') {
+//                        if (cli_id == cli) {
+//                            alert('Elija un cliente diferente al Local seleccionado');
+//                            $('#ped_ruc_cc_cliente').val('');
+//                            $('#ped_nom_cliente').val('');
+//                            $('#ped_dir_cliente').val('');
+//                            $('#ped_tel_cliente').val('');
+//                            $('#ped_email_cliente').val('');
+//                            $('#ped_parroquia_cliente').val('');
+//                            $('#ped_ciu_cliente').val('');
+//                            $('#ped_pais_cliente').val('');
+//                            rdn = true;
+//                        } else if (loc != 0 && vend != 0 && ruc != '' && nom != '') {
+//                            $('#ped_femision').attr('disabled', true),
+//                                    $('#im-reg_femision').hide();
+//                            $('#ped_local').attr('disabled', true);
+//                            $('#ped_ruc_cc_cliente').attr('disabled', true);
+//                            $('#ped_nom_cliente').attr('disabled', true);
+//                            $('#ped_dir_cliente').attr('disabled', true);
+//                            $('#ped_tel_cliente').attr('disabled', true);
+//                            $('#ped_email_cliente').attr('disabled', true);
+//                            $('#ped_parroquia_cliente').attr('disabled', true);
+//                            $('#ped_ciu_cliente').attr('disabled', true);
+//                            $('#ped_pais_cliente').attr('disabled', true);
+//                            $('#confirmar').attr('disabled', true);
+//                            rdn = false;
+//                        } else {
+//                            alert('Falta de ingresar un campos del encabezado \n del Pedido de Venta');
+//                            rdn = true;
+//                        }
+//                    } else {
+//                        if (loc != 0 && vend != 0 && ruc != '' && nom != '' && dir != '' && tel != '' && email != '' && parr != '' && ciu != '' && pais != '') {
+                    if (ruc != '' && nom != '') {
+                        $('#ped_femision').attr('disabled', true),
+                                $('#im-reg_femision').hide();
+                        $('#ped_local').attr('disabled', true);
+                        $('#ped_ruc_cc_cliente').attr('disabled', true);
+                        $('#ped_nom_cliente').attr('disabled', true);
+                        $('#ped_dir_cliente').attr('disabled', true);
+                        $('#ped_tel_cliente').attr('disabled', true);
+                        $('#ped_email_cliente').attr('disabled', true);
+                        $('#ped_parroquia_cliente').attr('disabled', true);
+                        $('#ped_ciu_cliente').attr('disabled', true);
+                        $('#ped_pais_cliente').attr('disabled', true);
+                        $('#confirmar').attr('disabled', true);
+                        rdn = false;
                     } else {
-                        if (loc != 0 && vend != 0 && ruc != '' && nom != '' && dir != '' && tel != '' && email != '' && parr != '' && ciu != '' && pais != '') {
-                            $('#ped_femision').attr('disabled', true),
-                                    $('#im-reg_femision').hide();
-                            $('#ped_local').attr('disabled', true);
-                            $('#ped_ruc_cc_cliente').attr('disabled', true);
-                            $('#ped_nom_cliente').attr('disabled', true);
-                            $('#ped_dir_cliente').attr('disabled', true);
-                            $('#ped_tel_cliente').attr('disabled', true);
-                            $('#ped_email_cliente').attr('disabled', true);
-                            $('#ped_parroquia_cliente').attr('disabled', true);
-                            $('#ped_ciu_cliente').attr('disabled', true);
-                            $('#ped_pais_cliente').attr('disabled', true);
-                            $('#confirmar').attr('disabled', true);
-                            rdn = false;
-                        } else {
-                            alert('Falta de ingresar un campo del encabezado \n del Pedido de Venta');
-                            rdn = true;
-                        }
+                        alert('Falta de ingresar un campo del encabezado \n del Pedido de Venta');
+                        rdn = true;
                     }
+//                    }
 
                     $('.dt_input').each(function () {
                         var pts = this.id.match(/(\D+)(\d+)$/);
@@ -876,9 +907,11 @@ $cns_vnd = $Docs->lista_vendedores();
                             this.readOnly = rdn;
                         }
                     });
+                    list_productos();
                 } else {
                     return false;
                 }
+
             }
 
         </script>
@@ -901,6 +934,7 @@ $cns_vnd = $Docs->lista_vendedores();
             }
             *{
                 font-size:11px; 
+                text-transform:uppercase; 
             }
             #frm_detalle thead th,#frm_detalle tbody td{
                 padding:1px !important; 
@@ -961,22 +995,21 @@ $cns_vnd = $Docs->lista_vendedores();
                                         <td>Local</td>
                                         <td>
                                             <select id="ped_local" onchange="list_productos(this)" <?php echo $disabled ?>> 
-                                                <option value="0">Seleccione</option>
                                                 <?php
-                                                while ($rst_locales = pg_fetch_array($cns)) {
-                                                    echo "<option value='$rst_locales[cod_punto_emision]'>$rst_locales[nombre_comercial]</option>";
-                                                }
+//                                                while ($rst_locales = pg_fetch_array($cns)) {
+//                                                    echo "<option value='$rst_locales[cod_punto_emision]'>$rst_locales[nombre_comercial]</option>";
+                                                echo "<option value='1'>POLIPACK</option>";
+//                                                }
                                                 ?>
                                             </select>
                                             <input type="text" id="cliente" hidden>
                                         </td>
-                                        <td>Vendedor</td>
+                                        <td hidden>Vendedor</td>
                                         <!--<td><input type="text" size="30" id="ped_vendedor" value="<?php echo $rst_enc[ped_vendedor] ?>" /></td>-->
-                                        <td><select id="ped_vendedor" <?php echo $disabled ?>>
-                                                <option value="0">SELECCIONE</option>
+                                        <td hidden><select id="ped_vendedor" <?php echo $disabled ?>>
                                                 <?php
                                                 while ($rst_vnd = pg_fetch_array($cns_vnd)) {
-                                                    echo "<option value='$rst_vnd[vnd_nombre]'>$rst_vnd[vnd_nombre]</option>";
+                                                    echo "<option value='$rst_vnd[usu_id]'>$rst_vnd[usu_person]</option>";
                                                 }
                                                 ?>
                                             </select></td>
@@ -1012,7 +1045,7 @@ $cns_vnd = $Docs->lista_vendedores();
                                     </tr>
                                     <tr>
                                         <td>EMAIL:</td>
-                                        <td><input type="text" id="ped_email_cliente" size="50" value="<?php echo $rst_enc[ped_email_cliente] ?>" onchange="mail_validado()" style="text-transform:lowercase " <?php echo $read ?>/></td>
+                                        <td><input type="text" id="ped_email_cliente" style="text-transform:lowercase; " size="50" value="<?php echo $rst_enc[ped_email_cliente] ?>" onchange="mail_validado()" style="text-transform:lowercase " <?php echo $read ?>/></td>
                                     </tr>
                                     <tr>
                                         <td>PARROQUIA:</td>
@@ -1063,7 +1096,7 @@ $cns_vnd = $Docs->lista_vendedores();
                                             <td hidden>
                                                 <input class="pg_input" type="date" size="10" id="pag_fecha_v1" name="pag_fecha_v1" lang="1"  value="<?php echo $rst_pag[pag_fecha_v] ?>" readonly />
                                             </td>
-                                            <td onclick="elimina_fila(this, 0)" align="center" ><img class="btn-dinamic" width="18px" src="../img/del_reg.png" /></td>
+                                            <td onclick="elimina_fila(this, 0)" align="center" ><img class="btn-dinamic" title="Elimina item" width="18px" src="../img/del_reg.png" /></td>
                                         </tr>
                                         <?php
                                     } else {
@@ -1092,7 +1125,7 @@ $cns_vnd = $Docs->lista_vendedores();
                                                 <td hidden>
                                                     <input class="pg_input" type="date" size="10" id="<?php echo 'pag_fecha_v' . $npg ?>" name="<?php echo 'pag_fecha_v' . $npg ?>" value="<?php echo $rst_pag[pag_fecha_v] ?>" lang="<?php echo $npg ?>" readonly />
                                                 </td>
-                                                <td onclick="elimina_fila(this, 0)" align="center" ><img class="btn-dinamic" width="18px" src="../img/del_reg.png" /></td>
+                                                <td onclick="elimina_fila(this, 0)" align="center" ><img class="btn-dinamic" width="18px" title="Elimina item" src="../img/del_reg.png" /></td>
                                             </tr>
                                             <?php
                                         }
@@ -1126,17 +1159,20 @@ $cns_vnd = $Docs->lista_vendedores();
                                     <tr>
                                         <th>#</th>
                                         <th>Codigo</th>
-                                        <th>Lote</th>
-                                        <th>Cod. Auxiliar</th>
+                                        <th hidden>Lote</th>
+                                        <th hidden>Cod. Auxiliar</th>
                                         <th>Descripcion</th>
-                                        <th>Inventario</th>
-                                        <th>Cantidad</th>
+                                        <th hidden>Inventario</th>
                                         <th>Unidad</th>
+                                        <th>D.Core</th>
+                                        <th>Cant X Caja</th>
+                                        <th>Cantidad</th>
                                         <th>V.Unitario</th>
                                         <th>Descuento%</th>
                                         <th>Descuento$</th>
                                         <th>Total</th>
                                         <th>Impuesto</th>
+                                        <th>Observaciones</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -1149,37 +1185,50 @@ $cns_vnd = $Docs->lista_vendedores();
                                                 <input type="text" size="2" class="itm" id="item1" name="item1"   value="1" lang="1" readonly style="text-align:right"/>
                                             </td>
                                             <td>
-                                                <input class="dt_input" type="text" size="25" id="det_cod_producto1" name="det_cod_producto"  value=" " lang="1"   maxlength="13" onfocus="this.style.width = '400px';" onblur="this.style.width = '100px';" list="productos" onkeypress="caracter(event, this, 0), frm_save.lang = 2" readonly />
+                                                <input class="dt_input" type="text" size="25" id="det_cod_producto1" name="det_cod_producto"  value="" lang="1"   maxlength="13" onfocus="this.style.width = '400px';" onblur="this.style.width = '100px';" list="productos" onkeypress="caracter(event, this, 0), frm_save.lang = 2" readonly />
                                             </td>
-                                            <td><input class="dt_input" type="text" size="10" id="det_lote1" name="det_codigo_empresa1" value="" lang="1" readonly  /></td>
-                                            <td><input class="dt_input" type="text" size="12" id="det_cod_auxiliar1" name="det_codigo_externo1" value="" lang="1" readonly /></td>
+                                            <td hidden><input class="dt_input" type="text" size="10" id="det_lote1" name="det_codigo_empresa1" value="" lang="1" readonly  /></td>
+                                            <td hidden><input class="dt_input" type="text" size="12" id="det_cod_auxiliar1" name="det_codigo_externo1" value="" lang="1" readonly /></td>
                                             <td>
                                                 <input class="dt_input" type="text" size="50" id="det_descripcion1" name="det_descripcion1" value="" lang="1"  style="font-size:9px;height:20px; " readonly />
                                                 <input class="dt_input" type="hidden" size="15" id="pro_id1"  value="" lang="1"/>
                                             </td>
-                                            <td><input class="dt_input" type ="text" size="7"  id="inventario1"  value="" lang="1" readonly /></td>
-                                            <td><input class="dt_input" type="text" size="10" id="det_cantidad1" name="det_cantidad1" value="" lang="1"  onchange="calculo(this), inventario(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly /></td>
                                             <td>
                                                 <select class="dt_input" id="det_unidad1" name="det_unidad1" lang="1">
                                                     <option value="1">ROLLO</option>
                                                     <option value="2">KG</option>
-                                                    <option value="3">M</option>
+                                                    <!--                                                    <option value="3">M</option>-->
                                                     <option value="4">UNIDAD</option>
+                                                    <option value="5">CAJA</option>
                                                 </select>
                                             </td>
-                                            <td><input class="dt_input" type="text" size="10" id="det_vunit1" name="det_vunit1" value="" lang="1"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly /></td>
-                                            <td><input class="dt_input" type="text" size="10" id="det_descuento_porcentaje1" name="det_descuento_porcentaje1" value="" lang="1"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly /></td>
-                                            <td><input class="dt_input" type="text" size="10" id="det_descuento_moneda1" name="det_descuento_moneda1" value="" lang="1" readonly style="text-align:right"/></td>                                        
+                                            <td>
+                                                <select class="dt_input" id="det_core1" name="det_core1" lang="1">
+                                                    <option value=""></option>
+                                                    <option value="1/2">1/2</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="6">6</option>
+                                                </select>
+                                            </td>
+                                            <td hidden><input class="dt_input" type ="text" size="7"  id="inventario1"  value="" lang="1" readonly /></td>
+                                            <td><input class="dt_input" type ="text" size="7"  id="cntcaja1"  value="" lang="1"/></td>
+                                            <td><input class="dt_input" type="text" size="10" id="det_cantidad1" name="det_cantidad1" value="" lang="1"  onchange="calculo(this), inventario(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly /></td>
+                                            <td><input class="dt_input" type="text" size="10" id="det_vunit1" name="det_vunit1" value="" lang="1"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')"/></td>
+                                            <td><input class="dt_input" type="text" size="10" id="det_descuento_porcentaje1" name="det_descuento_porcentaje1" value="" lang="1"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" /></td>
+                                            <td><input class="dt_input" type="text" size="10" id="det_descuento_moneda1" name="det_descuento_moneda1" value="" lang="1" style="text-align:right" readonly/></td>                                        
                                             <td><input class="dt_input" type="text" size="10" id="det_total1" name="det_total1" value="" lang="1" readonly style="text-align:right" /></td>
                                             <td>
                                                 <select id="det_impuesto1" name="det_impuesto1" lang="1" onchange="calculo(this)" >
-                                                    <option value="12">IVA 12</option>
+                                                    <option value="14">IVA 14</option>
+                                                    <!--<option value="12">IVA 12</option>-->
                                                     <option value="0">IVA 0</option>
                                                     <option value="NO">NO OBJETO</option>
                                                     <option value="EX">EXCENTO</option>
                                                 </select>
                                             </td>
-                                            <td onclick="elimina_fila(this, 1)" align="center" ><img class="btn-dinamic" width="18px" src="../img/del_reg.png" /></td>
+                                            <td><input  type="text" size="50" id="det_observacion1" name="det_observacion1" value="" lang="1"  style="font-size:9px;height:20px; "/></td>
+                                            <td onclick="elimina_fila(this, 1)" align="center" ><img class="btn-dinamic" width="18px" title="Elimina item" src="../img/del_reg.png" /></td>
                                         </tr>
                                         <?php
                                     } else {
@@ -1194,34 +1243,49 @@ $cns_vnd = $Docs->lista_vendedores();
                                                 <td align="right">
                                                     <input type="text" size="2" class="itm" id="<?php echo 'item' . $ndt ?>" name="<?php echo 'item' . $ndt ?>"   value="<?php echo $ndt ?>" lang="<?php echo $ndt ?>" readonly style="text-align:right"/>
                                                 </td>
-                                                <td><input class="dt_input" type="text" size="25" id="<?php echo 'det_cod_producto' . $ndt ?>" name="<?php echo 'det_cod_producto' . $ndt ?>" value="<?php echo $rst_det[det_cod_producto] ?>" lang="<?php echo $ndt ?>" onfocus="this.style.width = '400px';" onblur="this.style.width = '100px';" list="productos" onkeypress="caracter(event, this, 0), frm_save.lang = 2" <?php echo $read ?>/></td>
-                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_lote' . $ndt ?>" name="<?php echo 'det_lote' . $ndt ?>" value="<?php echo $rst_det[det_lote] ?>" lang="<?php echo $ndt ?>" <?php echo $read ?>/></td>
-                                                <td><input class="dt_input" type="text" size="12" id="<?php echo 'det_cod_auxiliar' . $ndt ?>" name="<?php echo 'det_cod_auxiliar' . $ndt ?>" value="<?php echo $rst_det[det_cod_auxiliar] ?>" lang="<?php echo $ndt ?>" <?php echo $read ?>/></td>
+                                                <td><input class="dt_input" type="text" size="25" id="<?php echo 'det_cod_producto' . $ndt ?>" name="<?php echo 'det_cod_producto' . $ndt ?>" value="<?php echo $rst_det[det_cod_producto] ?>" lang="<?php echo $ndt ?>" onfocus="this.style.width = '400px';" onblur="this.style.width = '100px';" list="productos" onkeypress="caracter(event, this, 0), frm_save.lang = 2" readonly/></td>
+                                                <td hidden><input class="dt_input" type="text" size="10" id="<?php echo 'det_lote' . $ndt ?>" name="<?php echo 'det_lote' . $ndt ?>" value="<?php echo $rst_det[det_lote] ?>" lang="<?php echo $ndt ?>" <?php echo $read ?>/></td>
                                                 <td>
-                                                    <input class="dt_input" type="text" size="50" id="<?php echo 'det_descripcion' . $ndt ?>" name="<?php echo 'det_descripcion' . $ndt ?>" value="<?php echo $rst_det[det_descripcion] ?>" lang="<?php echo $ndt ?>"    style="font-size:9px" readonly />
-                                                    <input class="dt_input" type="text" size="15" id="<?php echo 'pro_id' . $ndt ?>"  value="<?php echo $rst_det[det_tab] . $rst_det[pro_id] ?>" lang="1" hidden/>
-                                                </td>                                                
-                                                <td><input class="dt_input" type="text" size="7"  id="<?php echo 'inventario' . $ndt ?>"  value="<?php echo $inv ?>" lang="1" readonly/></td>
-                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_cantidad' . $ndt ?>" name="<?php echo 'det_cantidad' . $ndt ?>" value="<?php echo $rst_det[det_cantidad] ?>" lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" <?php echo $read ?>/></td>
+                                                    <input class="dt_input" type="text" size="50" id="<?php echo 'det_descripcion' . $ndt ?>" name="<?php echo 'det_descripcion' . $ndt ?>" value="<?php echo $rst_det[det_descripcion] ?>" lang="<?php echo $ndt ?>"  style="font-size:9px" readonly />
+                                                    <input class="dt_input" type="text" size="15" id="<?php echo 'pro_id' . $ndt ?>"  value="<?php echo $rst_det[pro_id] ?>" lang="1" hidden/>
+                                                </td>    
                                                 <td>
-                                                    <select class="dt_input" id="<?php echo 'det_unidad' . $ndt ?>" name="<?php echo 'det_unidad' . $ndt ?>" lang="<?php echo $ndt ?>" <?php echo $disabled ?>>
+                                                    <select class="dt_input" id="<?php echo 'det_unidad' . $ndt ?>" name="<?php echo 'det_unidad' . $ndt ?>" lang="<?php echo $ndt ?>" disabled>
                                                         <option value="1">ROLLO</option>
                                                         <option value="2">KG</option>
-                                                        <option value="3">M</option>
+                                                        <!--<option value="3">M</option>-->
                                                         <option value="4">UNIDAD</option>
+                                                        <option value="5">CAJA</option>
                                                     </select>
                                                     <script>
                                                         iduni1 = '<?php echo 'det_unidad' . $ndt ?>';
                                                         $('#' + iduni1).val('<?php echo $rst_det[det_unidad] ?>');
                                                     </script>
                                                 </td>
-                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_vunit' . $ndt ?>" name="<?php echo 'det_vunit' . $ndt ?>" value="<?php echo $rst_det[det_vunit] ?>" lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" <?php echo $read ?>/></td>
-                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_descuento_porcentaje' . $ndt ?>" name="<?php echo 'det_descuento_porcentaje' . $ndt ?>" value="<?php echo $rst_det[det_descuento_porcentaje] ?>"  lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" <?php echo $read ?>/></td>
-                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_descuento_moneda' . $ndt ?>" name="<?php echo 'det_descuento_moneda' . $ndt ?>" value="<?php echo $rst_det[det_descuento_moneda] ?>"  lang="<?php echo $ndt ?>"  readonly style="text-align:right"/></td>                                        
+                                                <td>
+                                                    <select class="dt_input" id="<?php echo 'det_core' . $ndt ?>" name="<?php echo 'det_core' . $ndt ?>" lang="<?php echo $ndt ?>" disabled>
+                                                        <option value=""></option>
+                                                        <option value="1/2">1/2</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="6">6</option>
+                                                    </select>
+                                                    <script>
+                                                        cor1 = '<?php echo 'det_core' . $ndt ?>';
+                                                        $('#' + cor1).val('<?php echo $rst_det[det_cod_auxiliar] ?>');
+                                                    </script>
+                                                </td>
+                                                <td><input class="dt_input" type ="text" size="7"  id="<?php echo 'cntcaja' . $ndt ?>" value="<?php echo $rst_det[det_lote] ?>" lang="<?php echo $ndt ?>" readonly/></td>
+                                                <td hidden><input class="dt_input" type="text" size="7"  id="<?php echo 'inventario' . $ndt ?>"  value="<?php echo $inv ?>" lang="<?php echo $ndt ?>" readonly/></td>
+                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_cantidad' . $ndt ?>" name="<?php echo 'det_cantidad' . $ndt ?>" value="<?php echo $rst_det[det_cantidad] ?>" lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly/></td>
+                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_vunit' . $ndt ?>" name="<?php echo 'det_vunit' . $ndt ?>" value="<?php echo $rst_det[det_vunit] ?>" lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly/></td>
+                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_descuento_porcentaje' . $ndt ?>" name="<?php echo 'det_descuento_porcentaje' . $ndt ?>" value="<?php echo $rst_det[det_descuento_porcentaje] ?>"  lang="<?php echo $ndt ?>"  onchange="calculo(this)" onkeyup="this.value = this.value.replace(/[^0-9.]/, '')" readonly/></td>
+                                                <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_descuento_moneda' . $ndt ?>" name="<?php echo 'det_descuento_moneda' . $ndt ?>" value="<?php echo $rst_det[det_descuento_moneda] ?>"  lang="<?php echo $ndt ?>"  readonly style="text-align:right" readonly/></td>                                        
                                                 <td><input class="dt_input" type="text" size="10" id="<?php echo 'det_total' . $ndt ?>" name="<?php echo 'det_total' . $ndt ?>" value="<?php echo $rst_det[det_total] ?>"  lang="<?php echo $ndt ?>" readonly style="text-align:right" /></td>
                                                 <td>
-                                                    <select id="<?php echo 'det_impuesto' . $ndt ?>" name="<?php echo 'det_impuesto' . $ndt ?>"   lang="<?php echo $ndt ?>" onchange="calculo(this)" <?php echo $disabled ?>>
-                                                        <option value="12">12%</option>
+                                                    <select id="<?php echo 'det_impuesto' . $ndt ?>" name="<?php echo 'det_impuesto' . $ndt ?>"   lang="<?php echo $ndt ?>" onchange="calculo(this)" disabled>
+                                                        <option value="14">IVA 14%</option>
+                                                        <!--<option value="12">IVA 12%</option>-->
                                                         <option value="0">0%</option>
                                                         <option value="NO">NO</option>
                                                         <option value="EX">EX</option>
@@ -1231,7 +1295,8 @@ $cns_vnd = $Docs->lista_vendedores();
                                                         $('#' + idt1).val('<?php echo $rst_det[det_impuesto] ?>');
                                                     </script>
                                                 </td>
-                                                <td onclick="elimina_fila(this, 1)" align="center" ><img class="btn-dinamic" width="18px" src="../img/del_reg.png" /></td>
+                                                <td><input type="text" size="50" id="<?php echo 'det_observacion' . $ndt ?>" name="<?php echo 'det_observacion' . $ndt ?>" value="<?php echo $rst_det[det_observacion] ?>" lang="<?php echo $ndt ?>"    style="font-size:9px" readonly/></td>
+                                                <td hidden onclick="elimina_fila(this, 1)" align="center" ><img class="btn-dinamic"  title="Elimina item" width="18px" src="../img/del_reg.png" /></td>
                                             </tr>
                                             <?php
                                         }
@@ -1248,52 +1313,52 @@ $cns_vnd = $Docs->lista_vendedores();
                                     </tr>
                                     <tr>
                                         <td colspan="2"></td>
-                                        <td colspan="7"></td>
-                                        <td colspan="2">Subtotal 12%:</td>
-                                        <td><input type="text" size="10" id="ped_sbt12" value="<?php echo round($rst_enc[ped_sbt12], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td colspan="6"></td>
+                                        <td colspan="2">Subtotal 14%:</td>
+                                        <td><input type="text" size="10" id="ped_sbt12" value="<?php echo round($rst_enc[ped_sbt12], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Observaciones:</td>
-                                        <td colspan="7"></td>
+                                        <td colspan="6"></td>
                                         <td colspan="2">Subtotal 0%:</td>
-                                        <td><input type="text" size="10" id="ped_sbt0" value="<?php echo round($rst_enc[ped_sbt0], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_sbt0" value="<?php echo round($rst_enc[ped_sbt0], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
-                                        <td valign="top" rowspan="11" colspan="9"><textarea id="ped_observacion" style="width:100%; text-transform: uppercase;" onkeydown="return enter(event)" <?php echo $disabled ?>><?php echo $rst_enc[ped_observacion] ?></textarea></td>
+                                        <td valign="top" rowspan="11" colspan="8"><textarea id="ped_observacion" style="width:100%; text-transform: uppercase;" onkeydown="return enter(event)" <?php echo $disabled ?>><?php echo $rst_enc[ped_observacion] ?></textarea></td>
                                         <td colspan="2">Subtotal No objeto de Iva:</td>
-                                        <td><input type="text" size="10" id="ped_sbt_noiva" value="<?php echo round($rst_enc[ped_sbt_noiva], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_sbt_noiva" value="<?php echo round($rst_enc[ped_sbt_noiva], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Subtotal Excento de Iva:</td>
-                                        <td><input type="text" size="10" id="ped_sbt_excento" value="<?php echo round($rst_enc[ped_sbt_excento], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_sbt_excento" value="<?php echo round($rst_enc[ped_sbt_excento], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Subtotal:</td>
-                                        <td><input type="text" size="10" id="ped_sbt" value="<?php echo round($rst_enc[ped_sbt], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_sbt" value="<?php echo round($rst_enc[ped_sbt], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Total Descuento:</td>
-                                        <td><input type="text" size="10" id="ped_tdescuento" value="<?php echo round($rst_enc[ped_tdescuento], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_tdescuento" value="<?php echo round($rst_enc[ped_tdescuento], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">IVA 12%:</td>
-                                        <td><input type="text" size="10" id="ped_iva12" value="<?php echo round($rst_enc[ped_iva12], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td colspan="2">IVA 14%:</td>
+                                        <td><input type="text" size="10" id="ped_iva12" value="<?php echo round($rst_enc[ped_iva12], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <td colspan="2">Valor ICE:</td>
-                                        <td><input type="text" size="10" id="ped_ice" value="<?php echo round($rst_enc[ped_ice], 4) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
+                                        <td><input type="text" size="10" id="ped_ice" value="<?php echo round($rst_enc[ped_ice], 2) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <td colspan="2">Valor IRBPRN:</td>
-                                        <td><input type="text" size="10" id="ped_irbpnr" value="<?php echo round($rst_enc[ped_irbpnr], 4) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
+                                        <td><input type="text" size="10" id="ped_irbpnr" value="<?php echo round($rst_enc[ped_irbpnr], 2) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <td colspan="2">Propina:</td>
-                                        <td><input type="text" size="10" id="ped_propina" value="<?php echo round($rst_enc[ped_propina], 4) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
+                                        <td><input type="text" size="10" id="ped_propina" value="<?php echo round($rst_enc[ped_propina], 2) ?>"  style="text-align:right" onchange="calculo_totales()" <?php echo $read ?>/></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Valor Total:</td>
-                                        <td><input type="text" size="10" id="ped_total" value="<?php echo round($rst_enc[ped_total], 4) ?>" readonly style="text-align:right"/></td>
+                                        <td><input type="text" size="10" id="ped_total" value="<?php echo round($rst_enc[ped_total], 2) ?>" readonly style="text-align:right"/></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -1310,14 +1375,16 @@ $cns_vnd = $Docs->lista_vendedores();
                             if ($x != 1) {
                                 ?>
                                 <button id="save" lang="<?php echo $id ?>" onclick="save(<?php echo $id ?>)" >Guardar</button>
-                                <button id="cancel" >Cancelar</button>
-                                <?php
-                            } else {
-                                ?>
-                                <button id="aprobar" lang="<?php echo $id ?>" onclick="aprobar(1,<?php echo $rst_enc[ped_id] ?>, '<?php echo $num_doc ?>')" >Aprobar</button>
-                                <button id="rechazar" lang="<?php echo $id ?>" onclick="aprobar(0,<?php echo $rst_enc[ped_id] ?>, '<?php echo $num_doc ?>')">Rechazar</button>
+
                                 <?php
                             }
+//                            else {
+                            ?>
+    <!--<button id="aprobar" lang="<?php echo $id ?>" onclick="aprobar(1,<?php echo $rst_enc[ped_id] ?>, '<?php echo $num_doc ?>')" >Aprobar</button>-->
+    <!--<button id="rechazar" lang="<?php echo $id ?>" onclick="aprobar(0,<?php echo $rst_enc[ped_id] ?>, '<?php echo $num_doc ?>')">Rechazar</button>-->
+                            <button id="cancel" >Cancelar</button>
+                            <?php
+//                            }
                         }
                         ?>
                     </td>
@@ -1329,7 +1396,6 @@ $cns_vnd = $Docs->lista_vendedores();
 <script>
     $('#ped_local').val('<?php echo $rst_enc[ped_local] ?>');
     $('#ped_vendedor').val('<?php echo $rst_enc[ped_vendedor] ?>');
-//    var productos = [];
 </script>
 <datalist id="productos">
 </datalist>

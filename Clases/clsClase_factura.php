@@ -476,6 +476,11 @@ where fac_id=$id
         }
     }
 
+function lista_f_vencimiento($fac_id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT p.pag_fecha_v from erp_factura f, erp_pagos_factura p where cast(p.com_id as integer)=($fac_id)");
+        }
+    }
     function lista_notcre_cli($id) {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT * FROM erp_cheques WHERE cli_id=$id and chq_tipo_doc='3' AND chq_estado<>2");

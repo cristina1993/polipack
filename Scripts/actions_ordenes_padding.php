@@ -1,4 +1,5 @@
 <?php
+
 //include_once '../Includes/permisos.php';
 include_once '../Clases/clsClase_ordenes_padding.php';
 $Clase = new Clase_Orden_Padding();
@@ -31,49 +32,70 @@ switch ($op) {
         echo $sms;
         break;
     case 2:
-      
-        $rst=  pg_fetch_array($Clase->lista_secuencial($id));
-         $sec=  (substr($rst[opp_codigo],-5)+1);
-        if($sec>=0 && $sec<10){
-            $txt='0000';
-        }else if($sec>=10 && $sec<100){
-            $txt='000';
-        }else if($sec>=100 && $sec<1000){
-            $txt='00';
-        }else if($sec>=1000 && $sec<10000){
-            $txt='0';
-        }else if($sec>=10000 && $sec<100000){
-            $txt='';
+
+        $rst = pg_fetch_array($Clase->lista_secuencial($id));
+        $sec = (substr($rst[opp_codigo], -5) + 1);
+        if ($sec >= 0 && $sec < 10) {
+            $txt = '0000';
+        } else if ($sec >= 10 && $sec < 100) {
+            $txt = '000';
+        } else if ($sec >= 100 && $sec < 1000) {
+            $txt = '00';
+        } else if ($sec >= 1000 && $sec < 10000) {
+            $txt = '0';
+        } else if ($sec >= 10000 && $sec < 100000) {
+            $txt = '';
         }
-        $retorno=$rst[emp_sigla].$txt.$sec;
+        $retorno = $rst[emp_sigla] . $txt . $sec;
         echo $retorno;
         break;
     case 3:
-        
-        $rst=  pg_fetch_array($Clase->lista_mostrar($id));
-        $ancho=$rst[pro_ancho];
-        $largo=$rst[pro_largo];
-        $peso=$rst[pro_peso];
-        $gramaje=$rst[pro_gramaje];
-        $mf1=$rst[pro_mf1];
-        $mf2=$rst[pro_mf2];
-        $mf3=$rst[pro_mf3];
-        $mf4=$rst[pro_mf4];
-        $mp1=$rst[pro_mp1];
-        $mp2=$rst[pro_mp2];
-        $mp3=$rst[pro_mp3];
-        $mp4=$rst[pro_mp4];
-        $velocidad=$rst[opp_velocidad];
-        $rodillosup=$rst[opp_temp_rodillosup];
-        $rodilloinf=$rst[opp_temp_rodilloinf];
-        
-        
-        $cns=$Clase->lista_combomp($id);
-        $combo="<option value='0'>Seleccione</option>";
-        while($rst=  pg_fetch_array($cns)){
+
+        $rst = pg_fetch_array($Clase->lista_mostrar($id));
+        $ancho = $rst[pro_ancho];
+        $largo = $rst[pro_largo];
+        $peso = $rst[pro_peso];
+        $gramaje = $rst[pro_gramaje];
+        $mf1 = $rst[pro_mf1];
+        $mf2 = $rst[pro_mf2];
+        $mf3 = $rst[pro_mf3];
+        $mf4 = $rst[pro_mf4];
+        $mp1 = $rst[pro_mp1];
+        $mp2 = $rst[pro_mp2];
+        $mp3 = $rst[pro_mp3];
+        $mp4 = $rst[pro_mp4];
+        $velocidad = $rst[opp_velocidad];
+        $rodillosup = $rst[opp_temp_rodillosup];
+        $rodilloinf = $rst[opp_temp_rodilloinf];
+
+
+        $cns = $Clase->lista_combomp($id);
+        $combo = "<option value='0'>Seleccione</option>";
+        while ($rst = pg_fetch_array($cns)) {
             $combo.="<option value='$rst[mpt_id]'>$rst[mpt_nombre]</option>";
-        }     
-        echo $ancho.'&'.$largo.'&'.$peso.'&'.$gramaje.'&'.$mf1.'&'.$mf2.'&'.$mf3.'&'.$mf4.'&'.$mp1.'&'.$mp2.'&'.$mp3.'&'.$mp4.'&'.$velocidad.'&'.$rodillosup.'&'.$rodilloinf.'&'.$combo;
+        }
+        echo $ancho . '&' . $largo . '&' . $peso . '&' . $gramaje . '&' . $mf1 . '&' . $mf2 . '&' . $mf3 . '&' . $mf4 . '&' . $mp1 . '&' . $mp2 . '&' . $mp3 . '&' . $mp4 . '&' . $velocidad . '&' . $rodillosup . '&' . $rodilloinf . '&' . $combo;
+        break;
+    case 4:
+        if ($data == 0) {
+            $txt = " and(p.pro_ancho)>=$id";
+        } else {
+            $txt = " and(p.pro_ancho%$id)=0";
+        }
+
+        $cns = $Clase->lista_productos_semielaborados($id, $ei, $ef, $txt);
+        while ($rst = pg_fetch_array($cns)) {
+            $cantidad = $rst[ingreso] - $rst[egreso];
+            echo "<tr onmousedown='mover(this)'>
+                    <td>$rst[pro_codigo] </td>
+                    <td>$rst[pro_descripcion] </td>
+                    <td>$rst[mov_pago]</td>
+                    <td align='right'>$rst[pro_ancho]</td>
+                    <td align='right'>$rst[pro_espesor]</td>
+                    <td align='right'>$cantidad</td>
+                  </tr>
+                    ";
+        }
         break;
 }
 ?>

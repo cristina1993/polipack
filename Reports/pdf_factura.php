@@ -173,7 +173,7 @@ class PDF extends FPDF {
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
         $this->SetXY(7, 67);
-        $this->Cell(100, 5, "Contribuyente Especial Nro :" . $emisor[contribuyente_especial], 'LR');
+        $this->Cell(100, 5, "CONTRIBUYENTE ESPECIAL Nro :" . $emisor[contribuyente_especial], 'LR');
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
         $this->SetXY(7, 72);
@@ -230,14 +230,14 @@ class PDF extends FPDF {
         //////////////////////////////////// ENCABEZADO CENTRAL ////////////////////////////////////////////////////////        
         $this->Ln($x + 4, $y + 1);
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(141, 5, "Razon Social / Nombres y Apellidos : " . utf8_decode($rst1[fac_nombre]), 'LT', 0, 'L');
+        $this->Cell(141, 5, "RAZON SOCIAL / NOMBRE Y APELLIDO : " . utf8_decode($rst1[fac_nombre]), 'LT', 0, 'L');
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(55, 5, "Identificacion : " . $rst1[fac_identificacion], 'RT', 'R');
+        $this->Cell(55, 5, "IDENTIFICACION : " . $rst1[fac_identificacion], 'RT', 'R');
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(141, 5, "Fecha de Emision : " . $rst1[fac_fecha_emision], 'LB', 0, 'L');
+        $this->Cell(141, 5, "FECHA DE EMISION : " . $rst1[fac_fecha_emision], 'LB', 0, 'L');
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(55, 5, "Guia Remision : " . $rst1[fac_num_guia_remision], 'RB', 0, 'L');
+        $this->Cell(55, 5, "GUIA REMISION : " . $rst1[fac_num_guia_remision], 'RB', 0, 'L');
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////// CUERPO ////////////////////////////////////////////////////////                        
         $this->Ln();
@@ -280,49 +280,55 @@ class PDF extends FPDF {
             $this->Cell(80, 4, $rst[dfc_lote] . " " . substr(utf8_decode($rst[dfc_descripcion]), 0, 40), 1, 0, 'L');
             $this->Cell(20, 4, $rst[dfc_precio_unit], 1, 0, 'R');
             $this->Cell(20, 4, $rst[dfc_porcentaje_descuento], 1, 0, 'R');
-            $this->Cell(20, 4, $rst[dfc_precio_total], 1, 0, 'R');
+            $this->Cell(20, 4,  number_format($rst[dfc_precio_total],$decimals=2), 1, 0, 'R');
             $this->Ln();
         }
+	//var ivava= $rst1[fac_total_iva]/$rst1[fac_subtotal12]
         //___________________________________________________________________________
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
-        $this->Cell(40, 5, "SUBTOTAL 12%", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_subtotal12], 'LRTB', 0, 'R');
+	if( $rst1[fac_fecha_emision]<'2016-06-01' ){
+        $this->Cell(40, 5, "SUBTOTAL IVA 12%", 'LRTB', 0, 'L');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal12],$decimals=2), 'LRTB', 0, 'R');
+	}else{
+        $this->Cell(40, 5, "SUBTOTAL IVA 14%", 'LRTB', 0, 'L');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal12],$decimals=2), 'LRTB', 0, 'R');
+	}
         $this->Ln();
         $this->SetFont('helvetica', 'B', 10);
         $this->Cell(85, 5, "Informacion Adicional ", 'LRT', 0, 'L');
         $this->Cell(51, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "SUBTOTAL 0%", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_subtotal0], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal0],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->SetFont('helvetica', '', 8);
         $this->Cell(85, 5, "Vendedor: " . $rst1[vnd_nombre], 'LR', 0, 'L');
         $this->Cell(51, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "SUBTOTAL No objeto de IVA", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_subtotal_no_iva], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal_no_iva],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->SetFont('helvetica', '', 8);
         $this->Cell(85, 5, "Direccion : " . $rst1[fac_direccion], 'LR', 0, 'L');
         $this->Cell(51, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "SUBTOTAL SIN IMPUESTOS", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_subtotal_no_iva], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal_no_iva],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->SetFont('helvetica', '', 8);
         $this->Cell(85, 5, "Telefono : " . $rst1[fac_telefono], 'LR', 0, 'L');
         $this->Cell(51, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "SUBTOTAL Exento de IVA", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_subtotal_ex_iva], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_subtotal_ex_iva],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->SetFont('helvetica', '', 8);
         $this->Cell(85, 5, "Email :  " . strtolower($rst1[fac_email]), 'LR', 0, 'L');
         $this->Cell(51, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "DESCUENTO", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_descuento], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_total_descuento],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
 
         $this->SetFont('helvetica', '', 8);
@@ -330,29 +336,34 @@ class PDF extends FPDF {
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "ICE", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_ice], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_total_ice],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
-        $this->Cell(40, 5, "IVA 12%", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_iva], 'LRTB', 0, 'R');
+       	if( $rst1[fac_fecha_emision]<'2016-06-01' ){
+	$this->Cell(40, 5, "IVA 12%", 'LRTB', 0, 'L');
+        $this->Cell(20, 5, number_format($rst1[fac_total_iva],$decimals=2), 'LRTB', 0, 'R');
+	}else{
+	$this->Cell(40, 5, "IVA 14%", 'LRTB', 0, 'L');
+        $this->Cell(20, 5, number_format($rst1[fac_total_iva],$decimals=2), 'LRTB', 0, 'R');
+	}
         $this->Ln();
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "IRBPNR", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_irbpnr], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_total_irbpnr],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(40, 5, "PROPINA", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_propina], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_total_propina],$decimals=2), 'LRTB', 0, 'R');
 
         $this->Ln();
         $this->Cell(136, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
 
         $this->Cell(40, 5, "VALOR TOTAL", 'LRTB', 0, 'L');
-        $this->Cell(20, 5, $rst1[fac_total_valor], 'LRTB', 0, 'R');
+        $this->Cell(20, 5, number_format($rst1[fac_total_valor],$decimals=2), 'LRTB', 0, 'R');
         $this->Ln();
 
         $this->SetXY(7.2, ($this->GetY() - 25));
@@ -363,9 +374,9 @@ class PDF extends FPDF {
         while ($rst2 = pg_fetch_array($cns2)) {
             $n++;
             if (empty($rst2[pag_valor])) {
-                $debito = $rst2[pag_cant];
+                $debito = number_format($rst2[pag_cant],$decimals=2);
             } else {
-                $debito = $rst2[pag_valor];
+                $debito = number_format($rst2[pag_valor],$decimals=2);
             }
             $this->Cell(85, 5, $rst2[pag_fecha_v] . "   $" . $debito, 'LR', 1);
         }

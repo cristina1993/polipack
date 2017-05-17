@@ -1,23 +1,26 @@
 <?php
 include_once '../Includes/permisos.php';
 include_once '../Clases/clsClase_industrial_egresopt.php'; //cambiar clsClase_productos
-include_once '../Clases/clsClase_pedidospt.php';
-$Clase_pedidospt = new Clase_pedidospt();
 $Clase_industrial_egresopt = new Clase_industrial_egresopt();
-if (isset($_GET[txt])) {
+if (isset($_GET[fecha1], $_GET[fecha2])) {
     $txt = trim(strtoupper($_GET[txt]));
-    ;
-    if (!empty($txt)) {
-        $txt = " and p.pro_codigo like '%$txt%'";
+    $prod = trim(strtoupper($_GET[prod]));
+    $fec1 = $_GET[fecha1];
+    $fec2 = $_GET[fecha2];
+    if (!empty($prod)) {
+        $txt = " and (pro_codigo like '%$prod%' or pro_descripcion like '%$prod%' or mov_pago like '%$prod%') and m.mov_fecha_trans between '$fec1' and '$fec2'";
+    } else if (!empty($txt)) {
+        $txt = " and (m.mov_documento like '%$txt%' or m.mov_guia_transporte like '%$txt%' or c.cli_raz_social like '%$txt%' or t.trs_descripcion like '%$txt%')
+                 and m.mov_fecha_trans between '$fec1' and '$fec2'";
+    } else {
+        $txt = " and m.mov_fecha_trans between '$fec1' and '$fec2' ";
     }
     $cns = $Clase_industrial_egresopt->lista_buscador_industrial_egresopt($txt);
 } else {
     $txt = '';
-//    if ($emisor == 1) {
-//        $cns = $Clase_industrial_egresopt->lista_ped_nop($emisor);
-//    } else {
-//        $cns = $Clase_industrial_egresopt->lista($emisor);
-//    }
+    $trs = '';
+    $fec1 = date('Y-m-d');
+    $fec2 = date('Y-m-d');
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
@@ -32,7 +35,9 @@ if (isset($_GET[txt])) {
                             sortMultiSortKey: 'altKey',
                             widthFixed: true});
                 parent.document.getElementById('bottomFrame').src = '';
-                parent.document.getElementById('contenedor2').rows = "*,50%";
+                parent.document.getElementById('contenedor2').rows = "*,0%";
+                Calendar.setup({inputField: "fecha1", ifFormat: "%Y-%m-%d", button: "im-campo1"});
+                Calendar.setup({inputField: "fecha2", ifFormat: "%Y-%m-%d", button: "im-campo2"});
             });
 
             function look_menu() {
@@ -50,32 +55,36 @@ if (isset($_GET[txt])) {
                 parent.document.getElementById('contenedor2').rows = "*,50%";
                 switch (a)
                 {
-                    case 1://Editar
-                        frm.src = '../Scripts/Form_industrial_egresopt.php?id=' + id + '&x=' + x;//Cambiar Form_productos
+                    case 0://Nuevo
+                        $.post("actions_industrial_ingresopt.php", {op: 15}, function (dt) {
+                            secuencial = '001-' + dt;
+                            frm.src = '../Scripts/Form_industrial_egresopt.php?emisor=' +<?php echo $emisor ?> + '&sec=' + secuencial;//Cambiar Form_productos
+                            if (secuencial != 0) {
+                                $.post("actions_industrial_ingresopt.php", {op: 16, sec: secuencial}, function (dt) {
+                                    if (dt != 0) {
+                                        alert(dt);
+                                    }
+                                });
+                            }
+                        });
                         look_menu();
                         break;
-                    case 2:
-                        main.src = '../Scripts/Lista_industrial_ingresopt.php';
-                        break;
-                    case 3:
-                        main.src = '../Scripts/Lista_industrial_egresopt.php';
-                        break;
-                    case 4:
-                        main.src = '../Scripts/Lista_industrial_movimientopt.php';
-                        break;
-                    case 5:
-                        main.src = '../Scripts/Lista_industrial_inventariopt.php';
-                        break;
-                    case 6:
-                        main.src = '../Scripts/Lista_industrial_kardexpt.php';
+                    case 1://Editar
+                        frm.src = '../Scripts/Form_industrial_egresopt.php?id=' + id + '&x=' + x;//Cambiar Form_productos
                         break;
                 }
             }
-
+            function descargar_archivo() {
+                window.location = '../formatos/descargar_archivo.php?archivo=inventario.csv';
+            }
+            function load_file() {
+                $('#frm_file').submit();
+            }
             function loading(prop) {
                 $('#cargando').css('visibility', prop);
                 $('#charging').css('visibility', prop);
             }
+
         </script> 
         <style>
             #mn55,
@@ -92,9 +101,46 @@ if (isset($_GET[txt])) {
                 color:white;
                 border: solid 1px white;
             }
+            div.upload {
+                padding:5px; 
+                width: 14px;
+                height: 20px;
+                background-color: #568da7;        
+                background-image:-moz-linear-gradient(
+                    top,
+                    rgba(255,255,255,0.4) 0%,
+                    rgba(255,255,255,0.2) 60%);
+                color:#FFFFFF; 
+                overflow: hidden;
+                border-radius: 4px 4px 4px 4px; 
+                cursor:pointer; 
+                border:solid 1px #ccc; 
+            }
+            div.upload:hover{
+                background-color:#7198ab;        
+            }
+            div.upload input {
+                margin-top:-20; 
+                margin-left:-5; 
+                display: block !important;
+                width: 40px !important;
+                height: 40px !important;
+                opacity: 0 !important;
+                overflow: hidden !important;
+                cursor:pointer; 
+            }    
+            #txt_load{
+                margin-right:5px; 
+                margin-top:13px; 
+            }
+            *{
+                text-transform: uppercase;
+            }
+
         </style>
     </head>
     <body>
+
         <img id="charging" src="../img/load_bar.gif" />    
         <div id="cargando">Por Favor Espere...</div>
         <div id="grid" onclick="alert(' ¡ Tiene Una Accion Habilitada ! \n Debe Guardar o Cancelar para habilitar es resto de la pantalla')"></div>        
@@ -111,87 +157,121 @@ if (isset($_GET[txt])) {
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" ><?PHP echo 'EGRESO DE PRODUCTO TERMINADO ' . $bodega ?></center>
+                <center class="cont_title" ><?PHP echo 'EGRESO DE PRODUCTO TERMINADO' ?> </center>
                 <center class="cont_finder">
+                    <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo </a>
+<!--                    <a href="#" onclick="descargar_archivo()" style="float:right;text-transform:capitalize;margin-left:15px;margin-top:10px;text-decoration:none;color:#ccc; ">Descargar Formato<img src="../img/xls.png" width="16px;" /></a>
+
+                    <form id="frm_file" name="frm_file" style="float:right" action="actions_upload.php" method="POST" enctype="multipart/form-data">
+                        <div class="upload">
+                            ...<input type="file"  name="archivo" id="archivo" onchange="load_file()" >
+                        </div>
+                    </form>
+                    <font style="float:right" id="txt_load">Cargar Datos:</font>-->
+
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
-                        CODIGO:<input type="text" name="txt" size="15" id="txt" />
+                        PRODUCTO:<input type="text" name="prod" size="15" id="prod" style="font-size: 10px"/>
+                        MOVIMIENTO:<input type="text" name="txt" size="25" id="txt" list="transacciones" style="font-size: 10px"/>
+                        DESDE:<input type="text" size="10" name="fecha1" id="fecha1" value="<?php echo $fec1 ?>" />
+                        <img src="../img/calendar.png" id="im-campo1"/>
+                        HASTA:<input type="text" size="10" name="fecha2" id="fecha2" value="<?php echo $fec2 ?>"/>
+                        <img src="../img/calendar.png" id="im-campo2"/>
                         <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
                     </form>  
                 </center>
             </caption>
             <!--Nombres de la columna de la tabla-->
             <thead>
-            <th>No</th>
-            <th>Orden</th>
-            <th>Cliente</th>
-            <th>Tipo de Transacción</th>
-            <th>Guía de Transporte</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </thead>
-        <!------------------------------------->
+                <tr>
+                    <th></th>
+                    <th colspan="4">Documento</th>
+                    <th colspan="5">Producto Terminado</th>
+                    <th colspan="5">Transaccción</th>
+                </tr>
+                <tr>
+                    <th>No</th>
+                    <th>Usuario</th>
+                    <th>Fecha de Transacción</th>
+                    <th>Documento No</th>
+                    <th>#Orden</th>
+                    <th>Cliente</th>
+                    <th>Código</th>
+                    <th>#Rollo</th>
+                    <th>Descripción</th>
+                    <th>Unidad</th>
+                    <th>Tipo</th>
+                    <th>UndxCaja</th>
+                    <th>Cajas</th>
+                    <th>Rollos</th>
+                    <th>Peso</th>
+                </tr>
+            </thead>
+            <!------------------------------------->
 
-        <tbody id="tbody">
-            <?PHP
-            $n = 0;
-            $grup = '';
-            while ($rst = pg_fetch_array($cns)) {
-                $n++;
-                if ($rst['ped_estado'] == 1) {
-                    $rst['ped_estado'] = 'ENPROCESO';
-                }
-                if ($rst['ped_estado'] == 2) {
-                    $rst['ped_estado'] = 'COMPLETADO';
-                }
-                if ($rst['ped_estado'] == 3) {
-                    $rst['ped_estado'] = 'PENDIENTE';
-                }
-                ?>
-            <!--                <tr id="fila" ondblclick="auxWindow(1,<?php //echo $rst[ped_id]    ?>, 1)">-->
-
+            <tbody id="tbody">
                 <?PHP
-                $ev = "onclick='auxWindow(1,$rst[ped_id],1)'";
-
-                if ($grup != $rst['ped_documento']) {
-                    ?>
-                <td><?php echo $n ?></td>
-                <td <?php echo $ev ?> ><?php echo $rst['ped_documento'] ?></td>
-                <td <?php echo $ev ?> ><?php echo trim($rst['cli_apellidos'] . ' ' . $rst['cli_nombres'] . ' ' . $rst['cli_raz_social']) ?></td>
-                <?php
-            } else {
-                ?>
-                <td></td>
-                <td></td>
-                <td></td>
-                <?php
-            }
-            ?>
-
-
-            <td <?php echo $ev ?> ><?php echo $rst['trs_descripcion'] ?></td>
-            <td <?php echo $ev ?> ><?php echo $rst['ped_guia_transporte'] ?></td>
-            <td <?php echo $ev ?> ><?php echo $rst['ped_estado'] ?></td>
-            <td align="center">
-                <?php
-                if ($Prt->edition == 0) {
-                    ?>
-                    <img src="../img/upd.png"  class="auxBtn" onclick="auxWindow(1,<?php echo $rst[ped_id] ?>, 0)">
-                    <?php
+                $n = 0;
+                $grup = '';
+                while ($rst = pg_fetch_array($cns)) {
+                    if (strlen($rst[mov_pago]) == 11) {
+                        $l = substr($rst[mov_pago], 0, 7);
+                        $rst_ord = pg_fetch_array($Clase_industrial_egresopt->lista_una_orden_extrusion($l, $rst[pro_id]));
+                    } else {
+                        $l = substr($rst[mov_pago], 0, 6);
+                        $rst_ord = pg_fetch_array($Clase_industrial_egresopt->lista_una_orden_corte($l));
+                    }
+                    $inv_caja = $rst[mov_tabla] / $rst_ord[opp_velocidad];
+                    $dt = explode('.', $inv_caja);
+                    if (empty($rst_ord[opp_velocidad])) {
+                        $cnt_cj = 0;
+                    } else {
+                        if (!empty($dt[1])) {
+                            $cnt_cj = round($dt[0]);
+                        } else {
+                            $cnt_cj = $inv_caja;
+                        }
+                    }
+                    $n++;
+                    echo "<tr>
+                            <td>$n</td>";
+                    if ($grup != $rst['mov_documento']) {
+                        echo "<td>$rst[mov_usuario]</td>
+                                <td align='center'>$rst[mov_fecha_trans]</td>
+                                <td>$rst[mov_documento]</td>
+                                <td>$rst[mov_guia_transporte]</td>
+                                <td>$rst[cli_raz_social]</td>";
+                    } else {
+                        echo "<td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>";
+                    }
+                    echo "     
+                            <td>$rst[pro_codigo]</td>                    
+                            <td>$rst[mov_pago]</td>                    
+                            <td>$rst[pro_descripcion]</td>
+                            <td>$rst[pro_uni]</td>
+                            <td>$rst[trs_descripcion]</td>
+                            <td align='right'>".number_format($rst_ord[opp_velocidad])."</td>
+                            <td align='right'>".number_format($cnt_cj)."</td>
+                            <td align='right'>".number_format($rst[mov_tabla])."</td>
+                            <td align='right'>".number_format($rst[mov_cantidad],2)."</td>
+                        </tr>";
+                    $grup = $rst['mov_documento'];
                 }
                 ?>
-
-
-            </td>           
-        </tr>  
-        <?PHP
-        $grup = $rst['ped_documento'];
-    }
-    ?>
-</tbody>
-
-
-</table>            
-
-</body>    
+            </tbody>
+        </table>            
+    </body>    
 </html>
-
+<datalist id="transacciones">
+    <?php
+    $cns_trans = $Clase_industrial_egresopt->lista_combo_transacciones();
+    while ($rst_tran = pg_fetch_array($cns_trans)) {
+        ?> 
+        <option value="<?php echo$rst_tran[trs_descripcion] ?>"><?php echo$rst_tran[trs_descripcion] ?></option>;
+        <?php
+    }
+    ?>  
+</datalist>

@@ -99,7 +99,7 @@ $cns = $Set->lista_ordenes_compra_search($txt, $date);
             <caption class="tbl_head" >
                 <center class="cont_menu" >
                     <?php
-                    $cns_sbm = $User->list_primer_opl(22, $_SESSION[usuid]);
+                    $cns_sbm = $User->list_primer_opl($mod_id, $_SESSION[usuid]);
                     while ($rst_sbm = pg_fetch_array($cns_sbm)) {
                         ?>
                         <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>

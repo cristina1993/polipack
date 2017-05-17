@@ -21,14 +21,14 @@ $cnsProc = $User->list_proceos($usuario);
 //                $('#mensaje').load('../Includes/envio_sri_retencion.php');
 //                $('#mensaje').load('../Includes/envio_sri_guia_remision.php');
 ////                Automatico Mail
-                $('#mensaje').load('../Includes/envio_mail_factura.php');
-                $('#mensaje').load('../Includes/envio_mail_nota_credito.php');
-                $('#mensaje').load('../Includes/envio_mail_nota_debito.php');
-                $('#mensaje').load('../Includes/envio_mail_retencion.php');
-                $('#mensaje').load('../Includes/envio_mail_guia.php');
-                $('#mensaje').load('../Includes/envio_mail_repventas.php');
-
-                setInterval(revisa_facturas, 3000);
+//                $('#mensaje').load('../Includes/envio_mail_factura.php');
+//                $('#mensaje').load('../Includes/envio_mail_nota_credito.php');
+//                $('#mensaje').load('../Includes/envio_mail_nota_debito.php');
+//                $('#mensaje').load('../Includes/envio_mail_retencion.php');
+//                $('#mensaje').load('../Includes/envio_mail_guia.php');
+//                $('#mensaje').load('../Includes/envio_mail_repventas.php');
+//
+//                setInterval(revisa_facturas, 3000);
             });
 
 

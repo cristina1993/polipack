@@ -46,6 +46,7 @@ if (isset($_GET[id])) {
     $cns_det = $Docs->lista_detalle_registro_pedido($id);
     $cns_pag = $Docs->lista_pagos_registro_pedido($id);
     $num_doc = $rst_enc[ped_num_registro];
+	$observacion2 = $rst_enc[ped_observacion];
     $det = 1;
     $rst[opg_codigo] = pg_num_rows($Docs->lista_pagos_registro_pedido($id));
 }
@@ -774,7 +775,7 @@ $id_vnd = $rst_vend[vnd_id];
                     }
 
                     tdsc = (tdsc * 1) + (d * 1);
-                    if (ob == '12') {
+                    if (ob == '14') {
                         t12 = (t12 * 1 + val * 1);
                     }
                     if (ob == '0') {
@@ -791,7 +792,7 @@ $id_vnd = $rst_vend[vnd_id];
                     sal = sal + parseFloat(cnt);
                 }
                 tsal = sol - ((ent * 1) + (sal * 1));
-                tiva = (t12 * 12 / 100);
+                tiva = (t12 * 14 / 100);
                 gtot = (t12 * 1 + t0 * 1 + tex * 1 + tno * 1 + tiva * 1);
                 $('#subtotal12').val(t12.toFixed(4));
                 $('#subtotal0').val(t0.toFixed(4));
@@ -1841,8 +1842,8 @@ $id_vnd = $rst_vend[vnd_id];
                                     <td colspan="2">Observaciones:</td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" rowspan="7" colspan="8"><textarea id="observacion" style="width:100%; text-transform: uppercase;" onkeydown="return enter(event)"><?php echo $rst[observaciones] ?></textarea></td>    
-                                    <td colspan="5" align="right">Sub Total 12%:</td>
+                                    <td valign="top" rowspan="7" colspan="8"><textarea id="observacion" style="width:100%; text-transform: uppercase;" onkeydown="return enter(event)"><?php echo $observacion2 ?></textarea></td>    
+                                    <td colspan="5" align="right">Sub Total 14%:</td>
                                     <td><input style="text-align:right" type="text" size="12" id="subtotal12" value="<?php echo number_format($rst_enc['ped_sbt12'], 4) ?>" readonly/></td>
                                 </tr>
                                 <tr>

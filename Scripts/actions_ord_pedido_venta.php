@@ -167,14 +167,14 @@ switch ($op) {
         echo $sms;
         break;
     case 2:
-        if ($id == 1) {
-            $cns = $Reg->lista_productos_noperti();
-        } else if ($id == 10) {
-            $cns = $Reg->lista_productos_industrial();
-        } else {
+//        if ($id == 1) {
+//            $cns = $Reg->lista_productos_noperti();
+//        } else if ($id == 10) {
+//            $cns = $Reg->lista_productos_industrial();
+//        } else {
             $cns = $Reg->lista_productos_todos();
-        }
-        $rst_emi = pg_fetch_array($Reg->lista_emisor($id));
+//        }
+//        $rst_emi = pg_fetch_array($Reg->lista_emisor($id));
         while ($rst = pg_fetch_array($cns)) {
 //            if ($id == 1) {
 //                $rst[tbl];
@@ -195,9 +195,11 @@ switch ($op) {
 //                $rst[lote];
 //                $rst[descripcion];
 //            }
-            $producto.= "<option value='$rst[tbl]$rst[id]'>$rst[lote] $rst[codigo] $rst[descripcion]</option>";
+            $producto.= "<option value='$rst[pro_id]'>$rst[pro_codigo] $rst[pro_descripcion]</option>";
+//            $producto.= "<option value='$rst[tbl]$rst[id]'>$rst[lote] $rst[codigo] $rst[descripcion]</option>";
         }
-        echo $producto . '&&' . $rst_emi[cod_cli];
+//        echo $producto . '&&' . $rst_emi[cod_cli];
+        echo $producto . '&&1';
         break;
     case 3:
         $sms = 0;

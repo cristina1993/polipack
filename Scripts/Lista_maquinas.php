@@ -102,22 +102,15 @@ if (isset($_GET[tipo])) {
         <table style="width:100%" id="tbl">
 
             <caption class="tbl_head" >
-                <center class="cont_menu" >
-                    <select style="float:left;margin-top:5px;margin-left:5px;" onchange="loadData(this.value, '<?php echo $tbl_set ?>')">
-                        <option value="0">Seleccione Tipo</option>
-                        <?php
-                        $cnsTipos = $Set->lista_by_tipo($tbl_set);
-                        while ($rst = pg_fetch_array($cnsTipos)) {
-                            if ($tipo == $rst[ids]) {
-                                $selected = 'selected';
-                            } else {
-                                $selected = '';
-                            }
-                            $val = explode('&', $rst[$tp]);
-                            echo "<option $selected value=$rst[ids]>$val[9]</option>";
-                        }
+                 <center class="cont_menu" >
+                    <?php
+                    $cns_sbm = $User->list_primer_opl($mod_id, $_SESSION[usuid]);
+                    while ($rst_sbm = pg_fetch_array($cns_sbm)) {
                         ?>
-                    </select>   
+                        <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>
+                        <?php
+                    }
+                    ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                     <?php
                     if ($Prt->special == 0) {
@@ -136,9 +129,24 @@ if (isset($_GET[tipo])) {
                     }
                     ?>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
+                        TIPO MAQUINA: <select name="tipo" onchange="loadData(this.value, '<?php echo $tbl_set ?>')">
+                            <option value="0">Seleccione Tipo</option>
+                            <?php
+                            $cnsTipos = $Set->lista_by_tipo($tbl_set);
+                            while ($rst = pg_fetch_array($cnsTipos)) {
+                                if ($tipo == $rst[ids]) {
+                                    $selected = 'selected';
+                                } else {
+                                    $selected = '';
+                                }
+                                $val = explode('&', $rst[$tp]);
+                                echo "<option $selected value=$rst[ids]>$val[9]</option>";
+                            }
+                            ?>
+                        </select>  
                         <input type="hidden" name="tp" size="15" value="<?php echo $tipo ?>" />
-                        Codigo:<input type="text" name="txt" size="15" />
-                        <a href="#" style="position:absolute " class="act_btn" title="Buscar" onclick="frmSearch.submit()" ><img src="../img/finder.png" /></a>                                    
+                        Codigo:<input type="text" name="txt" size="15" value="<?php echo $txt?>" />
+                        <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
                     </form>  
                 </center>
             </caption>
@@ -197,7 +205,7 @@ if (isset($_GET[tipo])) {
                         }
                         if ($Prt->delete == 0) {
                             ?>
-                            <img src="../img/b_delete.png" onclick="del(<?php echo $rst[id] ?>, '<?php echo $tbl ?>', '<?php echo $rst[$tp0 . 'a'] ?>','<?php echo $rst[maq_a] ?>')">
+                            <img src="../img/b_delete.png" onclick="del(<?php echo $rst[id] ?>, '<?php echo $tbl ?>', '<?php echo $rst[$tp0 . 'a'] ?>', '<?php echo $rst[maq_a] ?>')">
                         <?php }
                         ?>
                     </td>

@@ -2,11 +2,11 @@
 include_once '../Includes/permisos.php';
 include_once '../Clases/clsSetting.php';
 $Set = new Set();
-if (isset($_GET[txt])) {
-
+if (isset($_GET[search])) {
+    $txt = $_GET[txt];
     $cns = $Set->lista_tpmp_search(trim(strtoupper($_GET[txt])));
 } else {
-    $cns = $Set->lista_tpmp();
+//    $cns = $Set->lista_tpmp();
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
@@ -39,11 +39,11 @@ if (isset($_GET[txt])) {
                 switch (a)
                 {
                     case 0:
-                        frm.src = '../Scripts/Form_i_tpmp.php';
+                        frm.src = '../Scripts/Form_i_tpmp.php?txt=' + txt.value;
                         look_menu();
                         break;
                     case 1:
-                        frm.src = '../Scripts/Form_i_tpmp.php?id=' + id + '&x=' + x;
+                        frm.src = '../Scripts/Form_i_tpmp.php?id=' + id + '&x=' + x + '&txt=' + txt.value;
                         look_menu();
                         break;
                 }
@@ -90,7 +90,7 @@ if (isset($_GET[txt])) {
             <caption class="tbl_head" >
                 <center class="cont_menu" >
                     <?php
-                    $cns_sbm = $User->list_primer_opl(16, $_SESSION[usuid]);
+                    $cns_sbm = $User->list_primer_opl($mod_id, $_SESSION[usuid]);
                     while ($rst_sbm = pg_fetch_array($cns_sbm)) {
                         ?>
                         <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>
@@ -109,8 +109,8 @@ if (isset($_GET[txt])) {
                     }
                     ?>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
-                        Codigo:<input type="text" name="txt" size="15" />
-                        <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
+                        Codigo:<input type="text"  id="txt"  name="txt" size="15" value="<?php echo $txt ?>"/>
+                        <button class="btn" title="Buscar" name="search" onclick="frmSearch.submit()">Buscar</button>
                         <a href="#" ><img src="../img/finder.png" /></a>                                                                    
                     </form>  
                 </center>

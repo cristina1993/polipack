@@ -7,12 +7,12 @@ body{
     margin-left:0px;    
     margin-top:0px;  
 }
-//Encabezados
+/*//Encabezados*/
 .tbl_head{
     background:#00529B; 
 }
 .cont_menu{
-    background: #f8f8f8 url(../img/bg.jpg) repeat top left;    
+    background: #f8f8f8;    
     text-align:left;
     margin-top:0px;
     float:left;
@@ -186,12 +186,12 @@ body{
     box-shadow:1px 1px 10px 2px rgba(0,0,0,0.5);
     border:solid 2px #616975; 
 }
-#tbl_form{
+#tbl_form,#impresion{
     background: url(../img/bg.jpg) #10a5d3;
     margin: 2px;
     box-shadow:1px 1px 15px 5px rgba(0,0,0,0.5);
 }
-#tbl thead th, #tbl_form thead th { //Para que se carge sin mostrar sin estrilo el encabezado
+#tbl thead th, #tbl_form thead th,#impresion thead th { //Para que se carge sin mostrar sin estrilo el encabezado
 
                                     color:white; 
                                     padding:3px; 
@@ -244,7 +244,7 @@ body{
 #tbl tbody tr:nth-child(even){background: #F0F5FF;}
 #tbl tbody tr:nth-child(odd) { background: #fff}
 
-#tbl_form tr td{
+#tbl_form tr td,#impresion {
     font-size:11px;
     font-weight:bold;
     color:#000;
@@ -274,6 +274,13 @@ input:focus,textarea:focus,select:focus{
 }
 
 input[readonly]{
+    background:transparent; 
+    border:none;
+    color:#11658d;
+    font-weight:bolder;
+    border:solid 1px #fff;
+}
+textarea[disabled]{
     background:transparent; 
     border:none;
     color:#11658d;

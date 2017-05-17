@@ -7,12 +7,12 @@ body{
     margin-left:0px;    
     margin-top:0px;  
 }
-//Encabezados
+
 .tbl_head{
     background:#00529B; 
 }
 .cont_menu{
-    background: #f8f8f8 url(../img/bg.jpg) repeat top left;    
+    background: #f8f8f8 ;    
     text-align:left;
     margin-top:0px;
     float:left;

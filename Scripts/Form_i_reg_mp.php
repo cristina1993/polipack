@@ -117,14 +117,14 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                             orc_guia_recepcion.value
                             );
                     $.post("actions.php", {act: 30, 'data[]': data, id: id, s: 1},
-                    function (dt) {
-                        if (dt == 0)
-                        {
-                            window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
-                        } else {
-                            alert(dt);
-                        }
-                    });
+                            function (dt) {
+                                if (dt == 0)
+                                {
+                                    window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
+                                } else {
+                                    alert(dt);
+                                }
+                            });
                 }
             }
             function cerrar()
@@ -135,18 +135,19 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 grid.style.visibility = "hidden";
                 parent.document.getElementById('bottomFrame').src = '';
                 parent.document.getElementById('contenedor2').rows = "*,0%";
+                
             }
             function cancelar() {
                 if (orc_id.value.length > 0) {
                     $.post("actions.php", {act: 32, id: orc_id.value},
-                    function (dt) {
-                        if (dt == 0)
-                        {
-                            cerrar();
-                        } else {
-                            alert(dt);
-                        }
-                    });
+                            function (dt) {
+                                if (dt == 0)
+                                {
+                                    cerrar();
+                                } else {
+                                    alert(dt);
+                                }
+                            });
                 } else {
                     cerrar();
                 }
@@ -175,14 +176,14 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                     fields.push(des);
                 });
                 $.post("actions.php", {act: 83, id: id, 'fields[]': fields, s: 1},
-                function (dt) {
-                    if (dt == 0) {
-                        cerrar();
+                        function (dt) {
+                            if (dt == 0) {
+                                cerrar();
 
-                    } else {
-                        alert(dt);
-                    }
-                });
+                            } else {
+                                alert(dt);
+                            }
+                        });
             }
             function save_head() {
                 if (emp_id.value != '0' && cli_id.value != '0' && orc_fecha_entrega.value != '0' && orc_factura.value.length > 0) {
@@ -207,42 +208,42 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                             iva
                             )
                     $.post("actions.php", {act: 29, 'data[]': data, id: orc_codigo.value},
-                    function (dt) {
-                        if (dt == 0) {
-                            window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
-                        } else {
-                            alert(dt);
-                        }
-                    });
+                            function (dt) {
+                                if (dt == 0) {
+                                    window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
+                                } else {
+                                    alert(dt);
+                                }
+                            });
                 }
             }
             function del(id) {
                 if (confirm("Desea Eliminar Este Elemento?")) {
                     $.post("actions.php", {act: 31, id: id},
-                    function (dt) {
-                        if (dt == 0)
-                        {
-                            window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
-                        } else {
-                            alert(dt);
-                        }
+                            function (dt) {
+                                if (dt == 0)
+                                {
+                                    window.location = "Form_i_reg_mp.php?orc_codigo=" + orc_codigo.value;
+                                } else {
+                                    alert(dt);
+                                }
 
-                    });
+                            });
                 }
             }
             function datos(id) {
                 $.post("actions.php", {act: 26, mp: id},
-                function (dt) {
-                    det = dt.split('&');
-                    descripcion.innerHTML = det[0];
-                    unidad.innerHTML = det[2];
-                    mp_id.value = det[8];
-                    codigo.value = det[7];
-                });
+                        function (dt) {
+                            det = dt.split('&');
+                            descripcion.innerHTML = det[0];
+                            unidad.innerHTML = det[2];
+                            mp_id.value = det[8];
+                            codigo.value = det[7];
+                        });
             }
 
             function valor_total() {
-                orc_det_vt.value = (orc_det_cant.value * orc_det_vu.value).toFixed(1);
+                orc_det_vt.value = (orc_det_cant.value * orc_det_vu.value).toFixed(2);
             }
 
             function imprimir() {
@@ -310,21 +311,21 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             <thead>
                 <tr>
                     <th colspan="8" >
-                        INGRESO DE FACTURA DE INGRESO DE MATERIA PRIMA
+                        INGRESO DE MATERIA PRIMA
                         <font class="cerrar"  onclick="cerrar()" title="Salir del Formulario">&#X00d7;</font>
                     </th>
                 </tr>
             </thead>
             <tbody id='encabezado'>
                 <tr>
-                    <td >Fabrica:</td>
-                    <td>    
+                    <td hidden="">Fabrica:</td>
+                    <td hidden="">    
                         <select id="emp_id" onchange="save_head()" style="width:200px"  >
-                            <option value="0">Elija Una Fabrica</option>
+
                             <?php
                             $cns_emp = $Set->lista_fabricas();
                             while ($rst_emp = pg_fetch_array($cns_emp)) {
-                                echo "<option $sel value='$rst_emp[emp_id]'>$rst_emp[emp_descripcion]</option>";
+                                echo "<option $sel value='5'>$rst_emp[emp_descripcion]</option>";
                             }
                             ?>
                         </select>
@@ -373,8 +374,8 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                     </td>
                 </tr>
                 <tr>
-                    <td>Condicion_Pago:</td>
-                    <td>
+                    <td hidden="">Condicion_Pago:</td>
+                    <td hidden="">
                         <select id="orc_condicion_pago" style="width:200px" onchange="save_head()" >
                             <option value="CONTADO">CONTADO</option>
                             <option value="A 30 DIAS">A 30 DIAS</option>
@@ -384,20 +385,20 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                             <option value="A 150 DIAS">A 150 DIAS</option>
                         </select>
                     </td>
-                    <td>Direccion de Entrega:</td>
-                    <td colspan="5">
+                    <td hidden="">Direccion de Entrega:</td>
+                    <td hidden=""colspan="5">
                         <input type="text" id="orc_direccion_entrega" style="width:100%" value="<?php echo $rst_h[orc_direccion_entrega] ?>" onchange="save_head()" />
                     </td>
                 </tr>
                 <tr>
-                    <td>Factura #:</td>
+                    <td>Ingreso #:</td>
                     <td >
-                        <input type="text" id="orc_factura"   size="20"  value="<?php echo $rst_h[orc_factura] ?>" onchange="save_head()" />
+                        <input type="text" id="orc_factura" maxlength="17"  size="20"  value="<?php echo $rst_h[orc_factura] ?>" onchange="save_head()" />
                     </td>
-                    <td>
+                    <td hidden="">
                         Guia de Recepcion:
-                    </td>
-                    <td colspan="5">
+                    </td >
+                    <td hidden="" colspan="5">
                         <input type="text"  id="orc_guia_recepcion" value="<?php echo $rst_h[orc_guia_recepcion] ?>" onchange="save_head()" />
                     </td>
                 </tr>
@@ -406,7 +407,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 <tr>
                     <th>Item</th>
                     <th>Descripcion</th>
-                    <th>Referencia</th>            
+                    <th>Codigo</th>            
                     <th>Unidad</th>
                     <th>Cantidad</th>
                     <th>Valor_U</th>
@@ -436,12 +437,12 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                     ?>
                     <tr>
                         <td align="right"><?php echo $n ?></td>
+                        <td id='referencia<?php echo $n ?>'><?php echo $rst[mp_referencia] ?></td>  
                         <td id='codigo<?php echo $n ?>'><?php echo $rst[mp_codigo] ?></td>
-                        <td id='referencia<?php echo $n ?>'><?php echo $rst[mp_referencia] ?></td>          
                         <td id='unidad<?php echo $n ?>'><?php echo $rst[mp_unidad] ?></td>
                         <td id='cantidad<?php echo $n ?>'align="right"><?php echo number_format($rst[orc_det_cant], 1) ?></td>
-                        <td id='v_unitario<?php echo $n ?>'align="right"><?php echo number_format($rst[orc_det_vu], 1) ?></td>
-                        <td id='v_total<?php echo $n ?>'align="right" class="sbtls" ><?php echo number_format($rst[orc_det_vt], 1) ?></td>
+                        <td id='v_unitario<?php echo $n ?>'align="right"><?php echo number_format($rst[orc_det_vu], 2) ?></td>
+                        <td id='v_total<?php echo $n ?>'align="right" class="sbtls" ><?php echo number_format($rst[orc_det_vt], 2) ?></td>
                         <td id='no' align="center">
                             <?php
                             if ($Prt->delete == 0) {
@@ -457,7 +458,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 }
                 $t_desc = $stb * $rst_h[orc_descuento] / 100;
                 if ($rst_h[orc_iva] == 0) {
-                    $iva12 = ($stb - $t_desc) * 0.12;
+                    $iva12 = ($stb - $t_desc) * 0.14;
                     $chk_iva = 'checked';
                 } else {
                     $iva12 = 0;
@@ -484,7 +485,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 </tr>
                 <tr>
                     <td colspan="6" align="right">
-                        <font style="float:right  ">IVA 12%:</font>
+                        <font style="float:right  ">IVA 14%:</font>
                         <input type="checkbox" id="iva_aplica" <?php echo $chk_iva ?> style="float:right" onclick="save_head()"  />                        
                     </td>
                     <td class="sbtls" align="right">

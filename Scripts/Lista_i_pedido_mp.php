@@ -123,7 +123,7 @@ if (isset($_GET[txt])) {
                 <tr>
                     <th colspan="5">Documento</th>
                     <th colspan="4">Materia Prima</th>
-                    <th colspan="2">Solicitado</th>
+                    <th >Solicitado</th>
                     <th></th>
                 </tr>
                 <tr>
@@ -137,7 +137,7 @@ if (isset($_GET[txt])) {
                     <th>Presentacion</th>
                     <th>Unidad</th>
                     <th>Cantidad</th>
-                    <th>Peso</th>
+                    <!--<th>Peso</th>-->
                     <th>Acciones</th>
                 </tr>  
 
@@ -159,7 +159,7 @@ if (isset($_GET[txt])) {
                         <td><?php echo $rst[mp_presentacion] ?></td>
                         <td><?php echo $rst[mp_unidad] ?></td>
                         <td align="right"><?php echo number_format($rst[ped_det_cant], 2) ?></td>
-                        <td align="right"><?php echo number_format($rst[ped_det_peso], 2) ?></td>
+                        <!--<td align="right"><?php echo number_format($rst[ped_det_peso], 2) ?></td>-->
 
                         <td align="center">
                             <?php

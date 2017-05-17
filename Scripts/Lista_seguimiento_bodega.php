@@ -204,7 +204,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" ><?php echo "ORDENES DE PEDIDO DE VENTA " . $bodega ?></center>
+                <center class="cont_title" ><?php echo "ORDENES DE PEDIDO DE CORTE"?></center>
                 <center class="cont_finder">
                     <div style="float:right;margin-top:0px;padding:7px;">
                         <?php

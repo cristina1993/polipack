@@ -3,6 +3,8 @@ include_once '../Clases/clsSetting.php';
 include_once '../Includes/permisos.php';
 $Set = new Set();
 $id = $_GET[id];
+$txt = $_GET[txt];
+$emp = $_GET[emp_id];
 if (isset($_GET[id])) {
     $rst = pg_fetch_array($Set->lista_un_mp($id));
 } else {
@@ -21,15 +23,15 @@ if (isset($_GET[id])) {
                 var data = Array(
                         fbc_id.value,
                         mpt_id.value,
-                        mp_codigo.value,
-                        mp_referencia.value,
-                        mp_pro1.value,
-                        mp_pro2.value,
-                        mp_pro3.value,
-                        mp_pro4.value,
-                        mp_obs.value,
-                        mp_unidad.value,
-                        mp_presentacion.value);
+                        mp_codigo.value.toUpperCase(),
+                        mp_referencia.value.toUpperCase(),
+                        mp_pro1.value.toUpperCase(),
+                        mp_pro2.value.toUpperCase(),
+                        mp_pro3.value.toUpperCase(),
+                        mp_pro4.value.toUpperCase(),
+                        mp_obs.value.toUpperCase(),
+                        mp_unidad.value.toLowerCase(),
+                        mp_presentacion.value.toUpperCase());
                 var fields = Array();
                 $("#tbl_form").find(':input').each(function () {
                     var elemento = this;
@@ -56,7 +58,7 @@ if (isset($_GET[id])) {
                 grid.style.visibility = "hidden";
                 parent.document.getElementById('bottomFrame').src = '';
                 parent.document.getElementById('contenedor2').rows = "*,0%";
-                parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_mp.php';
+                parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_mp.php?search=1&txt=<?php echo $txt?>&emp_id=<?php echo $emp?>';
 
             }
             function crea_codigo(fbc, tp)
@@ -74,12 +76,17 @@ if (isset($_GET[id])) {
             }
         </script>
     </head>
+    <style>
+        *{
+            text-transform: uppercase;
+        }
+    </style>
     <body>
         <img id="charging" src="../img/load_bar.gif" />    
         <div id="cargando">Por Favor Espere...</div>
         <table id="tbl_form" cellpadding="0" >
             <thead>
-                <tr><th colspan="3" >MATERIA PRIMA</th></tr>
+                <tr><th colspan="3" >MATERIA PRIMA <font class="cerrar"  onclick="cancelar()" title="Salir del Formulario">&#X00d7;</font></th></tr>
             </thead>
             <tr>
                 <td>Fabrica:</td>
@@ -128,14 +135,15 @@ if (isset($_GET[id])) {
             <td><input type="text" readonly style="background:#ccc;" name="mp_codigo" id="mp_codigo" size="20" value="<?php echo $rst[mp_codigo] ?>" /></td>
         </tr>
         <tr>
-            <td>Referencia:</td>
-            <td><input type="text" name="mp_referencia" id="mp_referencia" size="45" value="<?php echo $rst[mp_referencia] ?>" /></td>
+            <td>Descripcion:</td>
+            <td><input type="text" name="mp_referencia" id="mp_referencia" size="35" value="<?php echo $rst[mp_referencia] ?>" /></td>
         </tr>
         <tr>
             <td>Unidad:</td>
             <td>
                 <select id="mp_unidad" style="text-transform:lowercase" >
                     <option value="kg">kg</option>
+                    <option value="unidad">unidad</option>
                     <option value="lb">lb</option>
                     <option value="gr">gr</option>
                     <option value="litro">litro</option>
@@ -155,7 +163,7 @@ if (isset($_GET[id])) {
             <td><input type="text" name="mp_presentacion" id="mp_presentacion" size="35" value="<?php echo $rst[mp_presentacion] ?>" /></td>
         </tr>
         <tr>
-            <td>Propiedad1:</td>
+            <td>Peso (kg):</td>
             <td><input type="text" name="mp_pro1" id="mp_pro1" size="35" value="<?php echo $rst[mp_pro1] ?>" /></td>
         </tr>
         <tr>

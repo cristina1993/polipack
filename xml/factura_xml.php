@@ -100,19 +100,22 @@ $xml.="<totalDescuento>" . round($rst_enc["total_descuento"], $round) . "</total
 $xml.="<totalConImpuestos>" . chr(13);
 $base = 0;
 while ($reg_detalle = pg_fetch_array($cns_det)) {
-    if($reg_detalle[iva]==12){
-        $codPorc=2;
-    }else{
-        $codPorc=0;
-    }
+ //   if($reg_detalle[iva]==14){
+        $codPorc=3;
+  //  }
+
+//else {
+  //      $codPorc=0;
+  //  }
     
     $base = $base + round($reg_detalle["precio_total"], $round);
 }
-    if($codPorc==2){
-        $valo_iva=round($base * 12 / 100, $round);
-    }else{
-        $valo_iva=0.00;
-    }
+// if($codPorc==3){
+        $valo_iva=round($base * 14 / 100, $round);
+  //  }   
+ //else{
+   //     $valo_iva=0.00;
+    //}
 
 $xml.="<totalImpuesto>" . chr(13);
 $xml.="<codigo>2</codigo>" . chr(13); //Tipo de Impuesto
@@ -143,15 +146,16 @@ while ($reg_detalle = pg_fetch_array($cns_det2)) {
     $xml.="<impuestos>" . chr(13);
     $xml.="<impuesto>" . chr(13);
     $xml.="<codigo>2</codigo>" . chr(13);
-    if($reg_detalle[iva]==12){
-        $codPorc=2;
-        $valo_iva=round($reg_detalle["precio_total"] * 12 / 100, $round);
-    }else{
-        $codPorc=0;
-        $valo_iva=0.00;
-    }
+ //   if($reg_detalle[iva]==14){
+        $codPorc=3;
+        $valo_iva=round($reg_detalle["precio_total"] * 14 / 100, $round);
+  //  }
+//	else  {
+  //      $codPorc=0;
+    //    $valo_iva=0.00;
+    //}
     $xml.="<codigoPorcentaje>".$codPorc."</codigoPorcentaje>" . chr(13);
-    $xml.="<tarifa>" . $reg_detalle[iva] . "</tarifa>" . chr(13);
+    $xml.="<tarifa>" .'14' . "</tarifa>" . chr(13);
     $xml.="<baseImponible>" . round($reg_detalle["precio_total"], $round) . "</baseImponible>" . chr(13);
     $xml.="<valor>" . $valo_iva . "</valor>" . chr(13);
     $xml.="</impuesto>" . chr(13);

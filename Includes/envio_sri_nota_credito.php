@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 set_time_limit(0);
 //date_default_timezone_set('America/Guayaquil');
@@ -31,7 +32,7 @@ class SRI {
 
     function documentos_noenviados() {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * from erp_nota_credito where (char_length(ncr_autorizacion)<>37 or  ncr_autorizacion is null ) and ncr_sts<>1 order by 1 DESC limit 1");
+            return pg_query("SELECT * from erp_nota_credito where (char_length(ncr_autorizacion)<>37 or  ncr_autorizacion is null ) and ncr_sts<>1 and nrc_total_valor>0 order by 1 DESC limit 1");
         }
     }
 
@@ -102,12 +103,12 @@ class SRI {
                     '$data[2]'  ) ");
         }
     }
+
     function lista_ambiente() {
         if ($this->con->Conectar() == true) {
             return pg_query("select * from erp_configuraciones");
         }
     }
-    
 
 }
 
@@ -202,8 +203,9 @@ class Auditoria {
     }
 
 }
+
 $Sri = new SRI();
-$rst_ambiente=  pg_fetch_array($Sri->lista_ambiente());
+$rst_ambiente = pg_fetch_array($Sri->lista_ambiente());
 $ambiente = $rst_ambiente['con_ambiente']; //Pruebas 1    Produccion 2
 $codigo = "12345678"; //Del ejemplo del SRI
 $tp_emison = "1"; //Emision Normal
@@ -212,7 +214,7 @@ $parametros = "<parametros>" .
         "<keyStorePassword>changeit</keyStorePassword>" .
         "<ambiente>" . $ambiente . "</ambiente>" .
         "<pathFirma>/var/www/FacturacionElectronica/usr006.p12</pathFirma>" .
-        "<passFirma>Noperti1952</passFirma>" .
+        "<passFirma>Nicco1952</passFirma>" .
         "</parametros>";
 ////////////////////////EJECUCION FUNCIONES Y CLASES///////////////////
 $Set = new Set();
@@ -223,50 +225,50 @@ $date1 = date_create($fnow . " " . $hnow);
 $date2 = date_create($rst_load['adt_date'] . " " . $rst_load['adt_time']);
 $diff = date_diff($date1, $date2);
 $mins = $diff->format("%i");
-        $doc = $Sri->recupera_datos('0605201501179000787100120010010000011161234567813', $ambiente);
-        $cns = $Sri->documentos_noenviados();
-        while ($rst = pg_fetch_array($cns)) {
-            if (strlen($rst['ncr_clave_acceso']) == 49) { //Si tiene clave de acceso
-                $doc1 = $Sri->recupera_datos($rst['ncr_clave_acceso'], $ambiente);
-                if (strlen($doc1[1]) == 37) { //Si recupera los datos
+$doc = $Sri->recupera_datos('0605201501179000787100120010010000011161234567813', $ambiente);
+$cns = $Sri->documentos_noenviados();
+while ($rst = pg_fetch_array($cns)) {
+    if (strlen($rst['ncr_clave_acceso']) == 49) { //Si tiene clave de acceso
+        $doc1 = $Sri->recupera_datos($rst['ncr_clave_acceso'], $ambiente);
+        if (strlen($doc1[1]) == 37 && $doc1[0] != 'NO AUTORIZADO') { //Si recupera los datos
+            if (!$Sri->actualizar_datos_documentos($doc1[0], $doc1[1], $doc1[2], $doc1[4], $rst['ncr_id'])) {
+                $data = array(1, date('Y-m-d'), date('H:i'), 'Recuperar Datos', 'Error', $rst['ncr_clave_acceso'], '', 'SuperAdmin');
+                if (!$Sri->registra_errores($data)) {
+                    echo pg_last_error();
+                }
+            }
+        } else {//Si no recupera los datos.
+            $doc = envio_electronico($rst['ncr_id'], $ambiente, $codigo, $tp_emison, $parametros);
+            $dc = explode('&', $doc);
+            $err1 = strpos($doc, 'CLAVE ACCESO REGISTRADA'); //Verfico Conxecion;
+            if (strlen($dc[0]) == 49 || $err1 == true) {
+                $doc1 = $Sri->recupera_datos($dc[0]);
+                if (strlen($doc1[1]) == 37) {
                     if (!$Sri->actualizar_datos_documentos($doc1[0], $doc1[1], $doc1[2], $doc1[4], $rst['ncr_id'])) {
                         $data = array(1, date('Y-m-d'), date('H:i'), 'Recuperar Datos', 'Error', $rst['ncr_clave_acceso'], '', 'SuperAdmin');
                         if (!$Sri->registra_errores($data)) {
                             echo pg_last_error();
                         }
                     }
-                } else {//Si no recupera los datos.
-                    $doc = envio_electronico($rst['ncr_id'], $ambiente, $codigo, $tp_emison, $parametros);
-                    $dc = explode('&', $doc);
-                    $err1 = strpos($doc, 'CLAVE ACCESO REGISTRADA'); //Verfico Conxecion;
-                    if (strlen($dc[0]) == 49 || $err1 == true) {
-                        $doc1 = $Sri->recupera_datos($dc[0]);
-                        if (strlen($doc1[1]) == 37) {
-                            if (!$Sri->actualizar_datos_documentos($doc1[0], $doc1[1], $doc1[2], $doc1[4], $rst['ncr_id'])) {
-                                $data = array(1, date('Y-m-d'), date('H:i'), 'Recuperar Datos', 'Error', $rst['ncr_clave_acceso'], '', 'SuperAdmin');
-                                if (!$Sri->registra_errores($data)) {
-                                    echo pg_last_error();
-                                }
-                            }
-                        }
-                    }
                 }
-            } else { //Si no tiene clave de acceso
-                $doc = envio_electronico($rst['ncr_id'], $ambiente, $codigo, $tp_emison, $parametros);
-                $dc = explode('&', $doc);
-                $err1 = strpos($doc, 'CLAVE ACCESO REGISTRADA'); //Verfifico Conxecion;
-                if (strlen($dc[0]) == 49 || $err1 == true) {
-                    $doc1 = $Sri->recupera_datos($dc[0]);
-                    if (strlen($doc1[1]) == 37) {
-                        if (!$Sri->actualizar_datos_documentos($doc1[0], $doc1[1], $doc1[2], $doc1[4], $rst['ncr_id'])) {
-                            $data = array(1, date('Y-m-d'), date('H:i'), 'Recuperar Datos', 'Error', $rst['ncr_clave_acceso'], '', 'SuperAdmin');
-                            if (!$Sri->registra_errores($data)) {
-                                echo pg_last_error();
-                            }
-                        }
+            }
+        }
+    } else { //Si no tiene clave de acceso
+        $doc = envio_electronico($rst['ncr_id'], $ambiente, $codigo, $tp_emison, $parametros);
+        $dc = explode('&', $doc);
+        $err1 = strpos($doc, 'CLAVE ACCESO REGISTRADA'); //Verfifico Conxecion;
+        if (strlen($dc[0]) == 49 || $err1 == true) {
+            $doc1 = $Sri->recupera_datos($dc[0]);
+            if (strlen($doc1[1]) == 37) {
+                if (!$Sri->actualizar_datos_documentos($doc1[0], $doc1[1], $doc1[2], $doc1[4], $rst['ncr_id'])) {
+                    $data = array(1, date('Y-m-d'), date('H:i'), 'Recuperar Datos', 'Error', $rst['ncr_clave_acceso'], '', 'SuperAdmin');
+                    if (!$Sri->registra_errores($data)) {
+                        echo pg_last_error();
                     }
                 }
             }
+        }
+    }
 }
 
 function envio_electronico($id, $ambiente, $codigo, $tp_emison, $parametros) {
@@ -294,7 +296,7 @@ function envio_electronico($id, $ambiente, $codigo, $tp_emison, $parametros) {
     $ems = $txem . $rst_emi['cod_establecimiento_emisor'];
     $pt_ems = $txpe . $rst_emi['cod_punto_emision'];
 
-    $fecha = date_format(date_create($rst['nrc_fecha_emision']), 'd/m/Y');
+    $fecha = date_format(date_create($rst['ncr_fecha_emision']), 'd/m/Y');
 
     $ndoc = explode('-', $rst['ncr_numero']);
     $secuencial = $ndoc[2];
@@ -374,7 +376,7 @@ function envio_electronico($id, $ambiente, $codigo, $tp_emison, $parametros) {
     //$xml.="<fechaEmisionDocSustento>" . date_format(date_create($rst['ncr_fecha_emi_comp']), 'd/m/Y') . "</fechaEmisionDocSustento>" . chr(13);
 
     $xml.="<fechaEmisionDocSustento>" . $rst['ncr_fecha_emi_comp'] . "</fechaEmisionDocSustento>" . chr(13);
-    
+
     $xml.="<totalSinImpuestos>" . round($rst['ncr_subtotal12'] + $rst['ncr_subtotal0'] + $rst['ncr_subtotal_no_iva'] + $rst['ncr_subtotal_ex_iva'], $round) . "</totalSinImpuestos>" . chr(13);
     $xml.="<valorModificacion>" . round($rst['nrc_total_valor'], $round) . "</valorModificacion>" . chr(13);
     $xml.="<moneda>DOLAR</moneda>" . chr(13);
@@ -479,31 +481,32 @@ function envio_electronico($id, $ambiente, $codigo, $tp_emison, $parametros) {
     $xml.="</infoAdicional>" . chr(13);
     $xml.="</notaCredito>" . chr(13);
 
+    
+//    print_r($xml);
     //echo htmlentities($xml);
     //echo htmlentities($parametros);
 
-    $fch = fopen("../xml_docs/" . $clave . ".xml", "w+o");
-    fwrite($fch, $xml);
-    fclose($fch);
-
-/*     $comando = 'java -jar /var/www/FacturacionElectronica/digitafXmlSigSend.jar "' . htmlentities($xml, ENT_QUOTES, "UTF-8") . '" "' . htmlentities($parametros, ENT_QUOTES, "UTF-8") . '"';
-     echo shell_exec($comando);
-    //$dat = $clave . '&' . shell_exec($comando);
-
-    $data = explode('&', $dat);
-    $sms = 0;
-    $env = 'Envio SRI';
-    $dt0 = $Adt->sanear_string($data[0]); //Clave de acceso
-    $dt1 = $Adt->sanear_string($data[1]); // Recepcion
-    $dt2 = $Adt->sanear_string($data[2]); // Autorizacion
-    $dt3 = $Adt->sanear_string($data[3]); // Mensaje
-    $dt4 = $Adt->sanear_string($data[4]); // Numero Autorizacion
-    $dt5 = $data[5];                      // Hora y fecha Autorizacion
-    $dt6 = '';                      // XML
-    $dat = array($dt0, $dt1, $dt2, $dt3, $dt4, $dt5, $dt6);
-    if (!$Sri->upd_documentos($dat, $id)) {
-        $sms = pg_last_error();
-        $env = 'Envio Fallido';
-    }
-    return $sms . '&' . $clave;*/
+//    $fch = fopen("../xml_docs/" . $clave . ".xml", "w+o");
+//    fwrite($fch, $xml);
+//    fclose($fch);
+//
+//    $comando = 'java -jar /var/www/FacturacionElectronica/digitafXmlSigSend.jar "' . htmlentities($xml, ENT_QUOTES, "UTF-8") . '" "' . htmlentities($parametros, ENT_QUOTES, "UTF-8") . '"';
+//    echo $dat = $clave . '&' . shell_exec($comando) . '<br>';
+//    $dat = $clave . '&' . shell_exec($comando);
+//
+//    $data = explode('&', $dat);
+//    $sms = 0;
+//    $env = 'Envio SRI';
+//    $dt0 = $Adt->sanear_string($data[0]); //Clave de acceso
+//    $dt1 = $Adt->sanear_string($data[1]); // Recepcion
+//    $dt2 = $Adt->sanear_string($data[2]); // Autorizacion
+//    $dt3 = $Adt->sanear_string($data[3]); // Mensaje
+//    $dt4 = $Adt->sanear_string($data[4]); // Numero Autorizacion
+//    $dt5 = $data[5];                      // Hora y fecha Autorizacion
+//    $dt6 = '';                      // XML
+//    $dat = array($dt0, $dt1, $dt2, $dt3, $dt4, $dt5, $dt6);
+//    if (!$Sri->upd_documentos($dat, $id)) {
+//        $sms = pg_last_error();
+//        $env = 'Envio Fallido';
+//    }
 }

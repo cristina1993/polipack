@@ -4,8 +4,18 @@ include_once '../Clases/clsClase_productos.php'; //cambiar clsClase_productos
 $Productos = new Clase_Productos();
 $cns_emp = $Productos->lst_emp();
 
-if (isset($_GET[txt1], $_GET[txt2], $_GET[txt3])) {
-    $cns = $Productos->lista_buscador(trim(strtoupper($_GET[txt1])), trim(strtoupper($_GET[txt2])), trim(strtoupper($_GET[txt3])));
+if (isset($_GET[search])) {
+    $codigo = trim(strtoupper($_GET[txt1]));
+    if (!empty($_GET[txt1])) {
+        $text = "and (pro_descripcion like '%$codigo%' or pro_codigo like '%$codigo%') and pro_estado= '0' order by pro_codigo";
+    } else if ($_GET[tipo]!='') {
+        $text = "and  pro_tipo=$_GET[tipo] and e.emp_id=$_GET[txt2] and pro_estado= '0' order by pro_codigo";
+    } else if (!empty($_GET[txt3])) {
+        $text = "and e.emp_id=$_GET[txt2] and pro_estado= '$_GET[txt3]' order by pro_codigo";
+    } else if (!empty($_GET[txt2])) {
+        $text = "and e.emp_id=$_GET[txt2] and pro_estado= '0' order by pro_codigo ";
+    }
+    $cns = $Productos->lista_buscador($text);
 } else if (isset($_GET[cod])) {
     $cns = $Productos->lista_uno(trim(strtoupper($_GET[cod])));
 }
@@ -38,19 +48,19 @@ $user = $_SESSION[usuid];
             {
                 frm = parent.document.getElementById('bottomFrame');
                 main = parent.document.getElementById('mainFrame');
-                parent.document.getElementById('contenedor2').rows = "*,50%";
+                parent.document.getElementById('contenedor2').rows = "*,80%";
                 switch (a)
                 {
                     case 0://Nuevo
-                        frm.src = '../Scripts/Form_i_productos.php';//Cambiar Form_productos
+                        frm.src = '../Scripts/Form_i_productos.php?txt1=' + txt1.value + '&txt2=' + emp_id.value + '&txt3=' + estado.value + '&tipo=' + tipo.value;//Cambiar Form_productos
                         look_menu();
                         break;
                     case 1://Editar
-                        frm.src = '../Scripts/Form_i_productos.php?id=' + id;//Cambiar Form_productos
+                        frm.src = '../Scripts/Form_i_productos.php?id=' + id + '&txt1=' + txt1.value + '&txt2=' + emp_id.value + '&txt3=' + estado.value + '&tipo=' + tipo.value;//Cambiar Form_productos
                         look_menu();
                         break;
                     case 2://Al dar dobleclik en la lista muestra formulario 
-                        frm.src = '../Scripts/Form_i_productos.php?id=' + id + '&x=' + x;//Cambiar Form_productos
+                        frm.src = '../Scripts/Form_i_productos.php?id=' + id + '&x=' + x + '&txt1=' + txt1.value + '&txt2=' + emp_id.value + '&txt3=' + estado.value + '&tipo=' + tipo.value;//Cambiar Form_productos
                         look_menu();
                         break;
                     case 4:
@@ -116,7 +126,7 @@ $user = $_SESSION[usuid];
         </style>
     </head>
     <body>
- 
+
         <img id="charging" src="../img/load_bar.gif" />    
         <div id="cargando">Por Favor Espere...</div>
         <div id="grid" onclick="alert(' ¡ Tiene Una Accion Habilitada ! \n Debe Guardar o Cancelar para habilitar es resto de la pantalla')"></div>        
@@ -137,35 +147,43 @@ $user = $_SESSION[usuid];
                 <center class="cont_finder">
                     <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo </a>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
-                        CODIGO/DESCRIPCION:<input type="text" name="txt1" size="15" />
+                        CODIGO/DESCRIPCION:<input type="text" id="txt1" name="txt1" size="15" />
                         FABRICA:
                         <select id="emp_id" name="txt2">
-                            <option value="">Seleccione</option>
                             <?php
                             while ($rst_emp = pg_fetch_array($cns_emp)) {
                                 echo "<option value='$rst_emp[emp_id]' >$rst_emp[emp_descripcion]</option>";
                             }
                             ?>  
                         </select>
-                        ESTADO:
-                        <select id="emp_id" name="txt3">
+                        TIPO:
+                        <select id="tipo" name="tipo">
                             <option value="">Seleccione</option>
-                            <option value="1">ACTIVO</option>
-                            <option value="0">INACTIVO</option>
+                            <option value="0">SEMIELABORADO</option>
+                            <option value="1">TERMINADO</option>
+
                         </select>
-                        <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
+                        ESTADO:
+                        <select id="estado" name="txt3">
+                            <option value="">Seleccione</option>
+                            <option value="0">ACTIVO</option>
+                            <option value="1">INACTIVO</option>
+                        </select>
+                        <button class="btn" title="Buscar" onclick="frmSearch.submit()" name="search">Buscar</button>
                     </form>  
                 </center>
             </caption>
             <!--Nombres de la columna de la tabla-->
             <thead>
             <th>No</th>
+            <th>Tipo</th>
             <th>Codigo</th>
             <th>Descripcion</th>
             <th>Unidad</th>
             <th>Ancho</th>
             <th>Largo</th>
-            <th>Gramaje</th>
+            <th>Densidad</th>
+            <th>Espesor</th>
             <th>Peso</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -178,36 +196,46 @@ $user = $_SESSION[usuid];
             $n = 0;
             while ($rst = pg_fetch_array($cns)) {
                 $n++;
+                switch ($rst['pro_tipo']) {
+                    case 0:
+                        $rst['pro_tipo'] = 'SEMIELABORADO';
+                        break;
+                    case 1:
+                        $rst['pro_tipo'] = 'TERMINADO';
+                        break;
+                }
                 ?>
                 <tr id="fila" ondblclick="auxWindow(2,<?php echo $rst[pro_id] ?>, 1)">
                     <td><?php echo $n ?></td>
+                    <td><?php echo $rst['pro_tipo'] ?></td>
                     <td><?php echo $rst['pro_codigo'] ?></td>
                     <td><?php echo $rst['pro_descripcion'] ?></td>
                     <td><?php echo $rst['pro_uni'] ?></td>
-                    <td><?php echo $rst['pro_ancho'] ?></td>
-                    <td><?php echo $rst['pro_largo'] ?></td>
-                    <td><?php echo $rst['pro_gramaje'] ?></td>
-                    <td><?php echo $rst['pro_peso'] ?></td>
+                    <td align="right"><?php echo $rst['pro_ancho'] *1000?></td>
+                    <td align="right"><?php echo $rst['pro_largo'] ?></td>
+                    <td align="right"><?php echo $rst['pro_gramaje'] ?></td>
+                    <td align="right"><?php echo $rst['pro_espesor'] ?></td>
+                    <td align="right"><?php echo $rst['pro_peso'] ?></td>
                     <td align="center" >
                         <?php
                         if ($user == 1) {
                             if ($rst['pro_estado'] == 2) {
                                 ?> 
-                                <img src = "../img/noshow.png" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 0, this)">
+                                <img src = "../img/noshow.png"  title="Mostrar producto" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 0, this)">
                                 <?php
                             } else {
                                 ?> 
-                                <img src = "../img/show.png" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 2, this)">
+                                <img src = "../img/show.png"  title="Ocultar producto" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 2, this)">
                                 <?php
                             }
                         }
                         if ($rst['pro_estado'] != 0) {
                             ?>  
-                            <img src = "../img/inactivo.png" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 0, this)">
+                            <img src = "../img/inactivo.png"  title="Activar producto" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 0, this)">
                             <?php
                         } else {
                             ?>
-                            <img src="../img/activo.png" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 1, this)">
+                            <img src="../img/activo.png"  title="Inactivar producto" width="16px" class="auxBtn" onclick = "auxWindow(4,<?php echo $rst[pro_id] ?>, 1, 1, this)">
                             <?php
                         }
                         ?>
@@ -216,12 +244,12 @@ $user = $_SESSION[usuid];
                         <?php
                         if ($Prt->delete == 0) {
                             ?>
-                            <img src="../img/b_delete.png"  class="auxBtn" onclick="del(<?php echo $rst[pro_id] ?>, 1)">
+                            <img src="../img/b_delete.png"   title="eliminar producto" class="auxBtn" onclick="del(<?php echo $rst[pro_id] ?>, 1)">
                             <?php
                         }
                         if ($Prt->edition == 0) {
                             ?>
-                            <img src="../img/upd.png"  class="auxBtn" onclick="auxWindow(1,<?php echo $rst[pro_id] ?>, 0)">
+                            <img src="../img/upd.png"   title="Editar producto" class="auxBtn" onclick="auxWindow(1,<?php echo $rst[pro_id] ?>, 0)">
                             <?php
                         }
                         ?>
@@ -239,4 +267,12 @@ $user = $_SESSION[usuid];
 
 </body>    
 </html>
+<script>
+    var emp = '<?php echo $_GET[txt2] ?>';
+    var est = '<?php echo $_GET[txt3] ?>';
+    var tip = '<?php echo $_GET[tipo] ?>';
+    $('#emp_id').val(emp);
+    $('#tipo').val(tip);
+    $('#estado').val(est);
+</script>
 

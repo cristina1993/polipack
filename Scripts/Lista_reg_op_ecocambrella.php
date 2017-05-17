@@ -2,6 +2,12 @@
 include_once '../Includes/permisos.php';
 include_once '../Clases/clsClase_reg_ecocambrella.php';
 $Set = new Clase_reg_ecocambrella();
+if (empty($_REQUEST[mod_id])) {
+    $md = pg_fetch_array($User->list_primer_opl($mod_id, $_SESSION[usuid]));
+    $mod = $md[opl_id];
+} else {
+    $mod = $_REQUEST[mod_id];
+}
 if (isset($_GET[fecha1], $_GET[fecha2])) {
     $txt = trim(strtoupper($_GET[txt]));
     $est = $_GET[estado];
@@ -43,21 +49,39 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                 grid.style.visibility = "visible";
             }
 
-            function auxWindow(a, id) {
+            function auxWindow(a, id, mod, data) {
                 frm = parent.document.getElementById('bottomFrame');
                 main = parent.document.getElementById('mainFrame');
+                var boxH = $(window).height() * 0.50;
+                var boxW = $(window).width() * 0.50;
+                var boxHF = (boxH - 25);
                 switch (a)
                 {
                     case 0://Nuevo
-                        frm.src = '../Scripts/Form_reg_op_ecocambrella.php?txt=' + $('#txt').val() + '&estado=' + $('#estado').val() + '&fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val();
-                        parent.document.getElementById('contenedor2').rows = "*,80%";
+                        frm.src = '../Scripts/Form_reg_op_ecocambrella.php?txt=' + $('#txt').val() + '&estado=' + $('#estado').val() + '&fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val() + '&mod_id=' + mod;
+                        parent.document.getElementById('contenedor2').rows = "*,100%";
                         look_menu();
                         break;
                     case 1://Editar
-                        frm.src = '../Scripts/Form_reg_op_ecocambrella.php?id=' + id + '&txt=' + $('#txt').val() + '&estado=' + $('#estado').val() + '&fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val();
-                        parent.document.getElementById('contenedor2').rows = "*,80%";
+                        wnd = "<iframe id='frmmodal' width='" + boxW + "' height='" + boxHF + "' src='../Reports/pdf_etiqueta_dinamica.php?mod=" + mod + "&data=" + data + "' frameborder='0' />";
                         break;
                 }
+                $.fallr.show({
+                    content: '<center>ETIQUETA</center>'
+                            + wnd,
+                    width: boxW,
+                    height: boxH,
+                    duration: 5,
+                    position: 'center',
+                    buttons: {
+                        button1: {
+                            text: '&#X00d7;',
+                            onclick: function () {
+                                $.fallr.hide();
+                            }
+                        }
+                    }
+                });
             }
 
 
@@ -100,7 +124,11 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             #tbl_aux tr{
                 border-bottom:solid 1px #ccc  ;
             }
-
+            .totales{
+                background:#ccc;
+                color:black;
+                font-weight:bolder; 
+            }
         </style>
     </head>
     <body>
@@ -115,15 +143,15 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     $cns_sbm = $User->list_primer_opl($mod_id, $_SESSION[usuid]);
                     while ($rst_sbm = pg_fetch_array($cns_sbm)) {
                         ?>
-                        <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>
+                        <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php?mod_id=$rst_sbm[opl_id]" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>
                         <?php
                     }
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" ><?php echo "REGISTRO DE PRODUCCION ECOCAMBRELLA" ?></center>
+                <center class="cont_title" ><?php echo "REGISTRO DE PRODUCCION CAST" ?></center>
                 <center class="cont_finder">
-                    <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo</a>
+                    <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0, 0, '<?php echo $mod ?>')" >Nuevo</a>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
                         BUSCAR POR:<input type="text" name="txt" size="15" id="txt" value="<?php echo $txt ?>"/>
                         <!--ESTADO:-->
@@ -145,10 +173,10 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             <!--Nombres de la columna de la tabla-->
             <thead>
                 <tr>
-                    <th colspan="4"></th>
-                    <th colspan="3">PRODUCTO PRIMARIO</th>
-                    <th colspan="3">PRODUCTO SECUNDARIO</th>
-                    <th colspan="3"></th>
+                    <th colspan="6"></th>
+                    <th colspan="2">CONFORME</th>
+                    <th colspan="2">INCONFORME</th>
+                    <!--<th></th>-->
                 </tr>
                 <tr>
                     <th>No</th>
@@ -156,14 +184,12 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     <th>REGISTRO</th>
                     <th>ORDEN</th>
                     <th>DESCRIPCION</th>
-                    <th>PESO TOTAL</th>
+                    <th>LOTE</th>
                     <th># ROLLOS</th>
-                    <th>DESCRIPCION</th>
-                    <th>PESO TOTAL</th>
+                    <th>PESO</th>
                     <th># ROLLOS</th>
-                    <th>DESPERDICIO</th>
-                    <th># OPERADOR</th>
-                    <th>ACCION</th>
+                    <th>PESO</th>
+                    <!--<th>Etiqueta</th>-->
                 </tr>
             </thead>
             <!------------------------------------->
@@ -173,37 +199,60 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                 $n = 0;
                 while ($rst = pg_fetch_array($cns)) {
                     $n++;
-                    $rst1 = pg_fetch_array($Set->lista_un_producto($rst[ord_pro_secundario]));
+//                    $rst1 = pg_fetch_array($Set->lista_un_producto($rst[ord_pro_secundario]));
+                    $data = array(
+                        $rst[ord_num_orden],
+                        $rst[pro_ancho],
+                        number_format($rst[rec_peso_primario], 2),
+                        $rst[pro_espesor],
+                        $rst[pro_largo],
+                        $rst[rec_lote],
+                        $rst[rec_estado]
+                    );
+                    if ($rst[rec_estado] == 0) {
+                        $pcon = $rst[rec_peso_primario];
+                        $rcon = $rst[rec_rollo_primario];
+                        $pincon = '';
+                        $rincon = '';
+                    } else if ($rst[rec_estado] == 3) {
+                        $pcon = '';
+                        $rcon = '';
+                        $pincon = $rst[rec_peso_primario];
+                        $rincon = $rst[rec_rollo_primario];
+                    }
                     echo "<tr>
                         <td>$n</td>
                         <td>$rst[rec_fecha] </td>
                         <td>$rst[rec_numero] </td>
                         <td>$rst[ord_num_orden] </td>
                         <td>$rst[pro_descripcion] </td>
-                        <td align='right'>" . number_format($rst[rec_peso_primario], 2) . "</td>
-                        <td align='right'>" . number_format($rst[rec_rollo_primario], 2) . "</td>
-                        <td>$rst1[pro_descripcion] </td>
-                        <td align='right'>" . number_format($rst[rec_peso_secundario], 2) . "</td>
-                        <td align='right'>" . number_format($rst[rec_rollo_secundario], 2) . "</td>
-                        <td align='right'>" . number_format($rst[rec_desperdicio], 2) . "</td>
-                        <td>$rst[rec_operador] </td>
-                        <td>";
-
-                    if ($Prt->delete == 0) {
-                        ?>
-                    <img src='../img/b_delete.png' width='20px' class='auxBtn' onclick="del('<?php echo $rst[rec_id]?>', '<?php echo $rst[rec_numero]?>')"/>
-                    <?PHP
-                }
-                if ($Prt->edition == 0) {
-                    echo "<img src='../img/upd.png'  class='auxBtn' width='20px' onclick='auxWindow(1, $rst[rec_id])'>";
-                }
-                echo "</td>
+                        <td>$rst[rec_lote] </td>
+                        <td align='right'>" . number_format($rcon, 0) . "</td>
+                        <td align='right'>" . number_format($pcon, 2) . "</td>
+                        <td align='right'>" . number_format($rincon, 0) . "</td>
+                        <td align='right'>" . number_format($pincon, 2) . "</td>
                     </tr>";
-            }
-            ?>
-        </tbody>
-    </table>            
-</body>    
+                    $tot_pcon+=$pcon;
+                    $tot_rcon+=$rcon;
+                    $tot_pincon+=$pincon;
+                    $tot_rincon+=$rincon;
+                }
+                echo "<tr>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'>Total</td>
+                        <td class='totales' align='right'>" . number_format($tot_rcon, 0) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_pcon, 2) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_rincon, 0) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_pincon, 2) . "</td>
+                 </tr>";
+                ?>
+            </tbody>
+        </table>            
+    </body>    
 </html>
 <script>
     var e = '<?php echo $est ?>';

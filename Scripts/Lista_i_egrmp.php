@@ -3,11 +3,26 @@ include_once '../Includes/permisos.php';
 include_once '../Clases/clsSetting.php';
 $Set = new Set();
 $vl_s = 0;
-if (isset($_GET[txt])) {
+if (isset($_GET[estado])) {
     $vl_s = 1;
-    $cns = $Set->lista_pedidos_mp_sts_search(0, trim(strtoupper($_GET[txt])));
+    $est = $_GET[estado];
+    if (!empty($_GET[txt])) {
+        $cns = $Set->lista_pedidos_mp_sts_search(0, trim(strtoupper($_GET[txt])));
+    } else {
+        switch ($est) {
+            case '0':
+                $cns = $Set->lista_pedidosmp_pendientes();
+                break;
+            case '1':
+                $cns = $Set->lista_pedidosmp_proceso();
+                break;
+            case '2':
+                $cns = $Set->lista_pedidosmp_entregado();
+                break;
+        }
+    }
 } else {
-    $cns = $Set->lista_pedidos_mp_sts(0);
+    $cns = $Set->lista_pedidosmp_pendientes();
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
@@ -57,7 +72,7 @@ if (isset($_GET[txt])) {
                     $.post("actions.php", {act: 20, id: id}, function (dt) {
                         if (dt == 0)
                         {
-                           parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_egrmp.php';
+                            parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_egrmp.php';
                         } else {
                             alert(dt);
                         }
@@ -100,6 +115,12 @@ if (isset($_GET[txt])) {
                 <center class="cont_finder">
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
                         Codigo:<input type="text" name="txt" size="15" />
+                        Estado:
+                        <select id="estado" name="estado">
+                            <option value="0">PENDIENTE</option>    
+                            <option value="1">EN PROCESO</option>    
+                            <option value="2">ENTREGADO</option>    
+                        </select>
                         <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
                         <a href="#" ><img src="../img/finder.png" /></a>                                                                    
                     </form>  
@@ -157,7 +178,7 @@ if (isset($_GET[txt])) {
                         </td>
                     </tr>  
                     <?PHP
-                } elseif ($sts != "Entregado") {
+                } else if ($sts != "Entregado") {
                     ?>
                     <tr>
                         <td><?php echo $n ?></td>
@@ -187,4 +208,8 @@ if (isset($_GET[txt])) {
 
 </body>    
 </html>
+<script>
+var est='<?php echo $est?>';
+$('#estado').val(est);
+</script>
 

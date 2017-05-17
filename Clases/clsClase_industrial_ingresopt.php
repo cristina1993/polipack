@@ -77,17 +77,17 @@ class Clase_industrial_ingresopt {
         }
     }
 
-    function lista_buscador_industrial_ingresopt($bod, $txt) {
+    function lista_buscador_industrial_ingresopt($txt) {
 
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT * FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c where m.trs_id=t.trs_id and m.cli_id=c.cli_id and t.trs_id=26 and m.bod_id=$bod  $txt order by m.mov_documento asc");
+            return pg_query("SELECT * FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c, erp_i_productos p where m.pro_id=p.pro_id and m.trs_id=t.trs_id and m.cli_id=c.cli_id and t.trs_id=26 $txt order by m.mov_documento asc");
         }
     }
 
-    function lista_num_productos($bod, $txt) {
+    function lista_num_productos($txt) {
 
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT pro_id, mov_tabla FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c where m.trs_id=t.trs_id and m.cli_id=c.cli_id and t.trs_id=26 and m.bod_id=$bod  $txt group by  mov_tabla,pro_id");
+            return pg_query("SELECT m.pro_id FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c, erp_i_productos p  where m.pro_id=p.pro_id and m.trs_id=t.trs_id and m.cli_id=c.cli_id and t.trs_id=26 $txt group by  m.pro_id");
         }
     }
 
@@ -186,16 +186,15 @@ ORDER BY p.pro_a");
 
     function lista_clientes_tipo($tp) {
         if ($this->con->Conectar() == true) {
-            return pg_query("select cli_id, trim(cli_apellidos || ' ' || cli_nombres || ' ' || cli_raz_social) as nombres  
+            return pg_query("select cli_id, trim(cli_raz_social) as nombres  
 from  erp_i_cliente 
-where cli_tipo <>'$tp'
 order by nombres");
         }
     }
 
     function lista_un_proveedor($id) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT cli_id, trim(cli_apellidos || ' ' || cli_nombres || ' ' || cli_raz_social) as nombres FROM  erp_i_cliente where cli_id=$id");
+            return pg_query("SELECT cli_id, trim(cli_raz_social) as nombres FROM  erp_i_cliente where cli_id=$id");
         }
     }
 
@@ -248,18 +247,7 @@ ORDER BY p.pro_a");
     function lista_productos_total($ems) {
         if ($this->con->Conectar() == true) {
 
-            if ($ems == 1) { //Nopeti (todos los comerciales + paddin y plumos)
-                $query = "(SELECT '1' as tbl,id as id,pro_ac as lote,pro_a as codigo,pro_b as descripcion FROM  erp_productos where pro_estado=0
-                           union
-                           SELECT '0' as tbl, pro_id as id, '' as lote ,pro_codigo as codigo,pro_descripcion as descripcion FROM erp_i_productos where pro_estado=0 and (  emp_id=3 or emp_id=4)) order by descripcion";
-            } elseif ($ems == 10) { //Industrial solo los industriales
-                $query = "(SELECT '0' as tbl, pro_id as id, '' as lote ,pro_codigo as codigo,pro_descripcion as descripcion FROM  erp_i_productos where pro_estado=0) order by descripcion";
-            } else { //Locales todos
-                $query = "(SELECT '1' as tbl,id as id,pro_ac as lote,pro_a as codigo,pro_b as descripcion FROM  erp_productos where pro_estado=0
-                              union
-                              SELECT '0' as tbl, pro_id as id, '' as lote ,pro_codigo as codigo,pro_descripcion as descripcion FROM  erp_i_productos where pro_estado=0) order by descripcion";
-            }
-            return pg_query($query);
+            return pg_query("SELECT * FROM  erp_i_productos where pro_estado=0 ORDER BY pro_codigo");
         }
     }
 
@@ -313,7 +301,9 @@ ORDER BY p.pro_a");
                 mov_tabla,                
                 mov_fecha_registro,
                 mov_hora_registro,
-                mov_usuario
+                mov_usuario,
+                mov_pago,
+                mov_flete
             )
     VALUES ('$data[0]',
             '$data[1]',
@@ -326,7 +316,9 @@ ORDER BY p.pro_a");
             '$data[8]',
             '$f',
             '$h',
-            '$usu')");
+            '$usu',
+            '$data[9]',
+            '$data[10]')");
         }
     }
 
@@ -506,5 +498,10 @@ GROUP BY ped_local, ped_femision, ped_nom_cliente, cli_id");
         }
     }
     
+    function lista_orden($id) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_orden_produccion_padding where opp_codigo='$id'");
+        }
+    }
 }
 ?>

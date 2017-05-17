@@ -50,10 +50,10 @@ if (empty($tp)) {
             break;
     }
 }
-$fch = fopen("../xml_docs/" . $clave . ".xml", "w+o");
+$fch = fopen("/var/www/html/noperti2/xml_docs/" . $clave . ".xml", "w+o");
 fwrite($fch, $xml);
 fclose($fch);
-$file = '../xml_docs/' . $clave . '.xml';
+$file = '/var/www/html/noperti2/xml_docs/' . $clave . '.xml';
 header("Content-type:xml");
 header("Content-length:" . filesize($file));
 header("Content-Disposition: attachment; filename=$clave.xml");
@@ -155,7 +155,11 @@ function factura($clave) {
     while ($reg_detalle = pg_fetch_array($cns_det)) {
         if ($reg_detalle[dfc_iva] == 12) {
             $codPorc = 2;
-        } else {
+        } 
+        else if ($reg_detalle[dfc_iva] == 14) {
+            $codPorc = 3;
+        } 
+else {
             $codPorc = 0;
         }
 
@@ -163,7 +167,11 @@ function factura($clave) {
     }
     if ($codPorc == 2) {
         $valo_iva = round($base * 12 / 100, $round);
-    } else {
+    } 
+    else if ($codPorc == 3) {
+        $valo_iva = round($base * 14 / 100, $round);
+    } 
+    else {
         $valo_iva = 0.00;
     }
 
@@ -200,7 +208,13 @@ function factura($clave) {
             $codPorc = 2;
             $valo_iva = round($reg_detalle[dfc_precio_total] * 12 / 100, $round);
             $tarifa = 12;
-        } else {
+        } 
+ 	else if ($reg_detalle[dfc_iva] == 14) {
+            $codPorc = 3;
+            $valo_iva = round($reg_detalle[dfc_precio_total] * 14 / 100, $round);
+            $tarifa = 14;
+        }
+	else {
             $tarifa = 0;
             $codPorc = 0;
             $valo_iva = 0.00;
@@ -348,6 +362,17 @@ function nota_credito($clave) {
         $xml.="<valor>" . $valo_iva . "</valor>" . chr(13);
         $xml.="</totalImpuesto>" . chr(13);
     }
+ 	if ($rst[ncr_subtotal12] != 0) {
+        $codPorc = 3;
+        $base = $rst[ncr_subtotal12];
+        $valo_iva = round(($base * 14) / 100, $round);
+        $xml.="<totalImpuesto>" . chr(13);
+        $xml.="<codigo>2</codigo>" . chr(13); //Tipo de Impuesto
+        $xml.="<codigoPorcentaje>" . $codPorc . "</codigoPorcentaje>" . chr(13); //Codigo del
+        $xml.="<baseImponible>" . round($base, $round) . "</baseImponible>" . chr(13);
+        $xml.="<valor>" . $valo_iva . "</valor>" . chr(13);
+        $xml.="</totalImpuesto>" . chr(13);
+    }
     if ($rst[ncr_subtotal0] != 0) {
         $codPorc = 0;
         $base = $rst[ncr_subtotal0];
@@ -463,7 +488,14 @@ function nota_credito($clave) {
 //            $valo_iva = round($reg_detalle1["dnc_precio_total"] + $reg_detalle1["dnc_ice"] * 12 / 100, $round);
             $valo_iva = round($reg_detalle1[dnc_precio_total] * 12 / 100, $round);
             $tarifa = 12;
-        } else if ($reg_detalle1[dnc_iva] == '0') {
+        } 
+	else if ($reg_detalle1[dnc_iva] == '14') {
+            $codPorc = 3;
+//            $valo_iva = round($reg_detalle1["dnc_precio_total"] + $reg_detalle1["dnc_ice"] * 12 / 100, $round);
+            $valo_iva = round($reg_detalle1[dnc_precio_total] * 14 / 100, $round);
+            $tarifa = 14;
+        }
+	else if ($reg_detalle1[dnc_iva] == '0') {
             $codPorc = 0;
             $valo_iva = 0.00;
             $tarifa = 0;
@@ -624,7 +656,14 @@ function nota_debito($clave) {
         $base = round($rst_enc[ndb_subtotal12], $round);
         $valo_iva = round(($base * 12) / 100, $round);
         $tarifa = '12.00';
-    } else if ($rst_enc[ndb_subtotal0] != 0) {
+    } 
+	else if ($rst_enc[ndb_subtotal12] != 0) {
+        $codPorc = 3;
+        $base = round($rst_enc[ndb_subtotal12], $round);
+        $valo_iva = round(($base * 14) / 100, $round);
+        $tarifa = '14.00';
+    } 	
+	else if ($rst_enc[ndb_subtotal0] != 0) {
         $codPorc = 0;
         $base = round($rst_enc[ndb_subtotal0], $round);
         $valo_iva = '0.00';

@@ -97,7 +97,11 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             #tbl_aux tr{
                 border-bottom:solid 1px #ccc  ;
             }
-
+            .totales{
+                background:#ccc;
+                color:black;
+                font-weight:bolder; 
+            }
         </style>
     </head>
     <body>
@@ -118,7 +122,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" ><?php echo "REGISTRO DE PRODUCCION PADDING" ?></center>
+                <center class="cont_title" ><?php echo "REGISTRO DE BOBINADO/CORTE" ?></center>
                 <center class="cont_finder">
                     <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo</a>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
@@ -134,9 +138,9 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             <!--Nombres de la columna de la tabla-->
             <thead>
                 <tr>
-                    <th colspan="4"></th>
-                    <th colspan="3">PRODUCTO PRIMARIO</th>
-                    <th colspan="3"></th>
+                    <th colspan="6"></th>
+                    <th colspan="3">CONFORME</th>
+                    <th colspan="2">INCONFORME</th>
                 </tr>
                 <tr>
                     <th>No</th>
@@ -144,46 +148,86 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     <th>REGISTRO</th>
                     <th>ORDEN</th>
                     <th>DESCRIPCION</th>
-                    <th>PESO TOTAL</th>
-                    <th># CANTIDAD</th>
-                    <th>DESPERDICIO</th>
+                    <th>LOTE</th>
+                    <th style="width: 100px">CAJAS</th>
+                    <th style="width: 100px"># ROLLOS</th>
+                    <th style="width: 100px">PESO</th>
+                    <th style="width: 100px"># ROLLOS</th>
+                    <th style="width: 100px">PESO</th>
+                    
+<!--                    <th>DESPERDICIO</th>
                     <th># OPERADOR</th>
-                    <th>ACCION</th>
+                    <th>ACCION</th>-->
                 </tr>
             </thead>
             <!------------------------------------->
             <tbody id="tbody">
                 <?PHP
                 $n = 0;
+                $tot_pcon = 0;
+                $tot_rcon = 0;
+                $tot_pincon = 0;
+                $tot_rincon = 0;
                 while ($rst = pg_fetch_array($cns)) {
                     $n++;
+                    if ($rst[rpa_estado] == 0) {
+                        $pcon = $rst[rpa_peso];
+                        $rcon = $rst[rpa_rollo];
+                        $pincon = '';
+                        $rincon = '';
+                    } else if ($rst[rpa_estado] == 3) {
+                        $pcon = '';
+                        $rcon = '';
+                        $pincon = $rst[rpa_peso];
+                        $rincon = $rst[rpa_rollo];
+                    }
+                    $cja = round($rcon) / $rst[opp_velocidad];
+                    $dt = explode('.', $cja);
+                    if (empty($rst[opp_velocidad])) {
+                        $cnt_cj =0;
+                    } else {
+                        if (!empty($dt[1])) {
+                            $cnt_cj = round($dt[0]);
+                        } else {
+                            $cnt_cj = $cja;
+                        }
+                    }
+                    $t_caja+=$cnt_cj;
                     echo "<tr>
                         <td>$n</td>
                         <td>$rst[rpa_fecha] </td>
                         <td>$rst[rpa_numero] </td>
                         <td>$rst[opp_codigo] </td>
                         <td>$rst[pro_descripcion] </td>
-                        <td align='right'>" . number_format($rst[rpa_peso], 2) . "</td>
-                        <td align='right'>" . number_format($rst[rpa_rollo], 2) . "</td>
-                        <td align='right'>" . number_format($rst[rpa_desperdicio], 2) . "</td>
-                        <td>$rst[rpa_operador] </td>
-                        <td>";
-
-                    if ($Prt->delete == 0) {
-                        ?>
-                    <img src='../img/b_delete.png' width='20px' class='auxBtn' onclick="del('<?php echo $rst[rpa_id] ?>', '<?php echo $rst[rpa_numero] ?>')"/>
-                    <?PHP
-                }
-                if ($Prt->edition == 0) {
-                    echo "<img src='../img/upd.png'  class='auxBtn' width='20px' onclick='auxWindow(1, $rst[rpa_id])'>";
-                }
-                echo "</td>
+                        <td>$rst[rpa_lote] </td>
+                        <td align='right'>" . number_format($cnt_cj, 0) . "</td>
+                        <td align='right'>" . number_format($rcon, 0) . "</td>
+                        <td align='right'>" . number_format($pcon, 2) . "</td>
+                        <td align='right'>" . number_format($rincon, 0) . "</td>
+                        <td align='right'>" . number_format($pincon, 2) . "</td>
                     </tr>";
-            }
-            ?>
-        </tbody>
-    </table>            
-</body>    
+                    $tot_pcon+=$pcon;
+                    $tot_rcon+=$rcon;
+                    $tot_pincon+=$pincon;
+                    $tot_rincon+=$rincon;
+                }
+                echo "<tr>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'></td>
+                        <td class='totales'>Total</td>
+                        <td class='totales' align='right'>" . number_format($t_caja, 0) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_rcon, 0) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_pcon, 2) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_rincon, 0) . "</td>
+                        <td class='totales' align='right'>" . number_format($tot_pincon, 2) . "</td>
+                 </tr>";
+                ?>
+            </tbody>
+        </table>            
+    </body>    
 </html>
 <script>
     var e = '<?php echo $est ?>';

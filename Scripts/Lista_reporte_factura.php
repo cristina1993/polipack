@@ -38,15 +38,15 @@ if (isset($_GET[txt])) {
                 Calendar.setup({inputField: "desde", ifFormat: "%Y-%m-%d", button: "im-desde"});
                 Calendar.setup({inputField: "hasta", ifFormat: "%Y-%m-%d", button: "im-hasta"});
 
-                $("#mensaje").load('../Includes/envio_sri.php');
+              //  $("#mensaje").load('../Includes/envio_sri.php');
 
 
-                $('#email').click(function () {
-                    $('#mensaje').html("<img src='../img/load_circle2.gif' width='30px' />");
-                    $('#mensaje').load("../Includes/envio_mail_factura.php", function (r, s, xhr) {
-                        $(this).html('email: ' + s);
-                    });
-                });
+            //    $('#email').click(function () {
+            //        $('#mensaje').html("<img src='../img/load_circle2.gif' width='30px' />");
+             //       $('#mensaje').load("../Includes/envio_mail_factura.php", function (r, s, xhr) {
+              //          $(this).html('email: ' + s);
+              //      });
+              //  });
                 $('#facturacion').click(function () {
                     $('#mensaje').html("<img src='../img/load_circle2.gif' width='30px' />");
                     $('#mensaje').load("../Includes/envio_sri.php", function (r, s, xhr) {
@@ -184,26 +184,27 @@ if (isset($_GET[txt])) {
             <!--Nombres de la columna de la tabla-->
             <thead>
                 <tr>
-                    <th colspan="10">FACTURA</th>
+                    <th colspan="11">FACTURA</th>
                     <th colspan="7">NOTA DE CREDITO</th>
                     <th colspan="4">RETENCION</th>
                 </tr>
                 <tr>
                     <th>No</th>
                     <th>FECHA</th>
+		    <th>F.VENCIMIENTO</th>
                     <th># Doc</th>
                     <th>CLIENTE</th>
                     <th>RUC</th>
-                    <th>SUBTOTAL 12%</th>
+                    <th>SUBTOTAL 14%</th>
                     <th>SUBTOTAL 0%</th>
                     <th>DESCUENTO_$</th>
-                    <th>IVA 12%</th>
+                    <th>IVA 14%</th>
                     <th>TOTAL_$</th>
                     <th># DOC</th>
-                    <th>SUBTOTAL 12%</th>
+                    <th>SUBTOTAL 14%</th>
                     <th>SUBTOTAL 0%</th>
                     <th>DESCUENTO_$</th>
-                    <th>IVA 12%</th>
+                    <th>IVA 14%</th>
                     <th>TOTAL_$</th>
                     <th>FACTURA-NC</th>
                     <th>#DOC</th>
@@ -238,6 +239,7 @@ if (isset($_GET[txt])) {
 //CONTROL DE ERRORES ***********************
                     $iva0 = number_format($rst[fac_subtotal0] + $rst[fac_subtotal_ex_iva] + $rst[fac_subtotal_no_iva], 2);
                     $rst_nc = pg_fetch_array($Fac->lista_notcre_factura($rst[fac_numero], 1));//Notas de credito
+		    $rst1 = pg_fetch_array($Fac->lista_f_vencimiento($rst[fac_id]));//fecha vencimiento
                     $rst_ret = pg_fetch_array($Fac->lista_retencion_factura($rst[fac_numero], 1));//Retenciones
                     $det_ret= pg_fetch_all_columns($Fac->lista_det_ret($rst_ret[rgr_id]));
                     $ret_iva=  number_format($det_ret[0],2);
@@ -265,11 +267,12 @@ if (isset($_GET[txt])) {
                     echo "<tr >
                         <td> $n $rst_ret[ret_id]</td>
                         <td>$rst[fac_fecha_emision]</td>
+ 			<td>$rst1[pag_fecha_v]</td>
                         <td>$rst[fac_numero]</td>
                         <td>$rst[fac_nombre]</td>
                         <td>$rst[fac_identificacion]</td>
                         <td align=right >".number_format($rst[fac_subtotal12],2)."</td>
-                        <td align=right >".number_format($iva0,2)."</td>    
+                        <td align=right >".number_format($rst[fac_subtotal0] + $rst[fac_subtotal_ex_iva] + $rst[fac_subtotal_no_iva],2)."</td>    
                         <td align=right >".number_format($rst[fac_total_descuento],2)."</td>                            
                         <td align=right >".number_format($rst[fac_total_iva],2)."</td>
                         <td align='right' style='font-size:14px;font-weight:bolder'>" . number_format($rst[fac_total_valor], 2) . "</td>

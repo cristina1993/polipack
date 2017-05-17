@@ -149,14 +149,14 @@ class PDF extends FPDF {
 
         // ///////////////////////////////// ENCABEZADO IZQUIERDO ///////////////////////////////////////////////////////
         $this->Code39($x + 5, $y + 5, $rst[opp_codigo]);
-        $this->Image('../img/logo_noperti.jpg', 50, 1, 100);
+  //      $this->Image('../img/logo_noperti.jpg', 50, 1, 100);
         $this->SetFont('helvetica', 'B', 18);
         $this->SetXY(7, 34);
-        $this->Cell(200, 15, "ORDEN PRODUCCION - PADDING", '', 0, 'C');
+        $this->Cell(200, 15, "ORDEN DE CORTE-BOBINADO", '', 0, 'C');
         $this->Ln();
         $this->SetFont('helvetica', 'B', 8);
         $this->Cell(100, 5, "DETALLE PRODUCTO", 'TB', 0, 'C');
-        $this->Cell(115, 5, "MIX DE FIBRA", 'TB', 0, 'C');
+   //     $this->Cell(115, 5, "", 'TB', 0, 'C');
         $this->Ln();
         $this->Cell(15, 5, "PEDIDO:", '');
         $this->SetFont('helvetica', '', 8);

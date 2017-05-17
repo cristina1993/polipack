@@ -702,8 +702,12 @@ if ($emisor == 1 || $emisor == 10) {
                     }
 
                     tdsc = (tdsc * 1) + (d * 1);
-                    if (ob == '12') {
+                    if (ob == '14') {
                         t12 = (t12 * 1 + val * 1);
+                    }
+                    if (ob == '12') {
+
+                            alert('IVA 12% favor contactar al departamento de sistemas' );
                     }
                     if (ob == '0') {
                         t0 = (t0 * 1 + val * 1);
@@ -716,7 +720,7 @@ if ($emisor == 1 || $emisor == 10) {
                     }
                 }
                 sb = t12 + t0 + tex + tno;
-                tiva = (t12 * 12 / 100);
+                tiva = (t12 * 14 / 100);
                 gtot = (t12 * 1 + t0 * 1 + tex * 1 + tno * 1 + tiva * 1);
                 $('#subtotal12').val(t12.toFixed(4));
                 $('#subtotal0').val(t0.toFixed(4));
@@ -1844,7 +1848,7 @@ if ($emisor == 1 || $emisor == 10) {
                                 <tr>
 
                                     <td valign="top" rowspan="7" colspan="8"><textarea id="observacion" style="width:100%; text-transform: uppercase;" onkeydown="return enter(event)" <?PHP echo $read ?>><?php echo $rst[fac_observaciones] ?></textarea></td>    
-                                    <td colspan="3" align="right">Sub Total 12%:</td>
+                                    <td colspan="3" align="right">Sub Total 14%:</td>
                                     <td><input style="text-align:right" type="text" size="12" id="subtotal12" value="<?php echo str_replace(',', '', number_format($rst[fac_subtotal12], 4)) ?>" readonly/></td>
                                 </tr>
                                 <tr>

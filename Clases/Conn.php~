@@ -3,12 +3,11 @@ class Conn {
 var $con = 0;
 function Conectar(){
 $this->con = pg_connect('host=localhost'
-        . ' port=5432 '
-        . ' dbname=noperti2'
+        . ' port=5433 '
+        . ' dbname=polipack'
         . ' user=postgres'
-        . ' password=SuremandaS495' );
+        . ' password=SuremandaS945' );
 return $this->con;
 }
 }
-
 ?>

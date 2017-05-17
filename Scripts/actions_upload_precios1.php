@@ -180,11 +180,11 @@ function check_file($file) {
                         break;
                     }
 
-                    if (trim($row[5]) != '12' || trim($row[5]) != '0' || trim($row[5]) != 'EX' || trim($row[5]) != 'NO') {
+                    if (trim($row[5]) != '14' || trim($row[5]) != '0' || trim($row[5]) != 'EX' || trim($row[5]) != 'NO') {
                         
                     } else {
                         $sms = "<script>
-                                   alert('El campo Iva no corresponde a los indicados 12, 0, EX o NO  linea  $n ')
+                                   alert('El campo Iva no corresponde a los indicados 14, 0, EX o NO  linea  $n ')
                                    parent.document.getElementById('bottomFrame').src = ''
                                    parent.document.getElementById('contenedor2').rows = '*,0%'
                                    parent.document.getElementById('mainFrame').src = '../Scripts/Lista_preciospt.php'

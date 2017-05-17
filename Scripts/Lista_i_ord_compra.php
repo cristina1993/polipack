@@ -158,7 +158,7 @@ if (isset($_GET[txt])) {
                     <th>Sub.T %</th>
                     <th>Desc %</th>
                     <th>Desc $</th>
-                    <th>IVA 12%</th>
+                    <th>IVA 14%</th>
                     <th>Flete $</th>
                     <th>Total $</th>
                     <th>Acciones</th>
@@ -178,7 +178,7 @@ if (isset($_GET[txt])) {
                         <td><?php echo $n ?></td>
                         <td><?php echo $rst[orc_codigo] ?></td>                        
                         <td><?php echo $rst[orc_fecha] ?></td>
-                        <td><?php echo trim($rst[cli_apellidos] . ' ' . $rst[cli_nombres] . ' ' . $rst[cli_raz_social]) ?></td>
+                        <td><?php echo trim($rst[cli_raz_social]) ?></td>
                         <td align='right'><?php echo number_format($sbt[sum], 2) ?></td>
                         <td align='right'><?php echo number_format($rst[orc_descuento], 2) ?></td>
                         <td align='right'><?php echo number_format($t_desc, 2) ?></td>

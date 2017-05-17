@@ -207,11 +207,11 @@ switch ($op) {
                     $asiento = $Clase_cheques->siguiente_asiento();
                     $dat = Array(
                         $asiento,
-                        'CUENTAS X COBRAR',
+                        $dt[9],
                         $dt[8],
                         $dt[3],
-                        $rst_cli[pln_codigo],
                         $dt[7],
+                        $rst_cli[pln_codigo],
                         $dt[2],
                         $dt[2],
                         '0'

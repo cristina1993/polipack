@@ -40,7 +40,7 @@ class Clase_industrial_kardexpt {
 
     function lista_buscar_kardexpt($txt) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT  * FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c where m.trs_id=t.trs_id and c.cli_id=m.cli_id and $txt order by m.pro_id,m.mov_tabla,m.mov_fecha_trans,m.mov_documento asc");
+            return pg_query("SELECT  * FROM  erp_i_mov_inv_pt m, erp_transacciones t, erp_i_cliente c, erp_i_productos p where p.pro_id=m.pro_id and m.trs_id=t.trs_id and c.cli_id=m.cli_id $txt order by p.pro_codigo,m.mov_fecha_trans,m.mov_pago,m.mov_tabla,m.mov_documento asc");
         }
     }
 
@@ -80,10 +80,10 @@ class Clase_industrial_kardexpt {
         }
     }
     
-      function total_ingreso_egreso($id, $emi,$fec1,$tab) {
+      function total_ingreso_egreso($id,$fec1,$lt) {
         if ($this->con->Conectar() == true) {
-            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0 and m.bod_id=$emi and m.mov_tabla=$tab and mov_fecha_trans<'$fec1') as ingreso,
-                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and m.bod_id=$emi and m.mov_tabla=$tab and mov_fecha_trans<'$fec1') as egreso");
+            return pg_query("select(SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id and t.trs_operacion= 0  and mov_fecha_trans<'$fec1') as ingreso,
+                                   (SELECT SUM(m.mov_cantidad)as suma FROM erp_i_mov_inv_pt m, erp_transacciones t WHERE m.trs_id=t.trs_id and m.pro_id=$id  and t.trs_operacion= 1 and mov_fecha_trans<'$fec1') as egreso");
         }
     }
     

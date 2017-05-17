@@ -9,12 +9,14 @@ if (isset($_GET[orden])) {
     $code = $_GET[orden];
     $fecha = $_GET[fecha];
     $clie = $_GET[clie];
+    $num_orden=$_GET[num_orden];
     $cns = $Set->lista_pedido_codgo($code);
     $cns_tp = $Set->lista_mp($clie);
 } elseif (isset($_GET[x])) {
     $rst = pg_fetch_array($Set->lista_ped_id($_GET[id]));
     $code = $rst[ped_orden];
     $fecha = $rst[ped_fecha];
+    $num_orden=$rst[ped_num_orden];
     $clie = $rst[emp_id];
     $mp_id = $rst[mp_id];
     $desc = $rst[mp_codigo];
@@ -32,6 +34,7 @@ if (isset($_GET[orden])) {
     $cns_tp = $Set->lista_mp($clie);
 } else {
     $fecha = date('Y-m-d');
+    $num_orden='';
     $rst_sec = pg_fetch_array($Set->lista_ped_sec());
     $sec = ($rst_sec[ped_orden] + 1);
     if ($sec >= 0 && $sec < 10) {
@@ -48,6 +51,7 @@ if (isset($_GET[orden])) {
         $tx_trs = "";
     }
     $code = $tx_trs . $sec;
+    $cns_tp = $Set->lista_mp('5'); ///lista materia prima Polipack
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
@@ -63,12 +67,22 @@ if (isset($_GET[orden])) {
             function save(id) {
                 p1 = (pmp_peso.value * 1);
                 p2 = (invp.innerHTML * 1);
-                if (p1 > p2)
+//                if (p1 > p2)
+//                {
+//                    alert('El peso del pedido excede el del inventario');
+//                    invp.style.background = "firebrick";
+//                } 
+                if (pmp_num_orden.value.length == 0) {
+                    $("#pmp_num_orden").css({borderColor: "red"});
+                    $("#pmp_num_orden").focus();
+                    return false;
+                }
+                if ((pmp_cant.value * 1) > (invu.innerHTML * 1))
                 {
-                    alert('El peso del pedido excede el del inventario');
-                    invp.style.background = "firebrick";
+                    alert('La cantidad del pedido excede el inventario');
+                    invu.style.background = "firebrick";
                 } else {
-                    invp.style.background = "none";
+                    invu.style.background = "none";
                     var data = Array(
                             pmp_orden.value,
                             pmp_fecha.value,
@@ -81,7 +95,7 @@ if (isset($_GET[orden])) {
                     function (dt) {
                         if (dt == 0)
                         {
-                            window.location = "Form_i_pedido_mp.php?fecha=" + pmp_fecha.value + "&orden=" + pmp_orden.value + "&clie=" + pmp_clie.value;
+                            window.location = "Form_i_pedido_mp.php?fecha=" + pmp_fecha.value + "&orden=" + pmp_orden.value + "&clie=" + pmp_clie.value+ "&num_orden=" + pmp_num_orden.value;
                         } else {
                             alert(dt);
                         }
@@ -90,12 +104,17 @@ if (isset($_GET[orden])) {
             }
             function edita(id_edita) {
 
-                if ((pmp_peso.value * 1) > (invp.innerHTML * 1))
+//                if ((pmp_peso.value * 1) > (invp.innerHTML * 1))
+//                {
+//                    alert('El peso del pedido excede el del inventario');
+//                    invp.style.background = "firebrick";
+//                } 
+                if ((pmp_cant.value * 1) > (invu.innerHTML * 1))
                 {
-                    alert('El peso del pedido excede el del inventario');
-                    invp.style.background = "firebrick";
+                    alert('La cantidad del pedido excede el inventario');
+                    invu.style.background = "firebrick";
                 } else {
-                    invp.style.background = "none";
+                    invu.style.background = "none";
                     var data = Array(
                             pmp_orden.value,
                             pmp_fecha.value,
@@ -129,6 +148,10 @@ if (isset($_GET[orden])) {
             function finalizar(op)
             {
                 if (op == 0) {
+                    if($('.itms').length==0){
+                        alert('Ingrese un registro');
+                        return false;
+                    }
                     if ($('#referencia1').html() != null) {
                         id = pmp_orden.value;
                         var fields = Array();
@@ -227,6 +250,11 @@ if (isset($_GET[orden])) {
             }
         </script>
     </head>
+    <style>
+        *{
+            text-transform: uppercase;  
+        }
+    </style>
     <body>
         <img id="charging" src="../img/load_bar.gif" />    
         <div id="cargando">Por Favor Espere...</div>
@@ -249,7 +277,6 @@ if (isset($_GET[orden])) {
                     <td>Cliente:</td>
                     <td>
                         <select name="pmp_clie" id="pmp_clie" onchange="combo()" >
-                            <option value="0">Seleccione</option>
                             <?php
                             $cns_fbc = $Set->lista_fabricas();
                             while ($rst_fbc = pg_fetch_array($cns_fbc)) {
@@ -264,7 +291,7 @@ if (isset($_GET[orden])) {
                         </select>
                     </td>
                     <td colspan="2">Ord. Produccion No.:</td>
-                    <td><input type="text" name="pmp_num_orden" id="pmp_num_orden" readonly size="20" value="<?php echo $rst[ped_num_orden] ?>" /></td>
+                    <td><input type="text" name="pmp_num_orden" id="pmp_num_orden" size="20" list="ordenes" value="<?php echo $num_orden ?>" /></td>
 
                 </tr>
             </tbody>
@@ -272,8 +299,8 @@ if (isset($_GET[orden])) {
                 <tr>
                     <th></th>
                     <th colspan="4">Materia Prima</th>
-                    <th colspan="2">Inventario</th>
-                    <th colspan="2">Solicitado</th>
+                    <th colspan="1">Inventario</th>
+                    <th colspan="1">Solicitado</th>
                     <th></th>
                 </tr>
                 <tr>
@@ -283,9 +310,9 @@ if (isset($_GET[orden])) {
                     <th>Presentacion</th>
                     <th>Unidad</th>                                                                        
                     <th width="80px">Cantidad</th>                        
-                    <th width="80px">Peso</th>                        
+                    <th width="80px" hidden>Peso</th>                        
                     <th width="80px">Cantidad</th>                        
-                    <th width="80px">Peso</th>
+                    <th width="80px" hidden>Peso</th>
                     <th>Acciones</th>
                 </tr>
             <tbody id="editar">
@@ -310,11 +337,11 @@ if (isset($_GET[orden])) {
                     <td id='pmp_pres'><?php echo $pres; ?></td>
                     <td id="mp_unidad"><?php echo $unidad; ?></td>                                                                                                
                     <td id='invu' style="font-size:14px;font-weight:bolder " align="right"><?php echo $invu; ?></td>                        
-                    <td id='invp' style="font-size:14px;font-weight:bolder " align="right"><?php echo $invp; ?></td>
+                    <td id='invp' hidden style="font-size:14px;font-weight:bolder " align="right"><?php echo $invp; ?></td>
                     <td align="center"><input type="text" name="pmp_cant" id="pmp_cant" size="5" value="<?php echo $cant; ?>" onchange="calculo(pmp_cant.value, invpu.value)"/></td>
-                    <td align="center">
+                    <td align="center" hidden>
                         <input type="hidden"  id="invpu" size="5" value="<?php echo $invpu; ?>" />
-                        <input type="text"  readonly style="background:#ccc;text-align:right" id="pmp_peso" size="5" value="<?php echo $peso; ?>" />
+                        <input type="hidden"  readonly style="background:#ccc;text-align:right" id="pmp_peso" size="5" value="<?php echo $peso; ?>" />
                     </td>
                     <td>
                         <button id="save" <?php echo $btn ?> onclick="save(<?php echo $id ?>)">+</button>
@@ -330,15 +357,15 @@ if (isset($_GET[orden])) {
                 $n++;
                 ?>    
                 <tr>
-                    <td><?php echo $n ?></td>
+                    <td class="itms"><?php echo $n ?></td>
                     <td id="pmp_ref<?php echo $n ?>"><?php echo $rst[mp_referencia] ?></td>
                     <td id="pmp_desc<?php echo $n ?>"><?php echo $rst[mp_codigo] ?></td>
                     <td id="pmp_pres<?php echo $n ?>"><?php echo $rst[mp_presentacion] ?></td>                            
                     <td id="mp_unidad<?php echo $n ?>"><?php echo $rst[mp_unidad] ?></td>                            
                     <td id="no"></td>
-                    <td id="no"></td>
+                    <td hidden id="no"></td>
                     <td id="pmp_cant<?php echo $n ?>" align="right" ><?php echo number_format($rst[ped_det_cant], 1) ?></td>
-                    <td id="pmp_peso<?php echo $n ?>" align="right" ><?php echo number_format($rst[ped_det_peso], 1) ?></td>
+                    <td  hidden id="pmp_peso<?php echo $n ?>" align="right" ><?php echo number_format($rst[ped_det_peso], 1) ?></td>
                     <td></td>
                 </tr>                    
                 <?php
@@ -358,3 +385,16 @@ if (isset($_GET[orden])) {
     </table>
 </body>
 </html>
+
+<datalist id="ordenes">
+    <?php
+    $cns_ord = $Set->lista_todas_ordenes();
+    $n = 0;
+    while ($rst_ord = pg_fetch_array($cns_ord)) {
+        $n++;
+        ?>
+        <option value="<?php echo $rst_ord[ord_num_orden] ?>" label="<?php echo $rst_ord[ord_num_orden] ?>" />
+        <?php
+    }
+    ?>
+</datalist>

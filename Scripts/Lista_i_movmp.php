@@ -10,7 +10,7 @@ if (isset($_GET[desde], $_GET[hasta])) {
     if (!empty($_GET[txt])) {
         $texto = "and (mp.mp_codigo like '%$nm%' OR mp.mp_referencia like '%$nm%')";
     } else if (!empty($_GET[emp_id])) {
-        $texto = "and mp.emp_id=$emp_id";
+        $texto = "and mp.emp_id=$emp_id and mi.mov_fecha_trans between '$desde' and '$hasta'";
     } else {
         $texto = "and mi.mov_fecha_trans between '$desde' and '$hasta'";
     }
@@ -172,7 +172,6 @@ if (isset($_GET[desde], $_GET[hasta])) {
                         Codigo:<input type="text" name="txt" size="15" value="<?php echo $nm ?>"/>
                         Fabrica:
                         <select id="emp_id" name="emp_id" style="width:125px; font-size: 12px"  >
-                            <option value="0">Seleccione</option>
                             <?php
                             $cns_emp = $Set->lista_fabricas();
                             while ($rst_emp = pg_fetch_array($cns_emp)) {
@@ -224,9 +223,10 @@ if (isset($_GET[desde], $_GET[hasta])) {
 
                     if ($grup != $rst['mov_num_trans']) {
                         echo"<td>$rst[mov_fecha_trans]</td>
+                                                   
                             <td>$rst[mov_num_trans]</td>
-                            <td>$rst[mov_num_orden]</td>
                             <td>$rst[mov_documento]</td>
+                                <td>$rst[mov_num_orden]</td>     
                             <td>" . trim($rst_prov[cli_apellidos] . $rst_prov[cli_nombres] . $rst_prov[cli_raz_social]) . "</td>";
                     } else {
                         echo "<td></td>

@@ -8,46 +8,27 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
     $fec1 = $_GET[fecha1];
     $fec2 = $_GET[fecha2];
     if (!empty($prod)) {
-        $ncom = pg_num_rows($Ing->lista_buscar_comerciales($prod));
-        if ($ncom > 0) {
-            $cns = $Ing->lista_buscar_comerciales($prod);
-            $tab = 1;
-        }
-        $nind = pg_num_rows($Ing->lista_buscar_industriales($prod));
-        if ($nind > 0) {
-            $cns = $Ing->lista_buscar_industriales($prod);
-            $tab = 0;
-        }
-        $fec1 = '';
-        $fec2 = '';
-        $txt = '';
-        $det = 1;
+        $text = " and (pro_codigo like '%$prod%' or pro_descripcion like '%$prod%' or mov_pago like '%$prod%')";
     } else if (!empty($txt)) {
-        $txt = " and (m.mov_documento like '%$txt%')";
-        $fec1 = '';
-        $fec2 = '';
-        $prod = '';
-        $cns = $Ing->lista_buscador_industrial_ingresopt($emisor, $txt);
-        $n_prod = pg_num_rows($Ing->lista_num_productos($emisor, $txt));
-        $det = 0;
+        $text = " and (m.mov_documento like '%$txt%')";
     } else {
-        $txt = " and m.mov_fecha_trans between '$fec1' and '$fec2' ";
-        $cns = $Ing->lista_buscador_industrial_ingresopt($emisor, $txt);
-        $n_prod = pg_num_rows($Ing->lista_num_productos($emisor, $txt));
-        $det = 0;
+        $text = " and m.mov_fecha_trans between '$fec1' and '$fec2' ";
     }
+    $cns = $Ing->lista_buscador_industrial_ingresopt($text);
+    $n_prod = pg_num_rows($Ing->lista_num_productos($text));
+    $det = 0;
+
     $fec1 = $_GET[fecha1];
     $fec2 = $_GET[fecha2];
     $prod = trim(strtoupper($_GET[prod]));
     $nm = trim(strtoupper($_GET[txt]));
 } else {
-    $txt = '';
     $trs = '';
     $fec1 = date('Y-m-d');
     $fec2 = date('Y-m-d');
-    $txt = " and m.mov_fecha_trans between '$fec1' and '$fec2' ";
-    $cns = $Ing->lista_buscador_industrial_ingresopt($emisor, $txt);
-    $n_prod = pg_num_rows($Ing->lista_num_productos($emisor, $txt));
+    $text = " and m.mov_fecha_trans between '$fec1' and '$fec2' ";
+//    $cns = $Ing->lista_buscador_industrial_ingresopt($text);
+    $n_prod = 0;
     $det = 0;
 }
 ?>
@@ -108,6 +89,7 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
                 $('#cargando').css('visibility', prop);
                 $('#charging').css('visibility', prop);
             }
+
         </script> 
         <style>
             #mn54,
@@ -149,9 +131,9 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" ><?PHP echo 'INGRESO DE PRODUCTO TERMINADO ' . $bodega ?></center>
+                <center class="cont_title" ><?PHP echo 'INGRESO DE PRODUCTO TERMINADO' ?></center>
                 <center class="cont_finder">
-                    <a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo </a>
+                    <!--<a href="#" class="btn" style="float:left;margin-top:7px;padding:7px;" title="Nuevo Registro" onclick="auxWindow(0)" >Nuevo </a>-->
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
                         PRODUCTO:<input type="text" name="prod" size="15" id="prod" value="<?php echo $prod ?>" />
                         MOVIMIENTO:<input type="text" name="txt" size="15" id="txt" value="<?php echo $nm ?>"/>
@@ -166,7 +148,7 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
             <thead>
                 <tr>
                     <th></th>
-                    <th colspan="3">Documento</th>
+                    <th id="doc" colspan="3">Documento</th>
                     <th colspan="5">Producto Terminado</th>
                     <th colspan="4">Transaccción</th>
                 </tr>
@@ -178,112 +160,63 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
                     <th>Proveedor</th>
                     <th>Familia</th>
                     <th>Código</th>
-                    <th>Lote</th>
+                    <th>#Rollo</th>
                     <th>Descripción</th>
                     <th>Tipo</th>
-                    <th>Cantidad</th>
+                    <th>Cajas</th>
+                    <th>Rollos</th>
+                    <th>Peso</th>
                 </tr>
             </thead>
             <!------------------------------------->
             <tbody id="tbody">
                 <?PHP
                 $n = 0;
+                $cja = 0;
                 $grup = '';
-                if ($det == 0) {
-                    while ($rst = pg_fetch_array($cns)) {
-                        $n++;
-                        $t_cnt+=$rst['mov_cantidad'];
-                        echo "<tr>
+                while ($rst = pg_fetch_array($cns)) {
+                    $n++;
+                    $rst_ord = pg_fetch_array($Ing->lista_orden($rst[mov_guia_transporte]));
+                    $t_peso+=$rst['mov_cantidad'];
+                    
+                    $t_cnt+=$rst['mov_tabla'];
+                    $cja = round($rst['mov_tabla']) / $rst_ord[opp_velocidad];
+                    $dt = explode('.', $cja);
+                    if (empty($rst_ord[opp_velocidad])) {
+                        $cnt_cj =0;
+                    } else {
+                        if (!empty($dt[1])) {
+                            $cnt_cj = round($dt[0]);
+                        } else {
+                            $cnt_cj = $cja;
+                        }
+                    }
+                    $t_caja+=$cnt_cj;
+                    echo "<tr>
                             <td>$n</td>";
 
-                        if ($grup != $rst['mov_documento']) {
-                            echo "<td>$rst[mov_usuario]</td>
+                    if ($grup != $rst['mov_documento']) {
+                        echo "<td>$rst[mov_usuario]</td>
                             <td align='center'>$rst[mov_fecha_trans]</td>
                                 <td>$rst[mov_documento]</td>
                                 <td>$rst[cli_raz_social]</td>";
-                        } else {
-                            echo "<td></td>
+                    } else {
+                        echo "<td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>";
-                        }
-                        if ($rst[mov_tabla] == 1) {
-                            $rst1 = pg_fetch_array($Ing->lista_prod_comerciales($rst['pro_id']));
-                            $rst['pro_codigo'] = $rst1['pro_a'];
-                            $rst['pro_descripcion'] = $rst1['pro_b'];
-                            $fl = explode('&', $rst1['pro_tipo']);
-                            $fml = $fl[9];
-                            $lote = $rst1['pro_ac'];
-                        } else {
-                            $rst1 = pg_fetch_array($Ing->lista_prod_industriales($rst['pro_id']));
-                            $rst['pro_codigo'] = $rst1['pro_codigo'];
-                            $rst['pro_descripcion'] = $rst1['pro_descripcion'];
-                            $fml = '';
-                            $lote = '';
-                        }
-                        echo "<td>$fml</td>     
-                            <td>$rst[pro_codigo]</td>                    
-                            <td>$lote</td>                    
+                    }
+                    echo "<td>$fml</td>     
+                            <td onmousemove='mover(this)'>$rst[pro_codigo]</td>                    
+                            <td>$rst[mov_pago]</td>                    
                             <td>$rst[pro_descripcion]</td>
                             <td>$rst[trs_descripcion]</td>
-                            <td align='right'>$rst[mov_cantidad]</td>
+                            <td align='right'>".number_format($cnt_cj)."</td>
+                            <td align='right'>".number_format($rst[mov_tabla])."</td>
+                            <td align='right'>".number_format($rst[mov_cantidad],2)."</td>
                         </tr>";
 
-                        $grup = $rst['mov_documento'];
-                    }
-                } else {
-                    while ($rst1 = pg_fetch_array($cns)) {
-                        if ($tab == 1) {
-                            $rst1[pro_id] = $rst1[id];
-                            $rst1['pro_codigo'] = $rst1['pro_a'];
-                            $rst1['pro_descripcion'] = $rst1['pro_b'];
-                            $fl = explode('&', $rst1['pro_tipo']);
-                            $fml = $fl[9];
-                            $lote = $rst1['pro_ac'];
-                        } else {
-                            $rst1['pro_codigo'] = $rst1['pro_codigo'];
-                            $rst1['pro_descripcion'] = $rst1['pro_descripcion'];
-                            $fml = '';
-                            $lote = '';
-                            $rst1[pro_id] = $rst1[pro_id];
-                        }
-                        $mov = pg_num_rows($Ing->buscar_un_movimiento($rst1[pro_id], $tab, $emisor));
-                        if ($mov > 0) {
-                            $cns1 = $Ing->buscar_un_movimiento($rst1[pro_id], $tab, $emisor);
-                            while ($rst = pg_fetch_array($cns1)) {
-                                $n++;
-                                $t_cnt+=$rst['mov_cantidad'];
-                                if ($g_id != $rst1[pro_id]) {
-                                    $n_prod += 1;
-                                }
-                                echo "<tr>
-                                    <td>$n</td>";
-
-                                if ($grup != $rst['mov_documento']) {
-
-                                    echo "<td>$rst[mov_usuario]</td>
-                                    <td align='center'>$rst[mov_fecha_trans]</td>
-                                        <td>$rst[mov_documento]</td>
-                                        <td>$rst[cli_raz_social]</td>";
-                                } else {
-
-                                    echo "<td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>";
-                                }
-                                echo "<td>$fml</td>     
-                            <td>$rst1[pro_codigo]</td>                    
-                            <td>$lote</td>                    
-                            <td>$rst1[pro_descripcion]</td>
-                            <td>$rst[trs_descripcion]</td>
-                            <td align='right'>$rst[mov_cantidad]</td>
-                        </tr> ";
-                                $grup = $rst['mov_documento'];
-                                $g_id = $rst1[pro_id];
-                            }
-                        }
-                    }
+                    $grup = $rst['mov_documento'];
                 }
                 ?>
             </tbody>
@@ -299,7 +232,9 @@ if (isset($_GET[txt], $_GET[prod], $_GET[fecha1], $_GET[fecha2])) {
         <td class='totales' >Total</td>                                
         <td class='totales' >Items " . number_format($n, 0) . "</td>
         <td class='totales' >PRODUCTOS " . number_format($n_prod, 0) . "</td>
+        <td class='totales' align='right' >" . number_format($t_caja, 2) . "</td>
         <td class='totales' align='right' >" . number_format($t_cnt, 2) . "</td>
+        <td class='totales' align='right' >" . number_format($t_peso, 2) . "</td>
     </tr>";
             ?>
         </table>            

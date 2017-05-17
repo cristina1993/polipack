@@ -288,7 +288,7 @@ class PDF extends FPDF {
         //_____________________________________________________________________________
         $this->Cell(141, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
-        $this->Cell(40, 5, "SUBTOTAL 12%", 'LRTB', 0, 'L');
+        $this->Cell(40, 5, "SUBTOTAL 14%", 'LRTB', 0, 'L');
         $this->Cell(20, 5, $rst1[subtotal12], 'LRTB', 0, 'R');
         $this->Ln();
         $this->SetFont('helvetica', 'B', 10);
@@ -339,7 +339,7 @@ class PDF extends FPDF {
         $this->Ln();
         $this->Cell(141, 5, "", '', 0, 'L');
         $this->SetFont('helvetica', '', 8);
-        $this->Cell(40, 5, "IVA 12%", 'LRTB', 0, 'L');
+        $this->Cell(40, 5, "IVA 14%", 'LRTB', 0, 'L');
         $this->Cell(20, 5, $rst1[total_iva], 'LRTB', 0, 'R');
         $this->Ln();
         $this->Cell(141, 5, "", '', 0, 'L');

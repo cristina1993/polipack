@@ -132,7 +132,10 @@ class FPDF {
             'legal' => array(612, 1008),
             'etq_nop' => array(320, 180),
             'talonario' => array(209, 841.89),
-            'etiqueta_op' => array(289.13, 218.26)
+            'etiqueta_op' => array(289.13, 218.26),
+            'etiqueta_reg' => array(140, 78),
+            'etiqueta_grande' => array(289.14, 379.84),
+            'etiqueta_grande1' => array(289.14, 189.92)
         );
         $size = $this->_getpagesize($size);
         $this->DefPageSize = $size;
@@ -288,7 +291,7 @@ class FPDF {
         $this->_enddoc();
     }
 
-    function AddPage($orientation = '', $size = '') {
+    function AddPage($orientation, $size) {
         // Start a new page
         if ($this->state == 0)
             $this->Open();

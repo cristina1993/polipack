@@ -206,7 +206,7 @@ if (isset($_GET[fecha1])) {
                 <tr>
                     <th></th>
                     <th colspan="4">Documento</th>
-                    <th colspan="5">Producto Terminado</th>
+                    <th colspan="5">Producto Semielaborado</th>
                     <th colspan="4">Transaccción</th>
                 </tr>
                 <tr>
@@ -216,7 +216,7 @@ if (isset($_GET[fecha1])) {
                     <th>Guía de Recepción</th>
                     <th>Proveedor</th>
                     <th>Id.Prod</th>
-                    <th>Familia</th>
+                    <th>Tipo</th>
                     <th>Código</th>
                     <th>Lote</th>
                     <th>Descripción</th>

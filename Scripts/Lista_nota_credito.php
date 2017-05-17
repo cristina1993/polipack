@@ -15,7 +15,7 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
     $fec2 = $_GET[fecha2];
 
     if (!empty($txt)) {
-        $texto = "and n.emi_id=$emisor and(n.ncr_identificacion like '%$txt%' or n.ncr_nombre like '%$txt%' or n.ncr_numero like '%$txt%' or n.ncr_num_comp_modifica like '%$txt%') and n.ncr_fecha_emision between '$fec1' and '$fec2' ";
+        $texto = "and n.emi_id=$emisor and(n.ncr_identificacion like '%$txt%' or n.ncr_nombre like '%$txt%' or n.ncr_numero like '%$txt%' or n.ncr_num_comp_modifica like '%$txt%')";
         $ident = 1;
         $cns = $Clase_nota_Credito->lista_buscador_notas_credito($texto);
     } else if (!empty($fac)) {
@@ -54,11 +54,11 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
                 Calendar.setup({inputField: "fecha2", ifFormat: "%Y-%m-%d", button: "im-campo2"});
                 revisa_sri();
                 setInterval(revisa_sri, 5000);
-
+                
                 $("#mensaje").load('../Includes/envio_sri_nota_credito.php');
-                $("#mensaje").load('../Includes/envio_mail_nota_credito.php');
-                usuid = '<?php echo $_SESSION[usuid] ?>';
-
+                $("#mensaje").load('../Includes/envio_mail_nota_credito.php');                
+                
+                
             });
 
             function revisa_sri() {
@@ -168,7 +168,7 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
 
                         break;
                     case 6://Genera XML
-                        if (e == 0) {
+                        if (x != '') {
                             id = x;
                             tp = 0;
                         } else {
@@ -249,45 +249,35 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
             }
 
             function anular() {
-
-                if (usuid == 1 || usuid == 109 || usuid == 57) {
-                    id = com_id.value;
-                    codigo_muzo = 'brt8thir';
-                    codigo_mejia = '75ma7gBU';
-                    codigo_supadm = 'tvk36146';
-                    $.ajax({
-                        beforeSend: function () {
-
-                            if (cod_anular.value == codigo_muzo && usuid == 57) {
-                                return true;
-                            } else if (cod_anular.value == codigo_mejia && usuid == 109) {
-                                return true;
-                            } else if (cod_anular.value == codigo_supadm && usuid == 1) {
-                                return true;
-                            } else {
-                                $('#cod_anular').css('border', 'solid 1px red');
-                                $('#cod_anular').val('');
-                                return false;
-                            }
-
-                        },
-                        type: 'POST',
-                        url: 'actions_nota_credito.php',
-                        data: {op: 4, id: id}, //op sera de acuerdo a la acion que le toque
-                        success: function (dt) {
-                            tbl_aux.style.display = 'none';
-                            if (dt == 0) {
-                                window.location = 'Lista_nota_credito.php';
-                            } else {
-                                alert(dt);
-                            }
-
+                id = com_id.value;
+                codigo = 'brt8thir';
+                $.ajax({
+                    beforeSend: function () {
+                        if (cod_anular.length == 0) {
+                            $("#cod_anular").css({borderColor: "red"});
+                            $("#cod_anular").focus();
+                            return false;
                         }
-                    });
-                } else {
-                    alert('Ud no esta autorizado para realizar este proceso');
-                }
+                        if (cod_anular.value != codigo) {
+                            $("#cod_anular").css({borderColor: "red"});
+                            $("#cod_anular").focus();
+                            $("#cod_anular").val('');
+                            return false;
+                        }
+                    },
+                    type: 'POST',
+                    url: 'actions_nota_credito.php',
+                    data: {op: 4, id: id}, //op sera de acuerdo a la acion que le toque
+                    success: function (dt) {
+                        tbl_aux.style.display = 'none';
+                        if (dt == 0) {
+                            window.location = 'Lista_nota_credito.php';
+                        } else {
+                            alert(dt);
+                        }
 
+                    }
+                })
             }
         </script> 
         <style>
@@ -432,23 +422,20 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
                 if ($rst[ncr_estado_aut] == 'ANULADO') {
                     $tot_nc = 0;
                 }
-                if (strlen(trim($rst[ncr_autorizacion])) == 37) {
-                    $estdado = 'RECIBIDA AUTORIZADO';
-                    $tp = 0;
+                if (strlen($rst[ncr_estado_aut]) > 20) {
+                    $estado = substr($rst[ncr_estado_aut], 0, 20);
                 } else {
-                    $tp = 1;
-                    if (strlen($rst[ncr_estado_aut]) > 20) {
-                        $estdado = substr($rst[ncr_estado_aut], 0, 20);
-                    } else {
-                        $estdado = $rst[ncr_estado_aut];
-                    }
+                    $estado = $rst[ncr_estado_aut];
                 }
-
-                if ($rst[ncr_sts] == 1) {
-                    $estado = 'REGISTRADO NO ENVIADO';
+                if ($rst[ncr_estado_aut] == 'ANULADO') {
+                   $estado='ANULADO';
                 }
-
-
+                
+              //  if($rst[ncr_sts]==1){
+              //      $estado='REGISTRADO NO ENVIADO';
+           //     }
+                
+                
                 echo "<tr>
                     <td>$n</td>
                     <td align='center'>$fecha</td>
@@ -462,7 +449,7 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
                     <td align='right' style='font-size:14px;font-weight:bolder'>" . number_format($tot_nc, 2) . "</td>
                     <td align='right' style='font-size:14px;font-weight:bolder'>" . number_format($tot_fac, 2) . "</td>";
 
-                if ($rst[ncr_estado_aut] == 'ANULADO' || strlen($rst[ncr_autorizacion]) != 37) {
+                if ($rst[ncr_estado_aut] == 'ANULADO' || strlen($rst[ncr_autorizacion])!=37) {
                     ?>
                 <td style="color:darkred;font-weight:bolder " ><?PHP echo $estado ?></td>
                 <?php
@@ -475,9 +462,9 @@ if (isset($_GET[txt], $_GET[fecha1], $_GET[fecha2], $_GET[fac])) {
             <td align="center">
                 <?php
                 if ($_SESSION[usuid] == 1) {
-                ?>
-                <img class="auxBtn" width="12px" src="../img/xml.png" onclick="auxWindow(6, '<?php echo $rst[ncr_id] ?>', '<?php echo $rst[ncr_clave_acceso] ?>', '<?php echo $tp ?>')" />
-                <?php
+                    ?>
+                    <img class="auxBtn" width="12px" src="../img/xml.png" onclick="auxWindow(6, '<?php echo $rst[ncr_id] ?>', '<?php echo $rst[ncr_clave_acceso] ?>')" />
+                    <?php
                 }
                 if (strlen($rst['ncr_autorizacion']) != 37) {
                     if (empty($rst[ncr_id])) {

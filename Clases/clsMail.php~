@@ -43,7 +43,7 @@ class Mail extends PHPMailer {
         }
         $this->FromName = "$dat[5]";
         $this->AddBCC('gabokatz@hotmail.com', 'gabokatz');
-        $this->AddBCC('holgerhcdj@gmail.com', 'Holger');
+       
         $this->Subject = $doc . " Grupo Noperti // Cliente : " . $name . " No: " . $ndoc;
         $this->AddEmbeddedImage('../img/noperti_logo.jpg', 'logo_cli');
         $this->AddEmbeddedImage('../img/tikva_logo.jpg', 'logo_tivka');
@@ -73,7 +73,9 @@ class Mail extends PHPMailer {
                           Es un gusto recordarle que NOPERTI CIA.LITDA, por disposición del SRI,  está emitiendo  todas sus facturas de manera electrónica  adjuntas en este correo, por lo que usted puede ingresar a nuestro portal web www.gruponoperti.com para descargar su factura.
                           Gracias por confiar en nosotros.
 
-                          Este mail no debe ser respondido, para cualquier información llame al 022449696 con la señora Raquel Cedeño  ó escribanos al email  rcedeno@gruponoperti.com  con copia a  jsanchez@gruponoperti.com");
+                          Este mail no debe ser respondido, para cualquier información llame al 022449696 con la señora Raquel Cedeño  ó escribanos al email  rcedeno@gruponoperti.com  con copia a  jsanchez@gruponoperti.com
+                          
+                          Favor Emitir la Retención en los proximos cinco dias de conformidad al ART 50 de la Ley de Regimen Tributario Interno ");
         $n = 0;
         while ($n < count($file)) {
             $this->AddAttachment($file[$n]);

@@ -38,20 +38,20 @@ switch ($op) {
                 $monto = 0;
             }
             If ($data[3] == 'NOTA DE DEBITO') {
-                $cd = $data[4];
-                $ch = $data[5];
-                $vd = $monto;
-                $vh = $data[2];
-            } else {
                 $cd = $data[5];
                 $ch = $data[4];
                 $vd = $data[2];
                 $vh = $monto;
+            } else {
+                $cd = $data[4];
+                $ch = $data[5];
+                $vd = $monto;
+                $vh = $data[2];
             }
             $asiento = $CuentasCobrar->siguiente_asiento();
             $dat = Array(
                 $asiento,
-                'CUENTAS X COBRAR',
+                $data[11],
                 $data[10],
                 $data[6],
                 $cd,

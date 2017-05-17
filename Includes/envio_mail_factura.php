@@ -3,7 +3,7 @@
 include_once '../Reports/fpdf/fpdf.php';
 include_once '../Clases/clsMail.php';
 include_once '../Clases/Conn.php';
-include_once './nusoap.php';
+include_once '../Includes/nusoap.php';
 
 class Clase_factura {
 

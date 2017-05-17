@@ -73,7 +73,7 @@ class PDF extends FPDF {
         $x = 0;
         $y = 0;
         $this->SetFont('helvetica', 'B', 16);
-        $this->Text($x + 30, $y + 5, "NOPERTI CIA LTDA");
+        $this->Text($x + 30, $y + 5, "POLIPACK");
         $this->Line($x + 1, $y + 6, $x + 110, $y + 6);
         
         $cx = strlen($rst_total[etq_bar_code]);
@@ -96,7 +96,7 @@ class PDF extends FPDF {
         $x = 0;
         $y = 0;
         $this->SetFont('helvetica', 'B', 16);
-        $this->Text($x + 30, $y + 5, "NOPERTI CIA LTDA");
+        $this->Text($x + 30, $y + 5, "POLIPACK");
         $this->Line($x + 1, $y + 6, $x + 110, $y + 6);
 
         $cx = strlen($rst_total[etq_bar_code]);

@@ -160,6 +160,7 @@ if (isset($_GET[num_trs])) {
                         mp_presentacion.value = det[3];
                         codigo.value = det[7];
                         mp_id.value = det[8];
+                        mov_cantidad.value=0;
                         if (det[4] != '') {
                             $('#inventario').val(det[4]);
                         } else {
@@ -301,7 +302,7 @@ if (isset($_GET[num_trs])) {
                     <th>Item</th>
                     <th>Descripcion</th>          
                     <th>Codigo</th>
-                    <th>Presentacion</th>
+                    <th hidden>Presentacion</th>
                     <th>Unidad</th>
                     <th>Inventario</th>
                     <th>Cantidad</th>
@@ -316,7 +317,7 @@ if (isset($_GET[num_trs])) {
                         <input type="hidden" id="mp_id" >
                     </th>
                     <th id="mp_ref" style="color:black;font-size:12px;  "></th>
-                    <th>
+                    <th hidden>
                         <input type="text" size="20" id="mp_presentacion"/>
                     </th>
                     <th id="mov_unidad" style="color:black;font-size:12px;text-transform:lowercase" ></th>
@@ -345,7 +346,7 @@ if (isset($_GET[num_trs])) {
                         <td><?php echo $n ?></td>
                         <td id="referencia<?php echo $n ?>"><?php echo $rst[mp_referencia] ?></td>
                         <td id="codigo<?php echo $n ?>"><?php echo $rst[mp_codigo] ?></td>          
-                        <td id="representacion<?php echo $n ?>"><?php echo $rst[mov_presentacion] ?></td>
+                        <td hidden id="representacion<?php echo $n ?>"><?php echo $rst[mov_presentacion] ?></td>
                         <td id="unidad<?php echo $n ?>" style="text-transform:lowercase"><?php echo $rst[mp_unidad] ?></td>
                         <td> </td>
                         <td id="cantidad<?php echo $n ?>" align="right"><?php echo number_format($rst[mov_cantidad], 1) ?></td>

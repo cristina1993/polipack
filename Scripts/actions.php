@@ -905,9 +905,9 @@ switch ($act) {
                 $rst[orc_fecha],
                 $data[2],
                 $rst[mp_presentacion],
-                $data[2],
+                $data[4], ///$data[2], total
                 $rst[cli_id],
-                1,
+                $data[3], ///1, unit
                 '',
                 $data[5],);
             if ($Set->insert_inv_mp($data1) == false) {
@@ -945,8 +945,6 @@ switch ($act) {
     case 31:
         $sms = 0;
         $rst = pg_fetch_array($Set->lista_una_det_orden_compra($id));
-
-
         if ($Set->del_det_orden_compra($id) == true) {
             if ($Set->del_mov_doc_mp($rst[orc_codigo], $rst[mp_id]) == false) {
                 $sms = pg_last_error();
@@ -1410,7 +1408,7 @@ switch ($act) {
         $rst_pro = pg_fetch_array($Set->lista_un_producto($_REQUEST[id]));
         $rst_fbc = pg_fetch_array($Set->lista_una_fabrica($rst_pro[emp_id]));
         $rst_set = pg_fetch_array($Set->lista_utlimo_seteo_maquina($_REQUEST[id]));
-        $cns_mp = $Set->lista_mp($rst_pro[emp_id]);
+        $cns_mp = $Set->lista_solo_mp();
         $combo = "<option  value='0'> - Seleccione - </option>";
         while ($rst_mp = pg_fetch_array($cns_mp)) {
             $combo.="<option value='$rst_mp[mp_id]'>$rst_mp[mp_referencia]</option>";
@@ -1432,7 +1430,7 @@ switch ($act) {
                 ($rst_pro[pro_mf1] + $rst_pro[pro_mf2] + $rst_pro[pro_mf3] + $rst_pro[pro_mf4] + $rst_pro[pro_mf5] + $rst_pro[pro_mf6]) . "&" .
                 $rst_pro[pro_largo] . "&" .
                 $rst_pro[pro_gramaje] . "&" .
-                $rst_pro[pro_peso] . "&" .
+                $rst_pro[pro_propiedad4] . "&" . ///$rst_pro[pro_peso]
                 $rst_fbc[emp_sigla] . "&" .
                 $rst_set[ord_zo1] . "&" .
                 $rst_set[ord_zo2] . "&" .
@@ -1464,7 +1462,37 @@ switch ($act) {
                 $rst_set[ord_win_tensility] . "&" .
                 $rst_set[ord_mas_bra_autosetting] . "&" .
                 $rst_set[ord_rol_mil_up_down] . "&" .
-                $combo;
+                $combo . "&" .
+                $rst_pro[pro_mp7] . "&" .
+                $rst_pro[pro_mp8] . "&" .
+                $rst_pro[pro_mp9] . "&" .
+                $rst_pro[pro_mp10] . "&" .
+                $rst_pro[pro_mp11] . "&" .
+                $rst_pro[pro_mp12] . "&" .
+                $rst_pro[pro_mf7] . "&" .
+                $rst_pro[pro_mf8] . "&" .
+                $rst_pro[pro_mf9] . "&" .
+                $rst_pro[pro_mf10] . "&" .
+                $rst_pro[pro_mf11] . "&" .
+                $rst_pro[pro_mf12] . "&" .
+                ($rst_pro[pro_mf7] + $rst_pro[pro_mf8] + $rst_pro[pro_mf9] + $rst_pro[pro_mf10] + $rst_pro[pro_mf11] + $rst_pro[pro_mf12]) . "&" .
+                $rst_pro[pro_mp13] . "&" .
+                $rst_pro[pro_mp14] . "&" .
+                $rst_pro[pro_mp15] . "&" .
+                $rst_pro[pro_mp16] . "&" .
+                $rst_pro[pro_mp17] . "&" .
+                $rst_pro[pro_mp18] . "&" .
+                $rst_pro[pro_mf13] . "&" .
+                $rst_pro[pro_mf14] . "&" .
+                $rst_pro[pro_mf15] . "&" .
+                $rst_pro[pro_mf16] . "&" .
+                $rst_pro[pro_mf17] . "&" .
+                $rst_pro[pro_mf18] . "&" .
+                ($rst_pro[pro_mf13] + $rst_pro[pro_mf14] + $rst_pro[pro_mf15] + $rst_pro[pro_mf16] + $rst_pro[pro_mf17] + $rst_pro[pro_mf18] + $rst_pro[pro_mf18]) . "&" .
+                $rst_pro[pro_por_tornillo1] . "&" .
+                $rst_pro[pro_por_tornillo2] . "&" .
+                $rst_pro[pro_por_tornillo3];
+
 
 //////////////////////////////////////////////////////////////////////////////////
         echo $retorno;
@@ -1682,13 +1710,16 @@ switch ($act) {
     case 60:
         $sms = 0;
 
-        if ($data[25] == '[object Window]') {
-            $data[25] = 0;
-        }
+//        if ($data[25] == '[object Window]') { ///ord_pro_secundario
+//            $data[25] = 0;
+//        }
         if ($id == 0) {// Insertar
             if ($Set->insertar_orden_produccion($data) == false) {
                 $sms = 'Insert' . pg_last_error();
             } else {
+                if ($Set->insertar_formula_produccion($data) == false) {
+                    $sms = 'Insert_formula' . pg_last_error();
+                }
                 $rst_sec = pg_fetch_array($Set->lista_ped_sec());
                 $sec = ($rst_sec[ped_orden] + 1);
                 if ($sec >= 0 && $sec < 10) {
@@ -1705,42 +1736,117 @@ switch ($act) {
                     $tx_trs = "";
                 }
                 $code = $tx_trs . $sec;
+                ///mp tornillo1
                 $n = 0;
-                $j = 3;
-                $i = 12;
-                while ($n < 6) {
+                $j = 6;
+                $i = 43;
+                while ($n < 18) {
                     $n++;
                     $j++;
                     $i++;
-                    if ($j == 8) {
-                        $j = 63;
-                        $i = 67;
-                    }
                     $ord_mp = array(
                         $code,
-                        $data[19],
+                        $data[68], ///ord_fec_entrega
                         '5',
                         $data[$j],
                         $data[$i],
                         $data[$i],
-                        $data[0]
+                        $data[0]///ord_num_orden
                     );
                     if ($data[$j] != 0) {
                         if ($Set->insert_pmp($ord_mp) == false) {
-                            $sms = 'insert pedido mp' . pg_last_error();
-                            ;
+                            $sms = 'insert pedido mp tornillos' . pg_last_error();
+                        }
+                    }
+                }
+//                ////mp tornillo2
+//                $n = 0;
+//                $j = 73;
+//                $i = 85;
+//                while ($n < 6) {
+//                    $n++;
+//                    $j++;
+//                    $i++;
+//                    $ord_mp = array(
+//                        $code,
+//                        $data[19],
+//                        '5',
+//                        $data[$j],
+//                        $data[$i],
+//                        $data[$i],
+//                        $data[0]
+//                    );
+//                    if ($data[$j] != 0) {
+////                        if ($Set->insert_pmp($ord_mp) == false) {
+////                            $sms = 'insert pedido mp t2' . pg_last_error();
+////                        }
+//                    }
+//                }
+//                ////mp tornillo3
+//                $n = 0;
+//                $j = 91;
+//                $i = 103;
+//                while ($n < 6) {
+//                    $n++;
+//                    $j++;
+//                    $i++;
+//                    $ord_mp = array(
+//                        $code,
+//                        $data[19],
+//                        '5',
+//                        $data[$j],
+//                        $data[$i],
+//                        $data[$i],
+//                        $data[0]
+//                    );
+//                    if ($data[$j] != 0) {
+////                        if ($Set->insert_pmp($ord_mp) == false) {
+////                            $sms = 'insert pedido mp t3' . pg_last_error();
+////                        }
+//                    }
+//                }
+                ////mp empaque
+                $n = 0;
+                $j = 96;
+                $i = 132;
+                while ($n < 24) {
+                    $n++;
+                    $j++;
+                    $i++;
+                    $ord_mp = array(
+                        $code,
+                        $data[68], //fec_entrega
+                        '5',
+                        $data[$j], //mp_id
+                        $data[$i], //kg
+                        $data[$i], //kg
+                        $data[0]//orden
+                    );
+                    if ($data[$j] != 0) {
+                        if ($Set->insert_pmp($ord_mp) == false) {
+                            $sms = 'insert pedido mp empq' . pg_last_error();
                         }
                     }
                 }
                 $accion = 'INSERTAR';
-                if ($Set->lista_cambia_status_det($data[73], '9') == false) {
-                    $sms = 'Cambio_estado_ped' . pg_last_error();
+                if (!empty($data[186])) {
+                    if ($Set->lista_cambia_status_det($data[186], '9') == true) {///
+                        $rst_ped = pg_fetch_array($Set->lista_pedido($data[186]));
+                        if ($Set->lista_cambia_status_pedido($rst_ped[ped_id], 9) == false) {///
+                            $sms = 'Cambio_estado_ped' . pg_last_error();
+                        }
+                    } else {
+                        $sms = 'Cambio_estado_ped' . pg_last_error();
+                    }
                 }
             }
         } else {// Modificar
             if ($Set->modificar_orden_produccion($data, $id) == false) {
                 $sms = 'upd' . pg_last_error();
             } else {
+                if ($Set->modificar_formula_produccion($data, $id) == false) {
+                    $sms = 'upd' . pg_last_error();
+                }
                 if ($Set->del_pmp_orden($data[0]) == false) {
                     $sms = 'del_pmp' . pg_last_error();
                 } else {
@@ -1760,29 +1866,95 @@ switch ($act) {
                         $tx_trs = "";
                     }
                     $code = $tx_trs . $sec;
+                    ///mp tornillo1
                     $n = 0;
-                    $j = 3;
-                    $i = 12;
-                    while ($n < 6) {
+                    $j = 6;
+                    $i = 43;
+                    while ($n < 18) {
                         $n++;
                         $j++;
                         $i++;
-                        if ($j == 8) {
-                            $j = 63;
-                            $i = 67;
-                        }
                         $ord_mp = array(
                             $code,
-                            $data[19],
+                            $data[68], ///ord_fec_entrega
                             '5',
                             $data[$j],
                             $data[$i],
                             $data[$i],
-                            $data[0]
+                            $data[0]///ord_num_orden
                         );
                         if ($data[$j] != 0) {
                             if ($Set->insert_pmp($ord_mp) == false) {
-                                $sms = 'insert pedido mp' . pg_last_error();
+                                $sms = 'insert pedido mp t0rnillos' . pg_last_error();
+                            }
+                        }
+                    }
+//                    ////mp tornillo2
+//                    $n = 0;
+//                    $j = 73;
+//                    $i = 85;
+//                    while ($n < 6) {
+//                        $n++;
+//                        $j++;
+//                        $i++;
+//                        $ord_mp = array(
+//                            $code,
+//                            $data[19],
+//                            '5',
+//                            $data[$j],
+//                            $data[$i],
+//                            $data[$i],
+//                            $data[0]
+//                        );
+////                        if ($data[$j] != 0) {
+////                            if ($Set->insert_pmp($ord_mp) == false) {
+////                                $sms = 'insert pedido mp t2' . pg_last_error();
+////                            }
+////                        }
+//                    }
+//                    ////mp tornillo3
+//                    $n = 0;
+//                    $j = 91;
+//                    $i = 103;
+//                    while ($n < 6) {
+//                        $n++;
+//                        $j++;
+//                        $i++;
+//                        $ord_mp = array(
+//                            $code,
+//                            $data[19],
+//                            '5',
+//                            $data[$j],
+//                            $data[$i],
+//                            $data[$i],
+//                            $data[0]
+//                        );
+//                        if ($data[$j] != 0) {
+////                            if ($Set->insert_pmp($ord_mp) == false) {
+////                                $sms = 'insert pedido mp t3' . pg_last_error();
+////                            }
+//                        }
+//                    }
+                    ////mp empaque
+                    $n = 0;
+                    $j = 96;
+                    $i = 132;
+                    while ($n < 24) {
+                        $n++;
+                        $j++;
+                        $i++;
+                        $ord_mp = array(
+                            $code,
+                            $data[68], //fec_entrega
+                            '5',
+                            $data[$j], //mp_id
+                            $data[$i], //kg
+                            $data[$i], //kg
+                            $data[0]//orden
+                        );
+                        if ($data[$j] != 0) {
+                            if ($Set->insert_pmp($ord_mp) == false) {
+                                $sms = 'insert pedido mp empq' . pg_last_error();
                             }
                         }
                     }
@@ -1857,56 +2029,73 @@ switch ($act) {
         break;
     ///CAMBIOS CRISTINA
     case 64:
-        $rst_em = pg_fetch_array($Set->lista_emisor($s));
-        $em = $rst_em[cod_orden];
-        if (strlen($_REQUEST[lt]) >= 8) {
-            $tabla = 1;
-            $rst = pg_fetch_array($Set->lista_un_producto_noperti_cod_lote($id, $_REQUEST[lt]));
-            $rst_precio1 = pg_fetch_array($Set->lista_precio_producto($rst[id], $tabla));
-            if ($rst_precio1[pre_vald_precio1] == 1) {
-                $rst_precio1[pre_precio] = $rst_precio1[pre_precio];
-            } else {
-                $rst_precio1[pre_precio] = $rst_precio1[pre_precio2];
-            }
-            $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio1[pre_id], $em));
-            $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[id], $s, '1'));
-            $inv = $rst1[ingreso] - $rst1[egreso];
-            echo $rst[pro_a] . '&' . $rst[pro_b] . '&' . $rst[pro_uni] . '&' . $rst_precio1[pre_precio] . '&' . $rst_precio1[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio1[pre_ice] . '&' . $rst[pro_ad] . '&' . $rst[pro_ac] . '&' . $rst[id] . '&1&' . $inv;
-        } else {
-            $tbl = substr($id, 0, 1);
-            $id = substr($id, 1, (strlen($id) - 1));
-            if ($tbl == 1) {
-                $rst = pg_fetch_array($Set->lista_un_producto_noperti_id($id));
-                if ($rst[id] != '') {
-                    $rst_precio1 = pg_fetch_array($Set->lista_precio_producto($rst[id], $tbl));
-                    if ($rst_precio1[pre_vald_precio1] == 1) {
-                        $rst_precio1[pre_precio] = $rst_precio1[pre_precio];
-                    } else {
-                        $rst_precio1[pre_precio] = $rst_precio1[pre_precio2];
-                    }
+//        $rst_em = pg_fetch_array($Set->lista_emisor($s));
+//        $em = $rst_em[cod_orden];
+//        if (strlen($_REQUEST[lt]) >= 8) {
+//            $tabla = 1;
+//            $rst = pg_fetch_array($Set->lista_un_producto_noperti_cod_lote($id, $_REQUEST[lt]));
+//            $rst_precio1 = pg_fetch_array($Set->lista_precio_producto($rst[id], $tabla));
+//            if ($rst_precio1[pre_vald_precio1] == 1) {
+//                $rst_precio1[pre_precio] = $rst_precio1[pre_precio];
+//            } else {
+//                $rst_precio1[pre_precio] = $rst_precio1[pre_precio2];
+//            }
+//            $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio1[pre_id], $em));
+//            $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[id], $s, '1'));
+//            $inv = $rst1[ingreso] - $rst1[egreso];
+//            echo $rst[pro_a] . '&' . $rst[pro_b] . '&' . $rst[pro_uni] . '&' . $rst_precio1[pre_precio] . '&' . $rst_precio1[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio1[pre_ice] . '&' . $rst[pro_ad] . '&' . $rst[pro_ac] . '&' . $rst[id] . '&1&' . $inv;
+//        } else {
+//            $tbl = substr($id, 0, 1);
+//            $id = substr($id, 1, (strlen($id) - 1));
+//            if ($tbl == 1) {
+//                $rst = pg_fetch_array($Set->lista_un_producto_noperti_id($id));
+//                if ($rst[id] != '') {
+//                    $rst_precio1 = pg_fetch_array($Set->lista_precio_producto($rst[id], $tbl));
+//                    if ($rst_precio1[pre_vald_precio1] == 1) {
+//                        $rst_precio1[pre_precio] = $rst_precio1[pre_precio];
+//                    } else {
+//                        $rst_precio1[pre_precio] = $rst_precio1[pre_precio2];
+//                    }
+//
+//                    $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio1[pre_id], $em));
+//                    $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[id], $s, '1'));
+//                    $inv = $rst1[ingreso] - $rst1[egreso];
+//                    echo $rst[pro_a] . '&' . $rst[pro_b] . '&' . $rst[pro_uni] . '&' . $rst_precio1[pre_precio] . '&' . $rst_precio1[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio1[pre_ice] . '&' . $rst[pro_ad] . '&' . $rst[pro_ac] . '&' . $rst[id] . '&1&' . $inv;
+//                }
+//            } else {
 
-                    $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio1[pre_id], $em));
-                    $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[id], $s, '1'));
-                    $inv = $rst1[ingreso] - $rst1[egreso];
-                    echo $rst[pro_a] . '&' . $rst[pro_b] . '&' . $rst[pro_uni] . '&' . $rst_precio1[pre_precio] . '&' . $rst_precio1[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio1[pre_ice] . '&' . $rst[pro_ad] . '&' . $rst[pro_ac] . '&' . $rst[id] . '&1&' . $inv;
-                }
-            } else {
-                $rst = pg_fetch_array($Set->lista_un_producto_industrial_id($id));
-                if ($rst[pro_id] != '') {
-                    $rst_precio = pg_fetch_array($Set->lista_precio_producto($rst[pro_id], $tbl));
-                    if ($rst_precio[pre_vald_precio1] == 1) {
-                        $rst_precio[pre_precio] = $rst_precio[pre_precio];
-                    } else {
-                        $rst_precio[pre_precio] = $rst_precio[pre_precio2];
-                    }
-                    $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio[pre_id], $em));
-                    $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[pro_id], $s, '0'));
-                    $inv = $rst1[ingreso] - $rst1[egreso];
-                    echo $rst[pro_codigo] . '&' . $rst[pro_descripcion] . '&' . $rst[pro_uni] . '&' . $rst_precio[pre_precio] . '&' . $rst_precio[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio[pre_ice] . '& & &' . $rst[pro_id] . '&0&' . $inv;
-                    ;
-                }
+        $rst = pg_fetch_array($Set->lista_un_producto_industrial_id($id));
+//        if ($rst[pro_id] != '') {
+        $rst_precio = pg_fetch_array($Set->lista_precio_producto($rst[pro_id], $tbl));
+        if ($rst_precio[pre_vald_precio1] == 1) {
+            $rst_precio[pre_precio] = $rst_precio[pre_precio];
+        } else {
+            $rst_precio[pre_precio] = $rst_precio[pre_precio2];
+        }
+        $rst_desc = pg_fetch_array($Set->lista_descuento_producto($rst_precio[pre_id], $em));
+
+        if (!empty($_REQUEST[lt])) {
+            $rst1 = pg_fetch_array($Set->total_ingreso_egreso_lote($_REQUEST[lt]));
+            $rst = pg_fetch_array($Set->lista_movimiento_lote($_REQUEST[lt]));
+        } else {
+            $rst = pg_fetch_array($Set->lista_un_producto($id));
+            if ($rst[pro_id] != '') {
+                $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[pro_id], $_REQUEST[lt]));
             }
         }
+
+        $cns_lote = $Set->lista_lotes_movimiento($rst[pro_id]);
+        $lotes = "";
+        while ($rst_lt = pg_fetch_array($cns_lote)) {
+            $lotes.="<option value='$rst_lt[mov_pago]'>$rst_lt[mov_pago]</option>";
+        }
+
+//            $rst1 = pg_fetch_array($Set->total_ingreso_egreso_fac($rst[pro_id], $_REQUEST[lt]));
+        $inv = $rst1[ingreso] - $rst1[egreso];
+        echo $rst[pro_codigo] . '&' . $rst[pro_descripcion] . '&' . $rst[pro_uni] . '&' . $rst_precio[pre_precio] . '&' . $rst_precio[pre_iva] . '&' . $rst_desc[dsc_descuento] . '&' . $rst_precio[pre_ice] . '& & &' . $rst[pro_id] . '&0&' . $inv . '&' . $lotes;
+//        }
+//            }
+//        }
         break;
     case 65:
         $sms = 0;
@@ -2674,6 +2863,111 @@ switch ($act) {
             $sms = pg_last_error();
         }
         echo $sms;
+        break;
+    case 85:
+        $tor = $_REQUEST[tornillo];
+        $rst_pro = pg_fetch_array($Set->lista_un_producto($_REQUEST[id]));
+        switch ($tor) {
+            case 1:
+                echo $rst_pro[pro_mp1] . "&" .
+                $rst_pro[pro_mp2] . "&" .
+                $rst_pro[pro_mp3] . "&" .
+                $rst_pro[pro_mp4] . "&" .
+                $rst_pro[pro_mp5] . "&" .
+                $rst_pro[pro_mp6] . "&" .
+                $rst_pro[pro_mf1] . "&" .
+                $rst_pro[pro_mf2] . "&" .
+                $rst_pro[pro_mf3] . "&" .
+                $rst_pro[pro_mf4] . "&" .
+                $rst_pro[pro_mf5] . "&" .
+                $rst_pro[pro_mf6] . "&" .
+                ($rst_pro[pro_mf1] + $rst_pro[pro_mf2] + $rst_pro[pro_mf3] + $rst_pro[pro_mf4] + $rst_pro[pro_mf5] + $rst_pro[pro_mf6]);
+                break;
+            case 2:
+                echo $rst_pro[pro_mp7] . "&" .
+                $rst_pro[pro_mp8] . "&" .
+                $rst_pro[pro_mp9] . "&" .
+                $rst_pro[pro_mp10] . "&" .
+                $rst_pro[pro_mp11] . "&" .
+                $rst_pro[pro_mp12] . "&" .
+                $rst_pro[pro_mf7] . "&" .
+                $rst_pro[pro_mf8] . "&" .
+                $rst_pro[pro_mf9] . "&" .
+                $rst_pro[pro_mf10] . "&" .
+                $rst_pro[pro_mf11] . "&" .
+                $rst_pro[pro_mf12] . "&" .
+                ($rst_pro[pro_mf7] + $rst_pro[pro_mf8] + $rst_pro[pro_mf9] + $rst_pro[pro_mf10] + $rst_pro[pro_mf11] + $rst_pro[pro_mf12]);
+                break;
+            case 3:
+                echo $rst_pro[pro_mp13] . "&" .
+                $rst_pro[pro_mp14] . "&" .
+                $rst_pro[pro_mp15] . "&" .
+                $rst_pro[pro_mp16] . "&" .
+                $rst_pro[pro_mp17] . "&" .
+                $rst_pro[pro_mp18] . "&" .
+                $rst_pro[pro_mf13] . "&" .
+                $rst_pro[pro_mf14] . "&" .
+                $rst_pro[pro_mf15] . "&" .
+                $rst_pro[pro_mf16] . "&" .
+                $rst_pro[pro_mf17] . "&" .
+                $rst_pro[pro_mf18] . "&" .
+                ($rst_pro[pro_mf13] + $rst_pro[pro_mf14] + $rst_pro[pro_mf15] + $rst_pro[pro_mf16] + $rst_pro[pro_mf17] + $rst_pro[pro_mf18]);
+                break;
+        }
+
+        break;
+    case 86:
+
+        $rst_pro = pg_fetch_array($Set->lista_una_formula($id));
+        $cns_mp = $Set->lista_mp0();
+        $combo = "<option  value='0'> - Seleccione - </option>";
+        while ($rst_mp = pg_fetch_array($cns_mp)) {
+            $combo.="<option value='$rst_mp[mp_id]'>$rst_mp[mp_referencia]</option>";
+        }
+
+        echo $combo . "&" .
+        $rst_pro[ord_mp1] . "&" .
+        $rst_pro[ord_mp2] . "&" .
+        $rst_pro[ord_mp3] . "&" .
+        $rst_pro[ord_mp4] . "&" .
+        $rst_pro[ord_mp5] . "&" .
+        $rst_pro[ord_mp6] . "&" .
+        $rst_pro[ord_mp7] . "&" .
+        $rst_pro[ord_mp8] . "&" .
+        $rst_pro[ord_mp9] . "&" .
+        $rst_pro[ord_mp10] . "&" .
+        $rst_pro[ord_mp11] . "&" .
+        $rst_pro[ord_mp12] . "&" .
+        $rst_pro[ord_mp13] . "&" .
+        $rst_pro[ord_mp14] . "&" .
+        $rst_pro[ord_mp15] . "&" .
+        $rst_pro[ord_mp16] . "&" .
+        $rst_pro[ord_mp17] . "&" .
+        $rst_pro[ord_mp18] . "&" .
+        $rst_pro[ord_mf1] . "&" .
+        $rst_pro[ord_mf2] . "&" .
+        $rst_pro[ord_mf3] . "&" .
+        $rst_pro[ord_mf4] . "&" .
+        $rst_pro[ord_mf5] . "&" .
+        $rst_pro[ord_mf6] . "&" .
+        $rst_pro[ord_mf7] . "&" .
+        $rst_pro[ord_mf8] . "&" .
+        $rst_pro[ord_mf9] . "&" .
+        $rst_pro[ord_mf10] . "&" .
+        $rst_pro[ord_mf11] . "&" .
+        $rst_pro[ord_mf12] . "&" .
+        $rst_pro[ord_mf13] . "&" .
+        $rst_pro[ord_mf14] . "&" .
+        $rst_pro[ord_mf15] . "&" .
+        $rst_pro[ord_mf16] . "&" .
+        $rst_pro[ord_mf17] . "&" .
+        $rst_pro[ord_mf18] . "&" .
+        $rst_pro[ord_por_tornillo1] . "&" .
+        $rst_pro[ord_por_tornillo2] . "&" .
+        $rst_pro[ord_por_tornillo3] . "&" .
+        $rst_pro[ord_patch1] . "&" .
+        $rst_pro[ord_patch2] . "&" .
+        $rst_pro[ord_patch3];
         break;
 }
 ?>

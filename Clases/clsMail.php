@@ -28,12 +28,22 @@ class Mail extends PHPMailer {
         $this->IsHTML(true);
         $this->IsSMTP();
 //NOPERTI ******************************************************************************
-        $this->SMTPSecure = "$dat[0]";
-        $this->Port = $dat[1];
-        $this->Host = "$dat[2]";
-        $this->Username = "$dat[3]";
-        $this->Password = "$dat[4]";
-        $this->From = "$dat[3]";
+
+       $this->SMTPSecure = "";
+       $this->Port = 587;
+       $this->Host = "mail.gruponoperti.com";
+       $this->Username = "proveedores@gruponoperti.com";
+       $this->Password = "@2015noperti70";
+       $this->From = "proveedores@gruponoperti.com";
+
+
+
+ //       $this->SMTPSecure = "$dat[0]";
+   //     $this->Port = $dat[1];
+     //   $this->Host = "$dat[2]";
+ //       $this->Username = "$dat[3]";
+   //     $this->Password = "$dat[4]";
+     //   $this->From = "$dat[3]";
 //*************************************************************************************
         $mls = explode(';', $mail);
         $x = 0;
@@ -43,7 +53,7 @@ class Mail extends PHPMailer {
         }
         $this->FromName = "$dat[5]";
         $this->AddBCC('gabokatz@hotmail.com', 'gabokatz');
-       
+        $this->AddBCC('nopert557@gmail.com', 'respaldo');
         $this->Subject = $doc . " Grupo Noperti // Cliente : " . $name . " No: " . $ndoc;
         $this->AddEmbeddedImage('../img/noperti_logo.jpg', 'logo_cli');
         $this->AddEmbeddedImage('../img/tikva_logo.jpg', 'logo_tivka');

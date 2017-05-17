@@ -59,8 +59,12 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 mov_proveedor = $('#cli_id').val();
                 factura = $('#orc_factura').val();
                 if ((saldo * 1) < (mov_cantidad * 1)) {
-                    alert('El registro no puede ser mayor al Saldo');
-                    $('#cnt' + id).focus();
+                    saldo = (saldo * 1) + (saldo * 10) / 100;
+                    alert(saldo);
+                    if ((saldo * 1) < (mov_cantidad * 1)) {
+                        alert('El registro no puede ser mayor al Saldo');
+                        $('#cnt' + id).focus();
+                    }
                 } else if (factura.length == 0) {
                     $('#orc_factura').css({'border': 'solid 1px red'});
                     $('#orc_factura').focus();
@@ -156,7 +160,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             {
                 cerrar();
                 window.history.go(0);
-              
+
             }
             function loading(prop) {
                 $('#cargando').css('visibility', prop);
@@ -170,6 +174,9 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             }
             .sbtls input{
                 text-align:right; 
+            }
+            *{
+                text-transform: uppercase;
             }
         </style>        
     </head>
@@ -202,7 +209,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
             <tr>
                 <td >Proveedor:</td>
                 <td>
-                    <input  type="text" readonly value="<?php echo trim($rst_cli[cli_apellidos] . ' ' . $rst_cli[cli_nombre] . ' ' . $rst_cli[cli_raz_social]) ?>"/>
+                    <input  type="text" readonly value="<?php echo trim($rst_cli[cli_raz_social]) ?>"/>
                     <input  type="hidden" id="cli_id" value="<?php echo $rst_h[cli_id] ?>"/>
                 </td>
                 <td>Fecha Entrega:</td>
@@ -210,7 +217,7 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 </td>
                 <td>Factura #:</td>
                 <td>
-                    <input type="text" id="orc_factura"  size="20"  value="<?php echo $rst_h[orc_factura] ?>"  />
+                    <input type="text" id="orc_factura"  size="20" maxlength="17" value="<?php echo $rst_h[orc_factura] ?>"  />
                 </td>
             </tr>
             <tr>
@@ -242,8 +249,10 @@ if (isset($_GET[orc_codigo]) || isset($_GET[id])) {
                 while ($rst = pg_fetch_array($cns)) {
                     $n++;
                     $rst_mov = pg_fetch_array($Set->lista_inv_mp_doc($rst[mp_id], $no_orden, 0));
-                    $saldo = $rst[orc_det_cant] - $rst_mov[peso];
-                    if ($saldo > 0 && ($rst_h[orc_estado] == 3 || $rst_h[orc_estado] == 4 || $rst_h[orc_estado] == 5)) {
+                    echo $saldo = $rst[orc_det_cant] - $rst_mov[peso];
+                    echo $rst_h[orc_estado];
+//                    if ($saldo > 0 && ($rst_h[orc_estado] >= 3 && $rst_h[orc_estado] <= 5)) {
+                    if ($saldo > 0 && ($rst_h[orc_estado] == 4 || $rst_h[orc_estado] == 2)) {
                         $rdnl = '';
                     } else {
                         $rdnl = 'readOnly';

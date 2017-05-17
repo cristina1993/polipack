@@ -3,6 +3,7 @@ include_once '../Clases/clsSetting.php';
 include_once '../Includes/permisos.php';
 $Set = new Set();
 $id = $_GET[id];
+$txt = $_GET[txt];
 if (isset($_GET[id])) {
     $rst = pg_fetch_array($Set->lista_un_tpmp($id));
 }
@@ -29,15 +30,12 @@ if (isset($_GET[id])) {
                 function (dt) {
                     if (dt == 0)
                     {
-                        parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_tpmp.php';
+                        cancelar();
                     } else {
                         alert(dt);
                     }
                 });
-                mnu = window.parent.frames[0].document.getElementById('lock_menu');
-                mnu.style.visibility = "hidden";
-                grid = window.parent.frames[1].document.getElementById('grid');
-                grid.style.visibility = "hidden";
+
 
             }
 
@@ -49,6 +47,7 @@ if (isset($_GET[id])) {
                 grid.style.visibility = "hidden";
                 parent.document.getElementById('bottomFrame').src = '';
                 parent.document.getElementById('contenedor2').rows = "*,0%";
+                parent.document.getElementById('mainFrame').src = '../Scripts/Lista_i_tpmp.php?search=1&txt=<?php echo $txt?>';
             }
 
             function loading(prop) {
@@ -57,6 +56,11 @@ if (isset($_GET[id])) {
             }
         </script>
     </head>
+    <style>
+        *{
+            text-transform: uppercase;
+        }
+    </style>
     <body>
 
         <img id="charging" src="../img/load_bar.gif" />    
@@ -64,7 +68,7 @@ if (isset($_GET[id])) {
 
         <table id="tbl_form" cellpadding="0" >
             <thead>
-                <tr><th colspan="3" >TIPOS DE MATERIA PRIMA</th></tr>
+                <tr><th colspan="3" >TIPOS DE MATERIA PRIMA <font class="cerrar"  onclick="cancelar()" title="Salir del Formulario">&#X00d7;</font></th></tr>
             </thead>                    
             <tr>
                 <td>Siglas:</td>

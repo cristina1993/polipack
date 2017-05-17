@@ -2,6 +2,7 @@
 include_once '../Includes/permisos.php';
 include_once '../Clases/clsClase_reportes.php';
 $Rep = new Reportes();
+set_time_limit(0);
 if (isset($_GET[search])) {
     $txt = strtoupper($_GET[txt]);
     $txt.= strtoupper($_GET[linea]);

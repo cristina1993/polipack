@@ -161,36 +161,6 @@ switch ($op) {
                 $cli_id = $rst_cl[cli_id];
             }
 
-
-//            if ($data[0] >= 10) {
-//                $ems = '0' . $data[0];
-//            } else {
-//                $ems = '00' . $data[0];
-//            }
-//            $rst_sec = pg_fetch_array($Set->lista_secuencial_documento($ems));
-//            $sec = ($rst_sec[secuencial] + 1);
-//            if ($sec >= 0 && $sec < 10) {
-//                $tx = '00000000';
-//            } else if ($sec >= 10 && $sec < 100) {
-//                $tx = '0000000';
-//            } else if ($sec >= 100 && $sec < 1000) {
-//                $tx = '000000';
-//            } else if ($sec >= 1000 && $sec < 10000) {
-//                $tx = '00000';
-//            } else if ($sec >= 10000 && $sec < 100000) {
-//                $tx = '0000';
-//            } else if ($sec >= 100000 && $sec < 1000000) {
-//                $tx = '000';
-//            } else if ($sec >= 1000000 && $sec < 10000000) {
-//                $tx = '00';
-//            } else if ($sec >= 10000000 && $sec < 100000000) {
-//                $tx = '0';
-//            } else if ($sec >= 100000000 && $sec < 1000000000) {
-//                $tx = '';
-//            }
-//            $secuencial = $ems . '-001-' . $tx . $sec;
-
-
             $rst_ulti_sec = pg_fetch_array($Set->lista_secuencial_num_factura($data[0], $data[5]));
 
             if (!empty($rst_ulti_sec)) {
@@ -406,15 +376,15 @@ switch ($op) {
                                     $cantid = $dtm[3];
                                 } else if ($dtm[19] == 'ROLLO' && $dtm[20] == 'M') {
                                     $cantid = $dtm[3] * $rollo / $mts;
-                                } else if ($dtm[19] == 'ROLLO' && $dtm[20] == 'KG'){
+                                } else if ($dtm[19] == 'ROLLO' && $dtm[20] == 'KG') {
                                     $cantid = $dtm[3] * $rollo / $kg;
-                                } else if ($dtm[19] == 'KG' && $dtm[20] == 'ROLLO'){
+                                } else if ($dtm[19] == 'KG' && $dtm[20] == 'ROLLO') {
                                     $cantid = $dtm[3] * $kg / $rollo;
-                                } else if ($dtm[19] == 'KG' && $dtm[20] == 'M'){
+                                } else if ($dtm[19] == 'KG' && $dtm[20] == 'M') {
                                     $cantid = $dtm[3] * $kg / $mts;
-                                } else if ($dtm[19] == 'M' && $dtm[20] == 'ROLLO'){
+                                } else if ($dtm[19] == 'M' && $dtm[20] == 'ROLLO') {
                                     $cantid = $dtm[3] * $mts / $rollo;
-                                } else if ($dtm[19] == 'M' && $dtm[20] == 'KG'){
+                                } else if ($dtm[19] == 'M' && $dtm[20] == 'KG') {
                                     $cantid = $dtm[3] * $mts / $kg;
                                 } else {
                                     $cantid = $dtm[3];
@@ -689,8 +659,8 @@ switch ($op) {
                                             'CUENTAS X COBRAR',
                                             $data[5], //doc
                                             $data[4], //fec
-                                            $rst_cliente[pln_codigo], //con_debe
-                                            $rst_cta[pln_codigo], //con_haber
+                                            $rst_cta[pln_codigo],//con_debe
+                                            $rst_cliente[pln_codigo], //con_haber
                                             $r_p[pag_cant], //val_debe
                                             $r_p[pag_cant], // val_haber
                                             '0' //estado

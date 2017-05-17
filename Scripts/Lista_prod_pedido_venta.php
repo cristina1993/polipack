@@ -10,25 +10,25 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
     $fecha1 = $_GET[fecha1];
     $fecha2 = $_GET[fecha2];
     if (!empty($ord)) {
-        $ord1 = "and ped_num_registro='$ord' and det_tab=$tabla";
+        $ord1 = "and ped_num_registro='$ord'";
         $cli = '';
         $ruc = '';
         $cns = $Docs->lista_buscador_orden($ord1);
     } else if (!empty($cli)) {
-        $cli1 = "and ped_nom_cliente='$cli' and det_tab=$tabla";
+        $cli1 = "and ped_nom_cliente='$cli'";
         $ord = '';
         $ruc = '';
         $cns = $Docs->lista_buscador_orden($cli1);
     } else if (!empty($ruc)) {
-        $ruc1 = "and ped_ruc_cc_cliente='$ruc' and det_tab=$tabla";
+        $ruc1 = "and ped_ruc_cc_cliente='$ruc'";
         $ord = '';
         $cli = '';
         $cns = $Docs->lista_buscador_orden($ruc1);
     } else if ($est != 'x') {
-        $estado1 = "and det_estado='$est' and det_tab=$tabla";
+        $estado1 = "and det_estado='$est'";
         $cns = $Docs->lista_buscador_orden($estado1);
     } else {
-        $ord1 = "and ped_femision between '$fecha1' and '$fecha2' and det_tab=$tabla";
+        $ord1 = "and ped_femision between '$fecha1' and '$fecha2'";
         $cns = $Docs->lista_buscador_orden($ord1);
     }
 } else {
@@ -73,34 +73,39 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                 parent.document.getElementById('contenedor2').rows = "*,80%";
                 switch (a)
                 {
-                    case 1://Orden
-                        switch (fab)
-                        {
-                             case 1:
+//                    case 1://Orden
+//                        switch (fab)
+//                        {
+//                            case 1:
 //                                frm.src = '../Scripts/Form_i_ordenes_geotextil.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
 //                                look_menu();
-                                break;
-                            case 3:
-                                frm.src = '../Scripts/Form_i_orden_plumon.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
-                                look_menu();
-                                break;
-                            case 4:
-                                frm.src = '../Scripts/Form_i_orden_padding.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
-                                look_menu();
-                                break;
-                            case 5:
-                                frm.src = '../Scripts/Form_i_orden_ecocambrella.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
-                                look_menu();
-                                break;
-                            case 6:
-                                frm.src = '../Scripts/Form_i_ordenes_geotextil.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
-                                look_menu();
-                                break;
-                        }
+//                                break;
+//                            case 3:
+//                                frm.src = '../Scripts/Form_i_orden_plumon.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
+//                                look_menu();
+//                                break;
+                    case 1:
+                        frm.src = '../Scripts/Form_i_orden_ecocambrella3T.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
+                        look_menu();
                         break;
-                    case 2://Facturar
+                    case 2:
+                        frm.src = '../Scripts/Form_i_orden_padding.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
+                        look_menu();
+                        break;
+
+//                            case 6:
+//                                frm.src = '../Scripts/Form_i_ordenes_geotextil.php?prod=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
+//                                look_menu();
+//                                break;
+//                        }
+//                        break;
+                    case 3://Facturar
                         frm.src = '../Scripts/Form_factura_pedventa.php?id=' + id + '&det=1';
                         parent.document.getElementById('contenedor2').rows = "*,80%";
+                        break;
+                        case 4:
+                        frm.src = '../Scripts/Form_ord_pedido_venta.php?id=' + id + '&ord=' + ord + '&cli=' + cli + '&ruc=' + ruc + '&fecha1=' + f1 + '&fecha2=' + f2 + '&ped_estado=' + e;
+                        look_menu();
                         break;
                 }
             }
@@ -125,11 +130,16 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                 });
             }
 
-            function del(id, det)
+            function del(id, det,sts)
             {
-                var r = confirm("Esta Seguro de Suspender este elemento?");
+                if(sts==5){
+                    sms="Anular"
+                }else{
+                    sms="Enviar"
+                }
+                var r = confirm("Esta Seguro de "+sms+" este elemento?");
                 if (r == true) {
-                    $.post("actions_prod_pedido_venta.php", {op: 0, id: id, data: det, sts: 5}, function (dt) {
+                    $.post("actions_prod_pedido_venta.php", {op: 0, id: id, data: det, sts: sts}, function (dt) {
                         if (dt == 0) {
                             parent.document.getElementById('mainFrame').src = '../Scripts/Lista_prod_pedido_venta.php';
                         } else {
@@ -172,7 +182,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                     ?>
                     <img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />                            
                 </center>               
-                <center class="cont_title" >ORDENES DE PEDIDO DE VENTA <?php echo $bodega ?></center>
+                <center class="cont_title" >ORDENES DE PEDIDO DE VENTA</center>
                 <center class="cont_finder">
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
                         ORDEN:<input type="text" name="ord" size="15" id="ord" value="<?php echo $ord ?>"/>
@@ -182,9 +192,11 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                         <select id="ped_estado" name="ped_estado">
                             <option value="x" >SELECCIONE</option>
                             <option value="1" >Aprobado</option>
-                            <option value="4" >Facturado</option>
-                            <option value="5" >Suspendido</option>
-                            <option value="9" >Programado</option>
+                            <option value="9" >En Espera</option>
+                            <option value="4" >Enviado</option>
+                            <option value="5" >Anulado</option>
+                            <option value="10" >Produccion</option>
+                            <option value="11" >Terminado</option>
                         </select>
                         DESDE:<input type="text" size="10" name="fecha1" id="fecha1" value="<?php echo $fecha1 ?>" />
                         <img src="../img/calendar.png" id="im-campo1"/>
@@ -200,15 +212,20 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
             <th>No</th>
             <th>Fecha</th>
             <th>Orden de Venta</th>
+            <th>Cliente</th>
             <th>Codigo</th>
-            <th>Lote</th>                                
+<!--            <th >Lote</th>                                -->
             <th>Descripcion</th>
-            <th>Fabrica</th>
-            <th>Solicitado</th>
-            <th>Unidad</th>
-            <th>Inventario</th>
+            <th style="width: 100px">Unidad</th>
+            <th style="width: 100px">Ancho</th>
+            <th style="width: 100px">Espesor</th>
+            <th style="width: 100px">Peso</th>
+            <th style="width: 100px">D.Core</th>
+           <!--<th>Fabrica</th>-->
+            <th style="width: 100px">Solicitado</th>
+            <th style="width: 100px">Inventario</th>
             <th>Estado</th>
-            <th>Acciones</th>
+            <th style="width: 350px">Acciones</th>
         </thead>
         <!------------------------------------->
 
@@ -221,11 +238,15 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                 switch ($rst[det_estado]) {
                     case '1':$estado = 'Aprobado';
                         break;
-                    case '4':$estado = 'Facturado';
+                    case '4':$estado = 'Enviado';
                         break;
-                    case '5':$estado = 'Suspendido';
+                    case '5':$estado = 'Anulado';
                         break;
-                    case '9':$estado = 'Programado';
+                    case '9':$estado = 'En Espera';
+                        break;
+                    case '10':$estado = 'Produccion';
+                        break;
+                    case '11':$estado = 'Terminado';
                         break;
                 }
                 switch ($rst[det_unidad]) {
@@ -237,73 +258,72 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
                         break;
                     case '4':$unidad = 'UNIDAD';
                         break;
+                    case '5':$unidad = 'CAJA';
+                        break;
                 }
                 $rst_inv = pg_fetch_array($Docs->total_ingreso_egreso_fac($rst[pro_id], $emisor, $rst[det_tab]));
                 $inv = $rst_inv[ingreso] - $rst_inv[egreso];
-                if ($rst[det_tab] == 0) {
-                    $prod = pg_fetch_array($Docs->lista_productos_industrial_id($rst[pro_id]));
-                } else {
-                    $prod = pg_fetch_array($Docs->lista_productos_noperti_id($rst[pro_id]));
-                    $prod[emp_id] = 1;
-                    $prod[emp_descripcion] = 'COMERCIAL';
-                }
+                 $even="onclick='auxWindow(4,$rst[ped_id])'";
                 ?>
                 <tr>
-                    <td><?php echo $n ?></td>
-                    <td><?php echo $rst[ped_femision] ?></td>
-                    <td><?php echo $rst[ped_num_registro] ?></td>
-                    <td><?php echo $rst[det_cod_producto] ?></td>
-                    <td><?php echo $rst[det_lote] ?></td>
-                    <td><?php echo $rst[det_descripcion] ?></td>
-                    <td><?php echo $prod[emp_descripcion] ?></td>
-                    <td align="right"><?php echo $rst[det_cantidad] ?></td>
-                    <td align="center"><?php echo $unidad ?></td>
-                    <td align="right"><?php echo $inv ?></td>
-                    <td align="center" ><?php echo $estado ?></td>
+                    <td <?php echo $even ?>><?php echo $n ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[ped_femision] ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[ped_num_registro] ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[cli_raz_social] ?></td>
+                    <td <?php echo $even ?>><?php echo $rst[det_cod_producto] ?></td>
+                    <!--<td><?php echo $rst[det_lote] ?></td>-->
+                    <td <?php echo $even ?>><?php echo $rst[det_descripcion] ?></td>
+                    <!--<td><?php echo $prod[emp_descripcion] ?></td>-->
+                    <td <?php echo $even ?> align="center"><?php echo $unidad ?></td>
+                    <td <?php echo $even ?> align="center"><?php echo $rst[pro_ancho]?></td>
+                    <td <?php echo $even ?> align="center"><?php echo $rst[pro_espesor]?></td>
+                    <td <?php echo $even ?> align="center"><?php echo $rst[pro_peso]?></td>
+                    <td <?php echo $even ?> align="center"><?php echo $rst[det_cod_auxiliar]?></td>
+                    <td <?php echo $even ?> align="right"><?php echo number_format($rst[det_cantidad]*$rst[det_lote],2) ?></td>
+                    <td <?php echo $even ?> align="right"><?php echo number_format($inv,2) ?></td>
+                    <td <?php echo $even ?> align="center" ><?php echo $estado ?></td>
                     <td align="center">
                         <?php
-                        switch ($prod[emp_id]) {
-                            case '1':$emp = '';
-                                break;
-                            case '3':$emp = 'erp_i_orden_produccion_plumon';
-                                break;
-                            case '4':$emp = 'erp_i_orden_produccion_padding';
-                                break;
-                            case '5':$emp = 'erp_i_orden_produccion';
-                                break;
-                            case '6':$emp = 'erp_i_orden_produccion_geotexti';
-                                break;
-                        }
+//                        switch ($prod[emp_id]) {
+//                            case '1':$emp = '';
+//                                break;
+//                            case '3':$emp = 'erp_i_orden_produccion_plumon';
+//                                break;
+//                            case '4':$emp = 'erp_i_orden_produccion_padding';
+//                                break;
+//                            case '5':$emp = 'erp_i_orden_produccion';
+//                                break;
+//                            case '6':$emp = 'erp_i_orden_produccion_geotexti';
+//                                break;
+//                        }
+//                        if ($estado == 'Aprobado') {
+//                            if ($Prt->delete == 0) {
+                        ?>
 
+                        <!--<img src="../img/b_delete.png" width="20px" title="Suspender" class="auxBtn" onclick="del(<?php echo $rst[ped_id] ?>, '<?php echo $rst[det_id] ?>')">-->
+                        <?php
+//                            }
                         if ($estado == 'Aprobado') {
-                            if ($Prt->delete == 0) {
+                            if ($Prt->edition == 0 || $Prt->delete == 0) {
                                 ?>
-                                <img src="../img/b_delete.png" width="20px" title="Suspender" class="auxBtn" onclick="del(<?php echo $rst[ped_id] ?>, '<?php echo $rst[det_id] ?>')">
+                                <button onclick="auxWindow(1,<?php echo $rst[det_id] ?>, 1)"  title="Generar Orden">Extrusion</button>
+                                <button onclick="auxWindow(2,<?php echo $rst[det_id] ?>, 1)" title="Generar Orden">Corte</button>
+                                <button onclick="del(<?php echo $rst[ped_id] ?>, '<?php echo $rst[det_id] ?>',5)" title="Anular Pedido">Anular</button>
+                                <button onclick="del(<?php echo $rst[ped_id] ?>, '<?php echo $rst[det_id] ?>',4)" title="Enviar Pedido">Enviar</button>
                                 <?php
                             }
-                            if ($estado != 'Facturado' && $estado != 'Programado') {
-                                if ($Prt->edition == 0) {
-                                    if ($prod[emp_id] != 1) {
-                                        ?>
-                                        <img src="../img/orden.png" width="20px" title="Generar Orden de Produccion" class="auxBtn" onclick="auxWindow(1,<?php echo $rst[det_id] ?>,<?php echo $prod[emp_id] ?>)">
-                                        <?php
-                                    } else {
-                                        ?>
-                                        <img src="../img/ord_comp.jpg" width="20px" title="Generar Orden de Compara" class="auxBtn" onclick="auxWindow(1,<?php echo $rst[det_id] ?>,<?php echo $prod[emp_id] ?>)">
-                                        <?php
-                                    }
-                                }
-                            }
                         }
-                        if ($grup != $rst[ped_num_registro]) {
-                            if ($estado != 'Facturado' && $estado != 'Suspendido') {
-                                if ($Prt->edition == 0) {
-                                    ?>
-                                    <img class="auxBtn" width="16px" src="../img/facturar.png" onclick="auxWindow(2,<?php echo $rst[ped_id] ?>, 1)" title="Facturar"/>
-                                    <?php
-                                }
-                            }
-                        }
+//                        }
+//                        if ($grup != $rst[ped_num_registro]) {
+//                            if ($estado != 'Facturado' && $estado != 'Suspendido') {
+//                                if ($Prt->edition == 0) {
+//                                    
+                        ?>
+    <!--<img class="auxBtn" width="16px" src="../img/facturar.png" onclick="auxWindow(2,//<?php echo $rst[ped_id] ?>, 1)" title="Facturar"/>-->
+                        <?php
+//                                }
+//                            }
+//                        }
                         ?>
                     </td>
                 </tr>  

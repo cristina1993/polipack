@@ -128,9 +128,9 @@ switch ($op) {
                         $ctas_cob = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('345'));
                         break;
                     case 10:
-                        $cli_nac_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('245'));
-                        $cli_ext_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('246'));
-                        $ven_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('247'));
+                        $cli_nac_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('246'));
+                        $cli_ext_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('247'));
+                        $ven_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('245'));
                         $iva_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('248'));
                         $fle_ctas = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('323'));
                         $ctas_cob = pg_fetch_array($Clase_nota_debito->lista_asientos_ctas('346'));

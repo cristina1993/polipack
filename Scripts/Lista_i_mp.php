@@ -2,7 +2,7 @@
 include_once '../Includes/permisos.php';
 include_once '../Clases/clsSetting.php';
 $Set = new Set();
-if (isset($_GET[txt])) {
+if (isset($_GET[search])) {
     $txt = trim(strtoupper($_GET[txt]));
     $emp = $_GET[emp_id];
     if ($emp != 0) {
@@ -10,11 +10,11 @@ if (isset($_GET[txt])) {
     } else {
         $t_emp = "";
     }
-
     $cns = $Set->lista_search_mp($txt, $t_emp);
-} else {
-    $cns = $Set->lista_mp0();
-}
+} 
+//else {
+////    $cns = $Set->lista_mp0();
+//}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN"> 
 <html> 
@@ -42,15 +42,15 @@ if (isset($_GET[txt])) {
             {
                 frm = parent.document.getElementById('bottomFrame');
                 main = parent.document.getElementById('mainFrame');
-                parent.document.getElementById('contenedor2').rows = "*,50%";
+                parent.document.getElementById('contenedor2').rows = "*,80%";
                 switch (a)
                 {
                     case 0:
-                        frm.src = '../Scripts/Form_i_mp.php';
+                        frm.src = '../Scripts/Form_i_mp.php?txt='+txt.value+'&emp_id='+emp_id.value;
                         look_menu();
                         break;
                     case 1:
-                        frm.src = '../Scripts/Form_i_mp.php?id=' + id + '&x=' + x;
+                        frm.src = '../Scripts/Form_i_mp.php?id=' + id + '&x=' + x+'&txt='+txt.value+'&emp_id='+emp_id.value;
                         look_menu();
                         break;
                 }
@@ -115,8 +115,8 @@ if (isset($_GET[txt])) {
                     }
                     ?>
                     <form method="GET" id="frmSearch" name="frm1" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
-                        Codigo:<input type="text" name="txt" size="25" placeholder="Referencia o Descripcion" />
-                        Fabrica:<select name="emp_id">
+                        Codigo:<input type="text" id="txt" name="txt" size="25" placeholder="Referencia o Descripcion" value="<?php echo $txt?>"/>
+                        Fabrica:<select id="emp_id" name="emp_id">
                             <option value="0" >Todos</option>
                             <?php
                             $cns_emp = $Set->lista_fabricas();
@@ -125,7 +125,7 @@ if (isset($_GET[txt])) {
                             }
                             ?>
                         </select>
-                        <button class="btn" title="Buscar" onclick="frmSearch.submit()">Buscar</button>
+                        <button class="btn" title="Buscar" name="search" onclick="frmSearch.submit()">Buscar</button>
                         <a href="#" ><img src="../img/finder.png" /></a>                                                                    
                     </form>  
                 </center>
@@ -135,11 +135,11 @@ if (isset($_GET[txt])) {
             <th>No</th>
             <th>Fabrica</th>
             <th>Tipo</th>
-            <th>Referencia</th>
+            <th>Codigo</th>
             <th>Descripcion</th>                     
             <th>Presentacion</th>
             <th>Unidad</th>
-            <th>Propiedad1</th>
+            <th>Peso (kg)</th>
             <th>Propiedad2</th>
             <th>Propiedad3</th>
             <th>Procedencia</th>
@@ -183,10 +183,12 @@ if (isset($_GET[txt])) {
             }
             ?>
         </tbody>
-
-
     </table>            
-
-</body>    
+</body>  
+<script>
+var emp='<?php echo $emp?>'
+$('#emp_id').val(emp);
+</script>
 </html>
+
 

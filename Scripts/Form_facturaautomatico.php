@@ -618,7 +618,7 @@ $cns_pag = $Clase_pagos->lista_detalle_pagos($fact);
 
                     tdsc = (tdsc * 1) + (d * 1);
 
-                    if (ob == '12') {
+                    if (ob == '14') {
                         t12 = (t12 * 1 + val * 1);
                     }
                     if (ob == '0') {
@@ -633,7 +633,7 @@ $cns_pag = $Clase_pagos->lista_detalle_pagos($fact);
 
                 }
 
-                tiva = (t12 * 12 / 100);
+                tiva = (t12 * 14 / 100);
 
                 gtot = (t12 * 1 + t0 * 1 + tex * 1 + tno * 1 + tiva * 1);
 
@@ -1210,7 +1210,7 @@ $cns_pag = $Clase_pagos->lista_detalle_pagos($fact);
                                     <td><button id="add_row" onclick="frm_save.lang = 0" >+</button></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9" align="right">Sub Total 12%:</td>
+                                    <td colspan="9" align="right">Sub Total 14%:</td>
                                     <td><input style="text-align:right" type="text" size="9" id="subtotal12" value="<?php echo number_format($rst['subtotal12'], 4) ?>" readonly/></td>
                                 </tr>
                                 <tr>

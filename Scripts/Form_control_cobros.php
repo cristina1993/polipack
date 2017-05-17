@@ -50,7 +50,8 @@ $val_chq = $rst[chq_monto] - $rst[chq_cobro]
                             identificacion.value + '&' +
                             num_chq + '&' +
                             cuenta + '&' +
-                            $('#num' + fac).html()
+                            $('#num' + fac).html()+'&'+
+                            concepto.value.toUpperCase()
                             );
                 }
             });
@@ -182,6 +183,11 @@ $val_chq = $rst[chq_monto] - $rst[chq_cobro]
                             <td><input type="text" size="25" id="identificacion" readonly value="<?php echo $cli[cli_ced_ruc] ?>" /></td>
                             <td>Credito:</td>
                             <td><input type="text" size="10" id="credito" readonly value="<?php echo str_replace(',', '', number_format($valor_credito, 4)) ?>" /></td>
+                        </tr>
+                         <tr>
+                            <td>Concepto:</td>
+                            <td><input type="text" size="25" id="concepto" readonly value="<?php echo $rst[chq_concepto] ?>" /></td>
+                           
                         </tr>
                     </table>
                 </td>

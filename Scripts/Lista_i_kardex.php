@@ -143,7 +143,6 @@ $sty = "mso-number-format:$a";
                         Codigo:<input type="text" name="txt" size="15" value="<?php echo $nm ?>"/>
                         Fabrica:
                         <select id="emp_id" name="emp_id" style="width:125px; font-size: 12px"  >
-                            <option value="0">Seleccione</option>
                             <?php
                             $cns_emp = $Set->lista_fabricas();
                             while ($rst_emp = pg_fetch_array($cns_emp)) {
@@ -172,7 +171,7 @@ $sty = "mso-number-format:$a";
                 </tr>
                 <tr>
                     <th>No</th>
-                    <th>Referencia</th>
+                    <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>Presentacion</th>
                     <th>Unidad</th>
@@ -257,7 +256,7 @@ $sty = "mso-number-format:$a";
                         $tpk2 = 0;
                     }
                     if ($mp != $rst[mp_id]) {
-                        $rst_ant = pg_fetch_array($Set->total_ingreso_egreso_mp($rst[mp_id], $desde));
+                        $rst_ant = pg_fetch_array($Set->total_ingreso_egreso_mp_ant($rst[mp_id], $desde));
                         $aing = $rst_ant[ingreso];
                         $aegr = $rst_ant[egreso];
                         $ap1 = $rst_ant[p1];

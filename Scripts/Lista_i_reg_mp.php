@@ -10,7 +10,7 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta])) {
     if (!empty($_GET[txt])) {
         $texto = "and trs.trs_operacion=0 and (mp.mp_codigo like '%$nm%' OR mp.mp_referencia like '%$nm%')";
     } else if (!empty($_GET[emp_id])) {
-        $texto = "and trs.trs_operacion=0 and mp.emp_id=$emp_id";
+        $texto = "and trs.trs_operacion=0 and mp.emp_id=$emp_id and mi.mov_fecha_trans between '$desde' and '$hasta'";
     } else {
         $texto = "and trs.trs_operacion=0 and mi.mov_fecha_trans between '$desde' and '$hasta'";
     }
@@ -99,11 +99,11 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta])) {
         <img id="charging" src="../img/load_bar.gif" />    
         <div id="cargando">Por Favor Espere...</div>
         <div id="grid" onclick="alert(' ¡ Tiene Una Accion Habilitada ! \n Debe Guardar o Cancelar para habilitar es resto de la pantalla')"></div>        
-        <table style="width:100%" id="tbl">
+        <table style="width: 100%" id="tbl">
             <caption class="tbl_head" >
                 <center class="cont_menu" >
                     <?php
-                    $cns_sbm = $User->list_primer_opl(18, $_SESSION[usuid]);
+                    $cns_sbm = $User->list_primer_opl($mod_id, $_SESSION[usuid]);
                     while ($rst_sbm = pg_fetch_array($cns_sbm)) {
                         ?>
                         <font class="sbmnu" id="<?php echo "mn" . $rst_sbm[opl_id] ?>" onclick="window.location = '<?php echo "../" . $rst_sbm[opl_direccion] . ".php" ?>'" ><?php echo $rst_sbm[opl_modulo] ?></font>
@@ -124,7 +124,6 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta])) {
                             Codigo:<input type="text" name="txt" size="15" value="<?php echo $nm ?>"/>
                             Fabrica:
                             <select id="emp_id" name="emp_id" style="width:125px; font-size: 12px"  >
-                                <option value="0">Seleccione</option>
                                 <?php
                                 $cns_emp = $Set->lista_fabricas();
                                 while ($rst_emp = pg_fetch_array($cns_emp)) {
@@ -145,15 +144,14 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta])) {
 
             <thead>
                 <tr>
-                    <th colspan="5">Materia Prima</th>
+                    <th colspan="4">Materia Prima</th>
                     <th colspan="4">Documento</th>
                     <th colspan="4">Transaccion</th>
                 </tr>
                 <tr>
                     <th>No</th>
-                    <th>Referencia</th>
+                    <th>Codigo</th>
                     <th>Descripcion</th>
-                    <th>Presentacion</th>
                     <th>Unidad</th>
                     <th>Fecha Transaccion</th>
                     <th>Documento No</th>
@@ -175,17 +173,16 @@ if (isset($_GET[txt], $_GET[desde], $_GET[hasta])) {
                     <tr>
                         <td><?php echo $n ?></td>
                         <td><?php echo $rst[mp_codigo] ?></td>
-                        <td><?php echo $rst[mp_referencia] ?></td>
                         <td><?php echo $rst[mp_presentacion] ?></td>
                         <td align="center" style="text-transform:lowercase"><?php echo $rst[mp_unidad] ?></td>                        
                         <td><?php echo $rst[mov_fecha_trans] ?></td>
                         <td><?php echo $rst[mov_num_trans] ?></td>
                         <td><?php echo $rst[mov_guia_remision] ?></td>
-                        <td><?php echo trim($rst_cli['cli_apellidos'] . ' ' . $rst_cli['cli_nombres'] . ' ' . $rst_cli['cli_raz_social']) ?></td>
+                        <td><?php echo trim($rst_cli['cli_raz_social']) ?></td>
                         <td><?php echo $rst[trs_descripcion] ?></td>
                         <td align="right"><?php echo number_format($rst[mov_cantidad], 1) ?></td>
-                        <td align="right"><?php echo number_format($rst[mov_peso_unit], 1) ?></td>
-                        <td align="right"><?php echo number_format($rst[mov_peso_total], 1) ?></td>
+                        <td align="right"><?php echo number_format($rst[mov_peso_unit], 2) ?></td>
+                        <td align="right"><?php echo number_format($rst[mov_peso_total], 2) ?></td>
                     </tr>  
                     <?PHP
                 }
