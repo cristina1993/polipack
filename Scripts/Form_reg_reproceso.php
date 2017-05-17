@@ -85,6 +85,7 @@ $rst_reg = pg_fetch_array($Set->lista_ultimo_registro());
                         tab = '0';
                         lote = $('#lote' + n).val();
                         bod_id = $('#bod_id').val();
+                        estado = $('#pro_tbl' + n).val();
                         data.push(pro + '&' +
                                 bod_id + '&' +
                                 '1' + '&' + ///proveedor
@@ -96,7 +97,8 @@ $rst_reg = pg_fetch_array($Set->lista_ultimo_registro());
                                 tab + '&' +
                                 lote + '&' +
                                 destino.value + '&' +
-                                $('#mp_id').val()
+                                $('#mp_id').val() + '&' +
+                                estado
                                 );
 
                     }
@@ -372,7 +374,7 @@ $rst_reg = pg_fetch_array($Set->lista_ultimo_registro());
 
             function load_producto(obj) {
                 j = obj.lang;
-                vl='';
+                vl = '';
 //                v = obj.value.split('_');
 //                if (v[1] != null) {
 //                    vl = v[0];
@@ -391,13 +393,13 @@ $rst_reg = pg_fetch_array($Set->lista_ultimo_registro());
                         if (pro2 == pro) {
                             alert('Producto ya ingresado');
                             vl = '';
-                            lt='';
+                            lt = '';
                             $('#pro_lote' + j).focus();
                             return false;
                         }
                     }
                 });
-                  
+
                 $.post("actions_reg_reproceso.php", {op: 64, id: vl, lt: lt, bod: $('#bod_id').val()},
                 function (dt) {
                     dat = dt.split('&');
@@ -407,6 +409,7 @@ $rst_reg = pg_fetch_array($Set->lista_ultimo_registro());
                         $('#pro_descripcion' + j).val(dat[2]);
                         $('#pro_uni' + j).val(dat[3]);
                         $('#mov_cantidad' + j).val('');
+                        $('#pro_tbl' + j).val(dat[6]);
                         if (dat[4] == '') {
                             $('#inventario' + j).val('0');
                         } else {

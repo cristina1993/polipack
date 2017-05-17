@@ -91,7 +91,8 @@ switch ($op) {
                         $dat[6], //mov_fecha_trans,
                         $dat[7], //mov_cantidad,
                         '0', //mov_tabla,
-                        $dat[9]//mov_pago
+                        $dat[9],//mov_pago
+                        $dat[12]//mov_flete(estado)
                     );
 
                     if (!$Set->insert_transferencia($dt_mov)) {
@@ -140,7 +141,8 @@ switch ($op) {
                         $dat[6], //mov_fecha_trans,
                         $dat[7], //mov_cantidad,
                         '0', //mov_tabla,
-                        $dat[9]//mov_pago
+                        $dat[9],//mov_pago,
+                        $dat[12]//mov_flete(estado)
                     );
 
                     if (!$Set->insert_transferencia_terminado($dt_mov)) {
@@ -317,7 +319,7 @@ switch ($op) {
             $rst = pg_fetch_array($Set->lista_un_producto($id, $lt, $bod));
         }
         if ($rst[pro_id] != '') {
-            echo $rst[pro_id] . '&' . $rst[pro_codigo] . '&' . $rst[pro_descripcion] . '&' . $rst[pro_uni] . '&' . $rst[inv] . '&' . $rst[mov_pago];
+            echo $rst[pro_id] . '&' . $rst[pro_codigo] . '&' . $rst[pro_descripcion] . '&' . $rst[pro_uni] . '&' . $rst[inv] . '&' . $rst[mov_pago]. '&' . $rst[ mov_flete];
         }
         break;
 }

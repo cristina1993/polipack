@@ -100,7 +100,8 @@ class Clase_reg_reproceso {
                 mov_fecha_registro,
                 mov_hora_registro,
                 mov_usuario,
-                mov_pago
+                mov_pago,
+                mov_flete
             )
     VALUES ('$data[0]',
             '$data[1]',
@@ -114,7 +115,8 @@ class Clase_reg_reproceso {
             '$f',
             '$h',
             '$usu',
-            '$data[9]'
+            '$data[9]',
+            '$data[10]'
                     )");
         }
     }
@@ -149,7 +151,8 @@ class Clase_reg_reproceso {
                 mov_fecha_registro,
                 mov_hora_registro,
                 mov_usuario,
-                mov_pago
+                mov_pago,
+                mov_flete
             )
     VALUES ('$data[0]',
             '$data[1]',
@@ -163,7 +166,8 @@ class Clase_reg_reproceso {
             '$f',
             '$h',
             '$usu',
-            '$data[9]'
+            '$data[9]',
+            '$data[10]'
                     )");
         }
     }
