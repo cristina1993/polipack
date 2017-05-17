@@ -5,8 +5,8 @@ set_time_limit(0);
 class Objeto {
 
     function con() {
-        return pg_connect('host=localhost port=5432 dbname=polipack user=postgres password=1234');
-//        return pg_connect('host=localhost port=5433 dbname=polipack user=postgres password=SuremandaS495');
+//        return pg_connect('host=localhost port=5432 dbname=polipack user=postgres password=1234');
+        return pg_connect('host=localhost port=5433 dbname=polipack user=postgres password=SuremandaS495');
     }
 
     function lista_buscar_inventario_rollos() {
