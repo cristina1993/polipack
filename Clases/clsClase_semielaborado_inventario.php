@@ -125,6 +125,26 @@ class Clase_semielaborado_inventario {
             return pg_query("SELECT * FROM erp_inv_semielaborado_historico m, erp_i_productos p where m.pro_id=p.pro_id  $txt ORDER BY p.pro_codigo, m.mvh_rollo");
         }
     }
+    
+    function lista_buscar_inventario_actual($txt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mva_rollo from  1 for 7) as mov_pago, sum(m.mva_cantidad) as cantidad,sum(mva_peso) as peso  
+                             FROM erp_inv_semielaborado_actual m, erp_i_productos p
+                             where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mva_estado='0' $txt
+                             group by m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mva_rollo from  1 for 7)
+                             ORDER BY p.pro_codigo, substring(m.mva_rollo from  1 for 7)");
+        }
+    }
+    
+    function lista_buscar_inventario_historico($txt) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 7) as mov_pago, sum(m.mvh_cantidad) as cantidad,sum(mvh_peso) as peso 
+                            FROM erp_inv_semielaborado_historico m, erp_i_productos p 
+                            where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mvh_estado='0' $txt 
+                            group by m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 7) 
+                            ORDER BY p.pro_codigo, substring(m.mvh_rollo from  1 for 7)");
+        }
+    }
 }
 
 ?>

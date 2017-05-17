@@ -6,15 +6,15 @@ $Set = new Clase_semielaborado_inventario();
 if (isset($_GET[txt], $_GET[fecha2])) {
     $nm = trim(strtoupper($_GET[txt]));
     $fec2 = $_GET[fecha2];
-    if (!empty($nm)) {
-        $txt = "and (pro_codigo like '%$nm%' or pro_descripcion like '%$nm%' or substring(m.mov_pago from  1 for 7) like '%$nm%') and m.mov_fecha_trans between '1900-01-01' and '$fec2'";
+    if ($fec2 == date('Y-m-d')) {
+        $txt = "and (pro_codigo like '%$nm%' or pro_descripcion like '%$nm%' or substring(m.mva_rollo from  1 for 7) like '%$nm%')";
+        $cns = $Set->lista_buscar_inventario_actual($txt);
+        $det = 0;
     } else {
-        $txt = "and m.mov_fecha_trans between '1900-01-01' and '$fec2'";
+        $txt = "and (pro_codigo like '%$nm%' or pro_descripcion like '%$nm%' or substring(m.mvh_rollo from  1 for 7) like '%$nm%') and m.mvh_fecha='$fec2'";
+        $cns = $Set->lista_buscar_inventario_historico($txt);
+        $det = 1;
     }
-
-//    $fec = "and m.mov_fecha_trans between '1900-01-01' and '$fec2'";
-    $cns = $Set->lista_buscar_inventariopt($txt);
-    $Set->crear_vista($txt);
 } else {
     $fec1 = date("Y-m-d");
     $fec2 = date("Y-m-d");
@@ -106,8 +106,6 @@ if (isset($_GET[txt], $_GET[fecha2])) {
                     <th>Descripción</th>
                     <th>Unidad</th>
                     <th>Rollos</th>
-<!--                    <th>Peso</th>
-                    <th>Rollos</th>-->
                     <th>Peso</th>
                 </tr>
             </thead>
@@ -118,29 +116,18 @@ if (isset($_GET[txt], $_GET[fecha2])) {
                 $g_total = 0;
                 while ($rst = pg_fetch_array($cns)) {
                     $i++;
-                    $rst_inv = pg_fetch_array($Set->total_inventario($rst[pro_id], $fec, $rst[mov_pago]));
-                    $inv_con = $rst_inv[ingreso_con] - $rst_inv[egreso_con];
-                    $cnt_con = $rst_inv[cnt_con];
-//                    $inv_inc = $rst_inv[ingreso_inc] - $rst_inv[egreso_inc];
-//                    $cnt_inc = $rst_inv[cnt_inc];
-//                      <td align='right'>" . number_format($cnt_inc, 2) . "</td>
-//                            <td align='right'>" . number_format($inv_inc, 2) . "</td>
-//                    <td align='right' style='font-size:14px;'>" . number_format($icnt_total, 2) . "</td>
-//                <td align='right' style='font-size:14px;'>" . number_format($ig_total, 2) . "</td>
-                    if ($cnt_con!=0 && $inv_con != 0) {
+                    if ($rst[cantidad]!= 0 && $rst[peso] != 0) {
                         echo "<tr style='height: 20px' id='fila'>
                             <td>$i </td>
                             <td>$rst[pro_codigo]</td>
                             <td>$rst[mov_pago]</td>
                             <td>$rst[pro_descripcion]</td>
                             <td>$rst[pro_uni]</td>
-                            <td align='right'>" . number_format($cnt_con, 2) . "</td>
-                            <td align='right'>" . number_format($inv_con, 2) . "</td>
+                            <td align='right'>" . number_format($rst[cantidad], 2) . "</td>
+                            <td align='right'>" . number_format($rst[peso], 2) . "</td>
                         </tr> ";
-                        $g_total+=$inv_con;
-                        $cnt_total+=$cnt_con;
-//                        $ig_total+=$inv_inc;
-//                        $icnt_total+=$cnt_inc;
+                        $g_total+=$rst[peso];
+                        $cnt_total+=$rst[cantidad];
                     }
                 }
                 echo "<tr style='font-weight:bolder'>
