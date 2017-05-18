@@ -202,14 +202,19 @@ if (isset($_GET[id])) {
                     } else {
                         estg = 0;
                     }
-                    
+                    if ($('#observacion_gr').attr('checked') == true) {
+                        obg = 1;
+                    } else {
+                        obg = 0;
+                    }
                     var data = Array(
                             eti_descripcion.value.toUpperCase(),
                             eti_tamano.value.toUpperCase(),
                             emp + '&' + fec + '&' + esp1 + '&' + esp2 + '&' + cli + '&' + ot + '&' + esp3 + '&' + esp4 + '&' +
                             esp5 + '&' + esp6 + '&' + tara + '&' + pbr + '&' + pnt + '&' + esp + '&' + anc + '&' + esp7 + '&' +
-                            esp8 + '&' + esp9 + '&' + esp10 + '&' + op + '&' + esp11 + '&' + esp12 + '&' + esp13 + '&' + esp14 + '&' + cdb+ '&' + estg
-                            )
+                            esp8 + '&' + esp9 + '&' + esp10 + '&' + op + '&' + esp11 + '&' + esp12 + '&' + esp13 + '&' + 
+                            esp14 + '&' + cdb+ '&' + estg+'&'+obg
+                            );
                 }
                 var fields = Array();
                 $("#tbl_form").find(':input').each(function () {
@@ -384,12 +389,12 @@ if (isset($_GET[id])) {
                     <td>Ancho</td>
                     <td><input type="checkbox" id="ancho_gr"/></td>
                 </tr>
-                <tr>
+                <tr hidden="">
                     <td>Espacio7</td>
                     <td><input type="checkbox" id="espacio7_gr"/></td>
                 </tr>
                 <tr>
-                    <td>Espacio8</td>
+                    <td>Largo</td>
                     <td><input type="checkbox" id="espacio8_gr"/></td>
                 </tr>
                 <tr>
@@ -428,6 +433,10 @@ if (isset($_GET[id])) {
                 <tr>
                     <td>Estado</td>
                     <td><input type="checkbox" id="estado_gr"/></td>
+                </tr>
+                <tr>
+                    <td>Observaciones</td>
+                    <td><input type="checkbox" id="observacion_gr"/></td>
                 </tr>
             </tbody>
             <tr>
@@ -525,6 +534,7 @@ if (isset($_GET[id])) {
         var esp14 = '<?php echo $dt[23] ?>';
         var cdb = '<?php echo $dt[24] ?>';
         var estg = '<?php echo $dt[25] ?>';
+        var obg = '<?php echo $dt[26] ?>';
         if (emp == 0) {
             $('#empresa_gr').attr('checked', false);
         } else {
@@ -654,6 +664,11 @@ if (isset($_GET[id])) {
             $('#estado_gr').attr('checked', false);
         } else {
             $('#estado_gr').attr('checked', true);
+        }
+         if (obg == 0) {
+            $('#observacion_gr').attr('checked', false);
+        } else {
+            $('#observacion_gr').attr('checked', true);
         }
     }
     mostrar_etiqueta();
