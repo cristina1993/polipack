@@ -174,7 +174,7 @@ function dias($from, $until) {
 //                            $dt = $from;
                             //Consumo mp***************************************************************
                             ?>
-                            <td rowspan="5"><?php echo $dt ?></td>
+                            <td rowspan="4"><?php echo $dt ?></td>
                             <td>Consumo mp (kg)</td>
                             <?php
                             $cnsMaq = $Set->listaExtrusoras($sec);
@@ -262,8 +262,8 @@ function dias($from, $until) {
                             ?>
                             <td align="right"><?php echo number_format($tot, 2) ?></td>
                         </tr>
-                        <tr>
-                            <!--//Produccion mt***************************************************************-->        
+<!--                        <tr>
+                            //Produccion mt***************************************************************        
                             <td>Produccion (m)</td>
                             <?php
                             $cnsMaq = $Set->listaExtrusoras($sec);
@@ -276,19 +276,19 @@ function dias($from, $until) {
 //                                    $cnt_t2 = pg_fetch_array($Set->listaExtrusionByMaqDateTur($rstMaq[ext_id], $date, $date, '2'));
 //                                    
                                 ?>
-                                                                                <!--<td align="right"><?php echo number_format($cnt_t1[mt] * 1000) ?></td>-->
-                                                                                <!--<td align="right"><?php echo number_format($cnt_t2[mt] * 1000) ?></td>-->
+                                                                                <td align="right"><?php echo number_format($cnt_t1[mt] * 1000) ?></td>
+                                                                                <td align="right"><?php echo number_format($cnt_t2[mt] * 1000) ?></td>
                                 <td align="right"><?php echo number_format($cnt_c[mts_neto], 2) ?></td>
                                 <td align="right"><?php echo number_format($cnt_c[mts_bruto], 2) ?></td>
                                 <td align="right"><?php echo number_format($cnt_i[mts_neto], 2) ?></td>
                                 <td align="right"><?php echo number_format($cnt_i[mts_bruto], 2) ?></td>
-                            <!--<td align="right"><?php echo number_format($cant[mts], 2) ?></td>-->
+                            <td align="right"><?php echo number_format($cant[mts], 2) ?></td>
                                 <?php
                                 $tot = $tot + ($cant[mts]);
                             }
                             ?>
                             <td align="right"><?php echo number_format($tot, 2) ?></td>
-                        </tr>
+                        </tr>-->
                         <!--//Desp kg***************************************************************-->        
                         <tr>
                             <td>Desperdicio (kg)</td>
@@ -383,8 +383,8 @@ function dias($from, $until) {
                         ?>
                         <td align="right"><?php echo number_format($tot, 2) ?></td>
                     </tr>
-                    <tr>
-                        <!--//Total Produccion / maq mt***************************************************************-->        
+<!--                    <tr>
+                        //Total Produccion / maq mt***************************************************************        
                         <td colspan="2">PRODUCCION POR MAQ (m)</td>
                         <?php
                         $cnsMaq = $Set->listaExtrusoras($sec);
@@ -396,19 +396,19 @@ function dias($from, $until) {
 //                                $cnt_t1 = pg_fetch_array($Objeto->listaExtrusionByMaqDateTur($rstMaq[ext_id], $from, $until, '1'));
 //                                $cnt_t2 = pg_fetch_array($Objeto->listaExtrusionByMaqDateTur($rstMaq[ext_id], $from, $until, '2'));
                             ?>
-                                            <!--                        <td align="right"><?php echo number_format($cnt_t1[mt] * 1000) ?></td>
-                                                            <td align="right"><?php echo number_format($cnt_t2[mt] * 1000) ?></td>-->
+                                                                    <td align="right"><?php echo number_format($cnt_t1[mt] * 1000) ?></td>
+                                                            <td align="right"><?php echo number_format($cnt_t2[mt] * 1000) ?></td>
                             <td align="right"><?php echo number_format($cnt_c[mts_neto], 2) ?></td>
                             <td align="right"><?php echo number_format($cnt_c[mts_bruto], 2) ?></td>
                             <td align="right"><?php echo number_format($cnt_i[mts_neto], 2) ?></td>
                             <td align="right"><?php echo number_format($cnt_i[mts_bruto], 2) ?></td>
-                            <!--<td align="right"><?php echo number_format($cant[mts], 2) ?></td>-->
+                            <td align="right"><?php echo number_format($cant[mts], 2) ?></td>
                             <?php
                             $tot = $tot + ($cant[mts]);
                         }
                         ?>
                         <td align="right"><?php echo number_format($tot, 2) ?></td>
-                    </tr>
+                    </tr>-->
                     <tr>
                         <!--//Total desperdicio / maq kg***************************************************************-->        
                         <td colspan="2"> DESPERDICIO POR MAQ (kg)</td>
