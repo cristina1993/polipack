@@ -262,7 +262,7 @@ class PDF extends FPDF {
             $this->SetFont('helvetica', 'b', 7);
             $this->Cell(17, 5, 'CLIENTE:', 'LTB', 0, 'L');
             $this->SetFont('helvetica', '', 7);
-            $this->Cell(38, 5, substr($data[10], 0, 33), 'RTB', 0, 'L');
+            $this->Cell(38, 5, substr($data[10], 0, 24), 'RTB', 0, 'L');
         } else {
             $this->Cell(17, 5, '', 'LTB', 0, 'L');
             $this->Cell(38, 5, '', 'RTB', 0, 'L');
@@ -337,21 +337,22 @@ class PDF extends FPDF {
             $this->SetFont('helvetica', 'b', 7);
             $this->Cell(12, 5, 'ANCHO:', 'LTB', 0, 'L');
             $this->SetFont('helvetica', '', 7);
-            $this->Cell(12, 5, ($data[1]*1000) . ' mm', 'RTB', 0, 'L');
+            $this->Cell(12, 5, ($data[1] * 1000) . ' mm', 'RTB', 0, 'L');
         } else {
             $this->Cell(12, 5, '', 'LTB', 0, 'L');
             $this->Cell(12, 5, '', 'RTB', 0, 'L');
         }
         $this->Ln();
         $this->SetXY(7, 40);
-//        if ($dt[15] == 1) {
-        $this->SetFont('helvetica', 'b', 7);
-        $this->Cell(14, 5, 'LARGO: ', 'LTB', 0, 'L'); //espacio7
-//        }
-//        if ($dt[16] == 1) {
-        $this->SetFont('helvetica', '', 7);
-        $this->Cell(17, 5, round($data[13],2).' mts', 'RTB', 0, 'L'); //espacio8
-//        }
+        if ($dt[16] == 1) {
+            $this->SetFont('helvetica', 'b', 7);
+            $this->Cell(14, 5, 'LARGO: ', 'LTB', 0, 'L'); //espacio7
+            $this->SetFont('helvetica', '', 7);
+            $this->Cell(17, 5, round($data[13], 2) . ' mts', 'RTB', 0, 'L'); //espacio8
+        } else {
+            $this->Cell(14, 5, '', 'LTB', 0, 'L'); //espacio7
+            $this->Cell(17, 5, '', 'RTB', 0, 'L'); //espacio8
+        }
 //        if ($dt[17] == 1) {
         $this->Cell(12, 5, '', 'LTB', 0, 'L'); //espacio9
 //        }
@@ -364,7 +365,7 @@ class PDF extends FPDF {
             $this->SetFont('helvetica', 'b', 7);
             $this->Cell(17, 5, 'OPERADOR:', 'LTB', 0, 'L');
             $this->SetFont('helvetica', '', 7);
-            $this->Cell(38, 5, substr($data[14],0,20), 'RTB', 0, 'L');
+            $this->Cell(38, 5, substr($data[14], 0, 20), 'RTB', 0, 'L');
         } else {
             $this->Cell(17, 5, '', 'LTB', 0, 'L');
             $this->Cell(38, 5, '', 'RTB', 0, 'L');
@@ -400,10 +401,11 @@ class PDF extends FPDF {
 //        }
 
         $this->SetXY(7, 70);
-//        if ($data[22] != '') {
-            $this->MultiCell(55, 4, "NOVEDADES:". substr($data[15],0,60), '0', 1);
-//        }
-
+        if ($dt[26] == 1) {
+            if ($data[15] != '') {
+                $this->MultiCell(55, 4, "OBSERVACIONES: " . substr($data[15], 0, 60), '0', 1);
+            }
+        }
 //////////////////////copia
 //        $this->SetXY(68, 5);
 //        $this->SetFont('helvetica', 'b', 7);

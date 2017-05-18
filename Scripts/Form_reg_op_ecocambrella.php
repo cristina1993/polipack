@@ -256,7 +256,7 @@ if (isset($_GET[id])) {
                                     dat[7],//cli_id,
                                     largo,
                                     '<?php echo $_SESSION[usuario]?>',                        
-                                    rec_observaciones.value.toUpperCase()
+                                    ord_observaciones.value.toUpperCase()
                                     );
                             $("#rec_observaciones").val('');
                             save_etiqueta(datos);
