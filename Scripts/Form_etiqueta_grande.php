@@ -135,6 +135,7 @@ $empresa = pg_fetch_array($Set->lista_empresa());
                         $('#etg_ancho').val(dat[7]);
                         $('#etg_tara').val(dat[8]);
                         $('#etg_tipo').val(dat[9]);
+                        $('#etg_espacio8').val(dat[10]);
                     } else {
                         $('#pro_id').val('');
                         $('#ord_id').val('');
@@ -146,6 +147,7 @@ $empresa = pg_fetch_array($Set->lista_empresa());
                         $('#etg_ancho').val('');
                         $('#etg_tara').val('');
                         $('#etg_tipo').val('');
+                        $('#etg_espacio8').val('');
                     }
                 })
             }
@@ -226,8 +228,9 @@ $empresa = pg_fetch_array($Set->lista_empresa());
                 <td><input type="text" size="12" readonly name="etg_ancho" id="etg_ancho" value="<?php echo $rst1[pro_ancho] ?>" /></td>
             </tr>
             <tr>
-                <td><input type="text" size="15" name="etg_espacio7" placeholder="Espacio7" id="etg_espacio7" value="<?php echo $rst[etg_espacio7] ?>" /></td>
-                <td><input type="text" size="15" name="etg_espacio8" placeholder="Espacio8" id="etg_espacio8" value="<?php echo $rst[etg_espacio8] ?>" /></td>
+                <td hidden><input type="text" size="15" name="etg_espacio7" placeholder="Espacio7" id="etg_espacio7" value="<?php echo $rst[etg_espacio7] ?>" /></td>
+                <td>Largo:</td>
+                <td><input type="text" size="12" name="etg_espacio8" id="etg_espacio8" value="<?php echo $rst[etg_espacio8] ?>" readonly/></td>
                 <td><input type="text" size="15" name="etg_espacio9" placeholder="Espacio9" id="etg_espacio9" value="<?php echo $rst[etg_espacio9] ?>" /></td>
                 <td><input type="text" size="15" name="etg_espacio10" placeholder="Espacio10" id="etg_espacio10" value="<?php echo $rst[etg_espacio10] ?>" /></td>
             </tr>

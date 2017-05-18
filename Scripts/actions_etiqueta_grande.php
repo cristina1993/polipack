@@ -79,23 +79,26 @@ switch ($op) {
                     $pro_id = $rst[pro_id];
                     break;
             }
-            $ord_id=$rst[ord_id];
-            $peso_bruto = $rst[pro_propiedad4];
-            $peso_neto = $rst[pro_peso];
+            $ord_id = $rst[ord_id];
+            $peso_bruto =$rst[pro_peso];
+            $peso_neto =  $rst[pro_propiedad4];
             $core = $rst[pro_propiedad5];
-            $tipo=0;
+            $tipo = 0;
+            $ancho = $rst[pro_ancho] * 1000;
+            $largo = round($peso_neto / ($ancho * $rst[pro_espesor] * $rst[pro_gramaje]) * 1000000, 2);
         } else if ($t == 'C') {
             $rst = pg_fetch_array($Set->lista_orden_corte(trim($ord), $pro));
-            $ord_id=$rst[opp_id];
+            $ord_id = $rst[opp_id];
             $pro_id = $rst[pro_id];
             $peso_bruto = $rst[pro_propiedad7];
             $peso_neto = $rst[pro_medvul];
             $core = $rst[pro_capa];
-            $tipo=1;
+            $tipo = 1;
+            $ancho = $rst[pro_ancho] * 1000;
+            $largo = round($peso_neto / ($ancho * $rst[pro_espesor] * $rst[pro_gramaje]) * 1000000, 2);
         }
 
-        echo $pro_id . '&&' .$ord_id. '&&' . $rst[cli_raz_social]. '&&' . $rst[cli_id] . '&&' . $peso_bruto . '&&' . $peso_neto . '&&' . $rst[pro_espesor] . '&&' . $rst[pro_ancho] . '&&' . $core. '&&' . $tipo;
+        echo $pro_id . '&&' . $ord_id . '&&' . $rst[cli_raz_social] . '&&' . $rst[cli_id] . '&&' . $peso_bruto . '&&' . $peso_neto . '&&' . $rst[pro_espesor] . '&&' . $ancho . '&&' . $core . '&&' . $tipo . '&&' . $largo;
         break;
-   
 }
 ?>
