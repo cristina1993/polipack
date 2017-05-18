@@ -45,15 +45,17 @@ $fecha = date('Y-m-d', strtotime($fec . "-1 days"));
 $cns = $Set->lista_buscar_inventario_rollos();
 $n = 0;
 while ($rst = pg_fetch_array($cns)) {
-    $data = array(
-        $rst[pro_id],
-        $rst[mva_cantidad],
-        round($rst[mva_peso], 2),
-        $rst[mva_estado],
-        $rst[mva_rollo],
-        $fecha);
-    if (!$Set->insert_transferencia($data)) {
-        $sms = 'insert_conforme' . pg_last_error();
+    if ($rst[mva_cantidad] != 0 && round($rst[mva_peso], 2) != 0) {
+        $data = array(
+            $rst[pro_id],
+            $rst[mva_cantidad],
+            round($rst[mva_peso], 2),
+            $rst[mva_estado],
+            $rst[mva_rollo],
+            $fecha);
+        if (!$Set->insert_transferencia($data)) {
+            $sms = 'insert_conforme' . pg_last_error();
+        }
     }
 }
 ?>
