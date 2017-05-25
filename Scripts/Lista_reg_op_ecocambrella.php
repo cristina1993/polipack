@@ -14,7 +14,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
     $fec1 = $_GET[fecha1];
     $fec2 = $_GET[fecha2];
     if (!empty($txt)) {
-        $texto = "and (r.rec_numero like'%$ord%' or o.ord_num_orden like'%$ord%') ";
+        $texto = "and (r.rec_numero like'%$txt%' or o.ord_num_orden like'%$txt%' or r.rec_lote like'%$txt%') ";
     } else {
         $texto = "and r.rec_fecha between '$fec1' and '$fec2'";
     }

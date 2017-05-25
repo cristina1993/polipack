@@ -8,7 +8,7 @@ if (isset($_GET[fecha1], $_GET[fecha2])) {
     $fec1 = $_GET[fecha1];
     $fec2 = $_GET[fecha2];
     if (!empty($txt)) {
-        $texto = "and (r.rpa_numero like'%$ord%' or o.opp_codigo like'%$ord%') ";
+        $texto = "and (r.rpa_numero like'%$txt%' or o.opp_codigo like'%$txt%' r.rpa_lote like'%$txt%') ";
     } else {
         $texto = "and r.rpa_fecha between '$fec1' and '$fec2'";
     }
