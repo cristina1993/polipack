@@ -453,15 +453,18 @@ switch ($op) {
         break;
 
     case 4:
+        ser_flush(true,true);
         ser_open("COM1", 9600, 8, "None", "1", "None");
         sleep(1);
+        $num="";
         for ($i = 0; $i < 9; $i++) {
             $j = ser_readbyte();
-            echo sprintf("%c", $j);
+            $num.= sprintf("%c", $j);
         }
-//        $resultado = preg_replace('/[^0-9.]+/', '', $num); 
-//        echo $num;
-//        ser_close();
+        ser_close();
+        $resultado = preg_replace('/[^0-9.]+/', '', $num); 
+        echo $resultado;
+//        
 //        ////implementar funcion lectura de puerto serial
 //        echo $sms; /// retorno peso   
         break;
