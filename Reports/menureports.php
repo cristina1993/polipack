@@ -19,221 +19,215 @@ include_once '../Includes/permisos.php';
                         {widgets: ['stickyHeaders'],
                             sortMultiSortKey: 'altKey',
                             widthFixed: true});
-
             });
-
-            function config() {
-
-                var extt = 'off'
-                var impp = 'off'
-                var sel = 'off'
-                var gen = 'off'
-                var from = f_month_from.value
-                var until = f_month_until.value
-                var sec = 0;
-//                var sec = sec_id.value
-                if (ext.checked == true) {
-                    var extt = 'on'
-                }
-                if (imp.checked == true) {
-                    var impp = 'on'
-                }
-                if (sell.checked == true) {
-                    var sel = 'on'
-                }
-                if (rptGeneral.checked == true) {
-                    var gen = 'on'
-                }
-                emailwindow = dhtmlmodal.open("EmailBox", "iframe", "configMail.php?ext=" + extt + "&imp=" + impp + "&sell=" + sel + "&rptGen=" + gen + "&from=" + from + "&until=" + until + "&sec=" + sec, "Configurar Cuentas de Correo", "width=400%,height=400%,center=1,resize=0,scrolling=1", "recal")
-            }
-            function hblprodDiaria()
-            {
-
-                if (prodDiaria.checked === true)
-                {
-                    ext.checked = true;
-                    imp.checked = true;
-                    sell.checked = true;
-                    drd.checked = true;
-                    mp.checked = true;
-                    prod.checked = true;
-                    resOperativo.checked = false
-                    repGen.checked = false
+//            function config() {
+//
+//                var extt = 'off'
+//                var impp = 'off'
+//                var sel = 'off'
+//                var gen = 'off'
+//                var from = f_month_from.value;
+//                var until = f_month_until.value;
+//                var sec = 0;
+////                var sec = sec_id.value
+//                if ($('#ext').attr('checked') == true) {
+//                    var extt = 'on';
+//                }
+//                if ($('#imp').attr('checked') == true) {
+//                    var impp = 'on';
+//                }
+//                if ($('#sell').attr('checked') == true) {
+//                    var sel = 'on';
+//                }
+//                if ($('#rptGeneral').attr('checked') == true) {
+//                    var gen = 'on';
+//                }
+//                emailwindow = dhtmlmodal.open("EmailBox", "iframe", "configMail.php?ext=" + extt + "&imp=" + impp + "&sell=" + sel + "&rptGen=" + gen + "&from=" + from + "&until=" + until + "&sec=" + sec, "Configurar Cuentas de Correo", "width=400%,height=400%,center=1,resize=0,scrolling=1", "recal")
+//            }
+            function hblprodDiaria() {
+                if ($('#prodDiaria').attr('checked') == true) {
+                    $('#ext').attr('checked', true);
+                    $('#imp').attr('checked', true);
+                    $('#sell').attr('checked', true);
+                    $('#drd').attr('checked', true);
+                    $('#mp').attr('checked', true);
+                    $('#prod').attr('checked', true);
+                    $('#resOperativo').attr('checked', false);
+                    $('#repGen').attr('checked', false);
                     pedido.value = ''
-                    pedidos.checked = false
+                    $('#pedidos').attr('checked', false);
                     hblresOperativo()
                     hblGen()
                 } else {
-                    ext.checked = false
-                    imp.checked = false
-                    sell.checked = false
-                    drd.checked = false
-                    mp.checked = false
-                    prod.checked = false
+                    $('#ext').attr('checked', false);
+                    $('#imp').attr('checked', false);
+                    $('#sell').attr('checked', false);
+                    $('#drd').attr('checked', false);
+                    $('#mp').attr('checked', false);
+                    $('#prod').attr('checked', false);
                 }
             }
             function hblresOperativo()
             {
-                if (resOperativo.checked == true)
+                if ($('#resOperativo').attr('checked') == true)
                 {
-                    extm.checked = true;
-                    impm.checked = true;
-                    sellm.checked = true;
-                    mpm.checked = true;
-                    prodm.checked = true;
-                    maqm.checked = true;
-                    repm.checked = true;
-                    resec.checked = true;
-                    prodDiaria.checked = false;
-                    repGen.checked = false;
+                    $('#extm').attr('checked', true);
+                    $('#impm').attr('checked', true);
+                    $('#sellm').attr('checked', true);
+                    $('#mpm').attr('checked', true);
+                    $('#prodm').attr('checked', true);
+                    $('#maqm').attr('checked', true);
+                    $('#repm').attr('checked', true);
+                    $('#resec').attr('checked', true);
+                    $('#prodDiaria').attr('checked', false);
+                    $('#repGen').attr('checked', false);
                     pedido.value = '';
-                    pedidos.checked = false;
+                    $('#pedidos').attr('checked', false);
                     hblprodDiaria();
                     hblGen();
                 } else {
-                    extm.checked = false;
-                    impm.checked = false;
-                    sellm.checked = false;
-                    mpm.checked = false;
-                    repm.checked = false;
-                    prodm.checked = false;
-                    maqm.checked = false;
-                    resec.checked = false;
+                    $('#extm').attr('checked', false);
+                    $('#impm').attr('checked', false);
+                    $('#sellm').attr('checked', false);
+                    $('#mpm').attr('checked', false);
+                    $('#repm').attr('checked', false);
+                    $('#prodm').attr('checked', false);
+                    $('#maqm').attr('checked', false);
+                    $('#resec').attr('checked', false);
                 }
             }
             function hblGen()
             {
-
-                if (repGen.checked == true)
+                if ($('#repGen').attr('checked') == true)
                 {
-                    res.checked = true
-                    rptGeneral.checked = true
-                    prodDiaria.checked = false
-                    resOperativo.checked = false
-                    pedido.value = ''
-                    pedidos.checked = false
-                    hblprodDiaria()
-                    hblresOperativo()
+                    $('#res').attr('checked', true);
+                    $('#rptGeneral').attr('checked', true);
+                    $('#prodDiaria').attr('checked', false);
+                    $('#resOperativo').attr('checked', false);
+                    pedido.value = '';
+                    $('#pedidos').attr('checked', false);
+                    hblprodDiaria();
+                    hblresOperativo();
 
                 } else {
-                    res.checked = false
-                    rptGeneral.checked = false
+                    $('#res').attr('checked', false);
+                    $('#rptGeneral').attr('checked', false);
                 }
             }
             function hbl0prodDiaria(o)
             {
-
-                if (ext.checked == true ||
-                        imp.checked == true ||
-                        sell.checked == true ||
-                        drd.checked == true ||
-                        mp.checked == true ||
-                        prod.checked == true)
+                alert('ok');
+                if ($('#ext').attr('checked') == true ||
+                        $('#imp').attr('checked') == true ||
+                        $('#sell').attr('checked') == true ||
+                        $('#drd').attr('checked') == true ||
+                        $('#mp').attr('checked') == true ||
+                        $('#prod').attr('checked') == true)
                 {
                     if (o == 0) {
-                        sell.checked = false;
+                        $('#sell').attr('checked', false);
                     } else if (o == 1) {
-                        ext.checked = false;
+                        $('#ext').attr('checked', false);
                     }
-                    prodDiaria.checked = true
-                    resOperativo.checked = false
-                    repGen.checked = false
+                    $('#prodDiaria').attr('checked', true);
+                    $('#resOperativo').attr('checked', false);
+                    $('#repGen').attr('checked', false);
                     pedido.value = ''
-                    pedidos.checked = false
+                    $('#pedidos').attr('checked', false);
                     hblresOperativo()
                     hblGen()
                 } else {
-                    prodDiaria.checked = false
+                    $('#prodDiaria').attr('checked', false);
                 }
             }
 
             function hbl0resOperativo(o)
             {
-                if (extm.checked == true ||
-                        impm.checked == true ||
-                        sellm.checked == true ||
-                        mpm.checked == true ||
-                        prodm.checked == true ||
-                        repm.checked == true ||
-                        maqm.checked == true ||
-                        resec.checked == true)
+                if ($('#extm').attr('checked') == true ||
+                        $('#impm').attr('checked') == true ||
+                        $('#sellm').attr('checked') == true ||
+                        $('#mpm').attr('checked') == true ||
+                        $('#prodm').attr('checked') == true ||
+                        $('#repm').attr('checked') == true ||
+                        $('#maqm').attr('checked') == true ||
+                        $('#resec').attr('checked') == true)
                 {
                     if (o == 0) {
-                        sellm.checked = false;
+                        $('#sellm').attr('checked', false);
                     } else if (o == 1) {
-                        extm.checked = false;
+                        $('#extm').attr('checked', false);
                     }
-                    resOperativo.checked = true;
-                    prodDiaria.checked = false;
-                    repGen.checked = false;
+                    $('#resOperativo').attr('checked', true);
+                    $('#prodDiaria').attr('checked', false);
+                    $('#repGen').attr('checked', false);
                     pedido.value = '';
-                    pedidos.checked = false;
+                    $('#pedidos').attr('checked', false);
                     hblprodDiaria();
                     hblGen();
                 } else {
-                    resOperativo.checked = false
+                    $('#resOperativo').attr('checked', false);
                 }
             }
             function hbl0Gen()
             {
-                if (res.checked == true ||
-                        rptGeneral.checked == true)
+                if ($('#res').attr('checked') == true ||
+                        $('#rptGeneral').attr('checked') == true)
                 {
-                    repGen.checked = true
-                    prodDiaria.checked = false
-                    resOperativo.checked = false
+                    $('#repGen').attr('checked', true);
+                    $('#prodDiaria').attr('checked', false);
+                    $('#resOperativo').attr('checked', false);
                     pedido.value = ''
-                    pedidos.checked = false
+                    $('#pedidos').attr('checked', false);
                     hblprodDiaria()
                     hblresOperativo()
                 } else {
-                    repGen.checked = false
+                    $('#repGen').attr('checked', false);
                 }
 
             }
 
             function hblPedidos()
             {
-                if (pedidos.checked == true)
+                if ($('#pedidos').attr('checked') == true)
                 {
-                    repGen.checked = false
-                    prodDiaria.checked = false
-                    resOperativo.checked = false
+                    $('#repGen').attr('checked', false);
+                    $('#prodDiaria').attr('checked', false);
+                    $('#resOperativo').attr('checked', false);
                     hblprodDiaria()
                     hblresOperativo()
                     hblGen()
                 } else {
-                    detProd.checked = false
-                    prodMaq.checked = false
+                    $('#detProd').attr('checked', false);
+                    $('#prodMaq').attr('checked', false);
                 }
 
             }
 
-
+//
 
             function redirection()
             {
 
-                if (resec.checked == true)
+                if ($('#resec').attr('checked') == true)
                 {
                     frmMenuReport.action = 'rptresumen.php';
                 } else {
 
-                    if (prodDiaria.checked == true || repGen.checked == true || mpm.checked == true || prodm.checked == true || maqm.checked == true)
+                    if ($('#prodDiaria').attr('checked') == true || $('#repGen').attr('checked') == true || $('#mpm').attr('checked') == true || $('#prodm').attr('checked') == true || $('#maqm').attr('checked') == true)
                     {
-                        if (drd.checked == true) {
+                        if ($('#drd').attr('checked') == true) {
                             frmMenuReport.action = 'rptResumenOperativo.php';
                         } else {
                             frmMenuReport.action = 'rptProductionDailyReport.php';
                         }
-                    } else if (extm.checked == true || impm.checked == true || sellm.checked == true || repm.checked == true) {
+                    } else if ($('#extm').attr('checked') == true || $('#impm').attr('checked') == true || $('#sellm').attr('checked') == true || $('#repm').attr('checked') == true) {
                         frmMenuReport.action = 'rptResumenOperativo.php';
-                    } else if (pedidos.checked == true)
+                    } else if ($('#pedidos').attr('checked') == true)
                     {
-                        if (detProd.checked == true)
+                        if ($('#detProd').attr('checked') == true)
                         {
                             frmMenuReport.action = 'prodSobrantes.php'
-                        } else if (prodMaq.checked == true) {
+                        } else if ($('#prodMaq').attr('checked') == true) {
                             frmMenuReport.action = 'rptProdMaq.php'
                         } else {
                             if (pedido.value.length == 0) {
@@ -251,63 +245,63 @@ include_once '../Includes/permisos.php';
                 }
                 $('#frmMenuReport').submit();
             }
-            function openclose()
-            {
+//            function openclose()
+//            {
+//
+//                if (boton1.value === '<<')
+//                {
+//                    boton1.value = '>>';
+//                    doc = document.getElementById('framePrint');
+//                    doc.width = '98%';
+//                    doc = document.getElementById('frmMenuReport');
+//                    doc.style.transition = 'all 0.5s ease-in';
+//                    doc.style.background = '#015b85';
+//                    doc.style.opacity = 0.2;
+//                } else {
+//                    boton1.value = '<<';
+//                    doc = document.getElementById('framePrint');
+//                    doc.width = '85%';
+//                    doc = document.getElementById('frmMenuReport');
+//                    doc.style.transition = 'all 0.5s ease-out';
+//                    doc.style.background = 'none';
+//                    doc.style.opacity = 1;
+//                }
+//            }
 
-                if (boton1.value === '<<')
-                {
-                    boton1.value = '>>';
-                    doc = document.getElementById('framePrint');
-                    doc.width = '98%';
-                    doc = document.getElementById('frmMenuReport');
-                    doc.style.transition = 'all 0.5s ease-in';
-                    doc.style.background = '#015b85';
-                    doc.style.opacity = 0.2;
-                } else {
-                    boton1.value = '<<';
-                    doc = document.getElementById('framePrint');
-                    doc.width = '85%';
-                    doc = document.getElementById('frmMenuReport');
-                    doc.style.transition = 'all 0.5s ease-out';
-                    doc.style.background = 'none';
-                    doc.style.opacity = 1;
-                }
-            }
-
-            function valFecha(val, id)
-            {
-                v = val.split('-');
-                if (val.length !== 10 || v[0].length !== 4 || v[1].length !== 2 || v[2].length !== 2)
-                {
-                    doc = document.getElementById(id);
-                    doc.focus();
-                    alert('Formato de fecha debe ser (yyyy-mm-dd)');
-                    return false;
-                }
-            }
-            function smsclose()
-            {
-                sms = document.getElementById('sms');
-                sms.style.visibility = 'hidden';
-            }
+//            function valFecha(val, id)
+//            {
+//                v = val.split('-');
+//                if (val.length !== 10 || v[0].length !== 4 || v[1].length !== 2 || v[2].length !== 2)
+//                {
+//                    doc = document.getElementById(id);
+//                    doc.focus();
+//                    alert('Formato de fecha debe ser (yyyy-mm-dd)');
+//                    return false;
+//                }
+//            }
+//            function smsclose()
+//            {
+//                sms = document.getElementById('sms');
+//                sms.style.visibility = 'hidden';
+//            }
             function vista_excel() {
-                if (resec.checked == true) {
+                if ($('#resec').attr('checked') == true) {
                     frmMenuReport.action = 'rptresumen.php';
                     load_file();
                 } else {
-                    if (prodDiaria.checked == true || repGen.checked == true || mpm.checked == true || prodm.checked == true || maqm.checked == true)
+                    if ($('#prodDiaria').attr('checked') == true || $('#repGen').attr('checked') == true || $('#mpm').attr('checked') == true || $('#prodm').attr('checked') == true || $('#maqm').attr('checked') == true)
                     {
-                        if (drd.checked == true) {
+                        if ($('#drd').attr('checked') == true) {
                             frmMenuReport.action = 'rptResumenOperativoExcel.php';
                         } else {
                             frmMenuReport.action = 'rptProductionDailyExcel.php';
                         }
-                    } else if (extm.checked == true || impm.checked == true || sellm.checked == true || repm.checked == true) {
+                    } else if ($('#extm').attr('checked') == true || $('#impm').attr('checked') == true || $('#sellm').attr('checked') == true || $('#repm').attr('checked') == true) {
                         frmMenuReport.action = 'rptResumenOperativoExcel.php';
-                    } else if (pedidos.checked == true) {
-                        if (detProd.checked == true) {
+                    } else if ($('#pedidos').attr('checked') == true) {
+                        if ($('#detProd').attr('checked') == true) {
                             frmMenuReport.action = 'prodSobrantes.php?exc=1'
-                        } else if (prodMaq.checked == true) {
+                        } else if ($('#prodMaq').attr('checked') == true) {
                             frmMenuReport.action = 'rptProdMaq.php'
                         } else {
                             if (pedido.value.length == 0) {
@@ -341,7 +335,7 @@ include_once '../Includes/permisos.php';
                         <?php
                     }
                     ?>
-                <!--<img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />-->                            
+<!--<img class="auxBtn" style="float:right" onclick="window.print()" title="Imprimir Documento"  src="../img/print_iconop.png" width="16px" />-->                            
                 </center>
                 <form action="" method="post"  target="framePrint" id="frmMenuReport" autocomplete="off" >  
                     <thead>
@@ -371,14 +365,14 @@ include_once '../Includes/permisos.php';
                     <thead>
                         <tr>
                             <th colspan="2" align="left">
-                                <input hidden type="checkbox" checked name="prodDiaria" id="prodDiaria" onClick="hblprodDiaria()" />
+                                <input hidden type="checkbox"  checked name="prodDiaria" id="prodDiaria" onclick="hblprodDiaria()" />
                                 <label for="prodDiaria">PRODUCCION DIARIA</label>
                             </th>
                         </tr>
                     </thead>   
                     <tr>
-                        <td   >Extrusion</td>
-                        <td >
+                        <td>Extrusion</td>
+                        <td>
                             <input type="checkbox" name="ext" checked id="ext" onclick="hbl0prodDiaria(0)" />
                         </td>
                     </tr>
@@ -416,7 +410,7 @@ include_once '../Includes/permisos.php';
                     <thead>
                         <tr>
                             <th colspan="2" align="left">
-                                <input hidden type="checkbox" name="resOperativo" id="resOperativo" onClick="hblresOperativo();" />
+                                <input hidden type="checkbox" name="resOperativo" id="resOperativo" onclick="hblresOperativo();" />
                                 <label for="resOperativo">RESUMEN OPERATIVO</label>
                             </th>
                         </tr>
@@ -473,7 +467,7 @@ include_once '../Includes/permisos.php';
                     <thead hidden>
                         <tr>
                             <th colspan="2" align="left">
-                                <input type="checkbox" name="repGen" id="repGen" onClick="hblGen()" />
+                                <input type="checkbox" name="repGen" id="repGen" onclick="hblGen()" />
                                 <label for="repGen">GENERAL DE FLUJO</label>
                             </th>
                         </tr>
@@ -500,21 +494,21 @@ include_once '../Includes/permisos.php';
                     </thead>            
                     <tr hidden>
                         <td colspan="2" >
-                            <input type="text" name="pedido" id="pedido" style="text-transform:uppercase "  size="25" placeholder="Pedido/Cliente/Producto" onchange="pedidos.checked = true;
+                            <input type="text" name="pedido" id="pedido" style="text-transform:uppercase "  size="25" placeholder="Pedido/Cliente/Producto" onchange="('#pedidos').attr('checked', true);
                                     hblPedidos()" />
                         </td>
                     </tr>
                     <tr hidden> 
                         <td >Detalle Productos </td>       
                         <td >
-                            <input type="checkbox" id="detProd" name="detProd" onclick="pedidos.checked = true;
+                            <input type="checkbox" id="detProd" name="detProd" onclick="$('#pedidos').attr('checked', true);
                                     hblPedidos()" />
                         </td>
                     </tr>
                     <tr hidden> 
                         <td >Produccion Maquinas </td>       
                         <td >
-                            <input type="checkbox" id="prodMaq" name="prodMaq" onclick="pedidos.checked = true;
+                            <input type="checkbox" id="prodMaq" name="prodMaq" onclick="$('#pedidos').attr('checked', true);
                                     hblPedidos()" />
                         </td>
                     </tr>
