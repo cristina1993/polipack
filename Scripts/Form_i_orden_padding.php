@@ -184,10 +184,12 @@ if (isset($_GET[id])) {
                     var p = $('#pro' + n).html();
                     var l = $('#lote' + n).html();
                     var i = $('#inven' + n).html();
+                    var ct = $('#cnt_inven' + n).html();
                     var f = '#fila' + n;
                     if ($(f).css('background') != '') {
-                        data2.push(p + '&' + l + '&' + i);
+                        data2.push(p + '&' + l + '&' + i+ '&' + ct);
                     }
+                    
                 });
                 var fields = Array();
                 $("#tbl_form").find(':input').each(function () {
@@ -798,6 +800,7 @@ if (isset($_GET[id])) {
                             $('#lista').html(dt);
                         }
                         $('#pro_mf4').html('0');
+                        $('#pro_mf5').html('0');
                     });
                 }
                 calculo();
@@ -810,20 +813,29 @@ if (isset($_GET[id])) {
                     $(obj).css('background', '');
                 }
                 var tot = 0;
+                var tot_r = 0;
                 n = 0;
                 $(".inv").each(function () {
                     n++;
                     var o = '#inven' + n;
+                    var r = '#cnt_inven' + n;
                     var f = '#fila' + n;
                     if ($(f).css('background') != '') {
                         cntp = parseFloat($(o).html());
                     } else {
                         cntp = 0;
                     }
+                    if ($(f).css('background') != '') {
+                        cntr = parseFloat($(r).html());
+                    } else {
+                        cntr = 0;
+                    }
 
                     tot = tot + cntp;
+                    tot_r = tot_r + cntr;
                 });
                 $('#pro_mf4').html(tot.toFixed(2));
+                $('#pro_mf5').html(tot_r.toFixed(0));
             }
 
             function load_datos_mp(obj) {
@@ -970,11 +982,12 @@ if (isset($_GET[id])) {
                                 <thead>
                                     <tr style="height:10px">
                                         <th style="width: 70px">Codigo</th>
-                                        <th style="width: 100px">Descripcion</th>
+                                        <th style="width: 230px">Descripcion</th>
                                         <th style="width: 70px">Orden</th>
                                         <th style="width: 70px">Ancho</th>
                                         <th style="width: 70px">Espesor</th>
                                         <th style="width: 70px" >Peso</th>
+                                        <th style="width: 70px" >Rollos</th>
                                     </tr>
                                 </thead>
                                 <?php
@@ -993,8 +1006,10 @@ if (isset($_GET[id])) {
                                                 <td align='right'>$rst_det[pro_ancho]</td>
                                                 <td align='right'>$rst_det[pro_espesor]</td>
                                                 <td class='inv' align='right' id='inven$n'>" . str_replace(",", "", number_format($rst_det[dtp_cant], 2)) . "</td>
+                                                <td align='right' id='cnt_inven$n'>" . str_replace(",", "", number_format($rst_det[dtp_rollo])) . "</td>
                                               </tr>";
                                     $totPeso+=$rst_det[dtp_cant];
+                                    $totCnt+=$rst_det[dtp_rollo];
                                     $cons.=" and substring(m.mov_pago from  1 for 7)!= '$rst_det[pro_lote]'";
                                 }
                                 ?>
@@ -1017,7 +1032,7 @@ if (isset($_GET[id])) {
                                         while ($rst_pro = pg_fetch_array($cns_pro)) {
                                             $rst_inv = pg_fetch_array($Clase->total_inventario($rst_pro[pro_id], $rst_pro[mov_pago]));
                                             $inv = $rst_inv[ingreso] - $rst_inv[egreso];
-                                            $cnt = $rst_inv[cnt_ingreso] - $rst_inv[cnt_egreso];
+                                            $cnt = $rst_inv[cnt];
                                             if (round($inv, 2) > 0) {
                                                 $n++;
                                                 echo "<tr onmousedown='mover(this)' id='fila$n'>
@@ -1028,6 +1043,7 @@ if (isset($_GET[id])) {
                                                 <td align='right'>$rst_pro[pro_ancho]</td>
                                                 <td align='right'>$rst_pro[pro_espesor]</td>
                                                 <td class='inv' align='right' id='inven$n'>" . str_replace(",", "", number_format($inv, 2)) . "</td>
+                                                <td align='right' id='cnt_inven$n'>" . str_replace(",", "", number_format($cnt)) . "</td>
                                               </tr>";
                                             }
                                         }
@@ -1038,6 +1054,7 @@ if (isset($_GET[id])) {
                                     <tr>
                                         <td colspan="5">Total Peso</td>
                                         <td id="pro_mf4" align="right"><?php echo str_replace(',', '', number_format($totPeso, 2)) ?></td>
+                                        <td id="pro_mf5" align="right"><?php echo str_replace(',', '', number_format($totCnt)) ?></td>
                                     </tr>
                                 </tfoot>
                             </table>

@@ -27,7 +27,8 @@ switch ($op) {
                         $rst_or[opp_id],
                         $dt[0],
                         $dt[1],
-                        $dt[2]
+                        $dt[2],
+                        $dt[3]
                     );
                     if ($Clase->insert_detalle_orden($dtorden) == false) {
                         $sms = 'insert det orden' . pg_last_error();
@@ -122,7 +123,8 @@ switch ($op) {
                             $rst_or[opp_id],
                             $dt[0],
                             $dt[1],
-                            $dt[2]
+                            $dt[2],
+                            $dt[3]
                         );
                         if ($Clase->insert_detalle_orden($dtorden) == false) {
                             $sms = 'insert det orden' . pg_last_error();
@@ -303,7 +305,7 @@ switch ($op) {
 
             $rst_inv = pg_fetch_array($Clase->total_inventario($rst[pro_id], $rst[mov_pago]));
             $inv = $rst_inv[ingreso] - $rst_inv[egreso];
-            $cnt = $rst_inv[cnt_ingreso] - $rst_inv[cnt_egreso];
+            $cnt = $rst_inv[cnt];
             if (round($inv, 2) > 0) {
                 $n++;
                 $fila.= "<tr onmousedown='mover(this)' id='fila$n'>
@@ -314,6 +316,7 @@ switch ($op) {
                     <td align='right'>$rst[pro_ancho]</td>
                     <td align='right'>$rst[pro_espesor]</td>
                     <td class='inv' align='right' id='inven$n'>" . str_replace(",", "", number_format($inv, 2)) . "</td>
+                    <td align='right' id='cnt_inven$n'>" . str_replace(",", "", number_format($cnt, 0)) . "</td>
                   </tr>
                     ";
             }

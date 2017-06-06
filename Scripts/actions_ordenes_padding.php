@@ -92,7 +92,7 @@ switch ($op) {
                     <td>$rst[mov_pago]</td>
                     <td align='right'>$rst[pro_ancho]</td>
                     <td align='right'>$rst[pro_espesor]</td>
-                    <td align='right'>$cantidad</td>
+                    <td align='right'>".round($cantidad)."</td>
                   </tr>
                     ";
         }
