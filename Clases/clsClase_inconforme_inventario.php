@@ -91,12 +91,12 @@ class Clase_inconforme_inventario {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 7) as mov_pago, sum(m.mvh_cantidad) as cantidad,sum(mvh_peso) as peso 
                             FROM erp_inv_semielaborado_historico m, erp_i_productos p 
-                            where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mvh_estado='3' and substring(m.mvh_rollo from  1 for 2)='EC'
+                            where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mvh_estado='3' and substring(m.mvh_rollo from  1 for 2)='EC' $txt
                             group by m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 7) 
                             union 
                             SELECT m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 6) as mov_pago, sum(m.mvh_cantidad) as cantidad,sum(mvh_peso) as peso 
                             FROM erp_inv_semielaborado_historico m, erp_i_productos p 
-                            where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mvh_estado='3' and substring(m.mvh_rollo from  1 for 1)='C' 
+                            where m.pro_id=p.pro_id  and m.pro_id=p.pro_id and mvh_estado='3' and substring(m.mvh_rollo from  1 for 1)='C' $txt
                             group by m.pro_id, p.pro_codigo, p.pro_descripcion,p.pro_uni,substring(m.mvh_rollo from  1 for 6) 
                             ORDER BY pro_codigo, mov_pago
                              ");
