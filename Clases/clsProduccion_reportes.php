@@ -34,7 +34,7 @@ class Produccion_reportes {
                         SELECT op.ord_num_orden  FROM erp_reg_op_ecocambrella r_ext,erp_i_orden_produccion op, erp_maquinas m
                         WHERE r_ext.ord_id=op.ord_id
                         and r_ext.maq_id=m.id
-                        AND   r_ext.rec_fecha='$date' 
+                        AND r_ext.rec_fecha='$date' 
                         and r_ext.maq_id=$ext GROUP BY op.ord_num_orden");
         }
     }
@@ -51,9 +51,38 @@ class Produccion_reportes {
         }
     }
 
-    function rptExt2($date, $ext, $pedido, $turno, $pro_id) {
+    function rptExtrusion($date, $ext) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT op.ord_num_orden,
+            return pg_query(" SELECT op.ord_num_orden,
+                           cl.cli_raz_social,
+                           p.pro_id,     
+                           p.pro_descripcion,
+                           m.maq_a,
+                           p.pro_espesor,
+                           p.pro_ancho,
+                           p.pro_gramaje
+                        FROM erp_reg_op_ecocambrella r_ext,erp_i_orden_produccion op, erp_maquinas m,erp_i_productos p,erp_i_cliente cl
+                        WHERE r_ext.ord_id=op.ord_id
+                        and r_ext.maq_id=m.id
+                        AND r_ext.rec_fecha='$date' 
+                        and r_ext.maq_id=$ext
+                        and r_ext.pro_id=p.pro_id
+                        and op.cli_id=cl.cli_id
+                        group by op.ord_num_orden,
+                           cl.cli_raz_social,
+                           p.pro_id,     
+                           p.pro_descripcion,
+                           m.maq_a,
+                           p.pro_espesor,
+                           p.pro_ancho,
+                           p.pro_gramaje
+                       ");
+        }
+    }
+
+    function rptExtrusionFecha($date) {
+        if ($this->con->Conectar() == true) {
+            return pg_query(" SELECT op.ord_num_orden,
                            cl.cli_raz_social,
                            p.pro_id,     
                            p.pro_descripcion,
@@ -62,118 +91,162 @@ class Produccion_reportes {
                            p.pro_ancho,
                            p.pro_gramaje,
                            sum(r_ext.rec_peso_primario)as peso
-                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
-                    WHERE op.cli_id=cl.cli_id
-                    and  r_ext.ord_id=op.ord_id
-                    and p.pro_id=op.pro_id
-                    and r_ext.pro_id=op.pro_id
-                    and r_ext.maq_id=m.id
-                    and  r_ext.rec_fecha='$date'	
-                    and  op.ord_num_orden='$pedido'
-                    and  r_ext.maq_id='$ext'
-                    group by op.ord_num_orden,
-                            p.pro_id,    
-                            cl.cli_raz_social,
-                            p.pro_descripcion,
-                            m.maq_a, 
-                            p.pro_espesor,
-                            p.pro_ancho,
-                            p.pro_gramaje");
-        }
-    }
-
-    function rptExt3($date, $ext, $pedido, $turno, $pro_id) {
-        if ($this->con->Conectar() == true) {
-            return pg_query("SELECT op.ord_num_orden,
-                           cl.cli_raz_social,
-                           p.pro_id,     
-                           p.pro_descripcion,
-                            m.maq_a,
-                           p.pro_espesor,
-                           p.pro_ancho,
-                           p.pro_gramaje,
-                           sum(r_ext.rec_peso_primario)as peso
-                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
-                    WHERE op.cli_id=cl.cli_id
-                    and  r_ext.ord_id=op.ord_id
-                    and p.pro_id=op.ord_pro_secundario
-                    and r_ext.pro_id=op.ord_pro_secundario
-                    and r_ext.maq_id=m.id
-                    and  r_ext.rec_fecha='$date'	
-                    and  op.ord_num_orden='$pedido'
-                    and  r_ext.maq_id='$ext'
-                    group by op.ord_num_orden,
-                            p.pro_id,    
-                            cl.cli_raz_social,
-                            p.pro_descripcion,
-                            m.maq_a, 
-                            p.pro_espesor,
-                            p.pro_ancho,
-                            p.pro_gramaje");
-        }
-    }
-
-    function rptExt4($date, $ext, $pedido, $turno, $pro_id) {
-        if ($this->con->Conectar() == true) {
-            return pg_query("SELECT op.ord_num_orden,
+                        FROM erp_reg_op_ecocambrella r_ext,erp_i_orden_produccion op, erp_maquinas m,erp_i_productos p,erp_i_cliente cl
+                        WHERE r_ext.ord_id=op.ord_id
+                        and r_ext.maq_id=m.id
+                        AND r_ext.rec_fecha='$date' 
+                        and r_ext.pro_id=p.pro_id
+                        and op.cli_id=cl.cli_id
+                        group by op.ord_num_orden,
                            cl.cli_raz_social,
                            p.pro_id,     
                            p.pro_descripcion,
                            m.maq_a,
                            p.pro_espesor,
                            p.pro_ancho,
-                           p.pro_gramaje,
-                           sum(r_ext.rec_peso_primario)as peso
-                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
-                    WHERE op.cli_id=cl.cli_id
-                    and  r_ext.ord_id=op.ord_id
-                    and p.pro_id=op.ord_pro3
-                    and r_ext.pro_id=op.ord_pro3
-                    and r_ext.maq_id=m.id
-                    and  r_ext.rec_fecha='$date'	
-                    and  op.ord_num_orden='$pedido'
-                    and  r_ext.maq_id='$ext'
-                    group by op.ord_num_orden,
-                            p.pro_id,    
-                            cl.cli_raz_social,
-                            p.pro_descripcion,
-                            m.maq_a, 
-                            p.pro_espesor,
-                            p.pro_ancho,
-                            p.pro_gramaje");
+                           p.pro_gramaje
+                      ");
         }
     }
 
-    function rptExt5($date, $ext, $pedido, $turno, $pro_id) {
+    function rptExtrusionMaq($date) {
         if ($this->con->Conectar() == true) {
-            return pg_query("SELECT op.ord_num_orden,
-                           cl.cli_raz_social,
-                           p.pro_id,     
-                           p.pro_descripcion,
-                           m.maq_a,
-                           p.pro_espesor,
-                           p.pro_ancho,
-                           p.pro_gramaje,
-                           sum(r_ext.rec_peso_primario)as peso
-                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
-                    WHERE op.cli_id=cl.cli_id
-                    and  r_ext.ord_id=op.ord_id
-                    and p.pro_id=op.ord_pro4
-                    and r_ext.pro_id=op.ord_pro4
-                    and r_ext.maq_id=m.id
-                    and  r_ext.rec_fecha='$date'	
-                    and  op.ord_num_orden='$pedido'
-                   and  r_ext.maq_id='$ext'
-                    group by op.ord_num_orden,
-                            p.pro_id,    
-                            cl.cli_raz_social,
-                            p.pro_descripcion,
-                            m.maq_a, 
-                            p.pro_espesor,
-                            p.pro_ancho,
-                            p.pro_gramaje");
+            return pg_query("SELECT maq_id FROM erp_reg_op_ecocambrella r_ext WHERE r_ext.rec_fecha='$date' group by maq_id");
         }
     }
+    
+    function rptExtrusionEst($fec,$m,$op,$pro) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select (SELECT sum(r_ext.rec_peso_primario)as peso FROM erp_reg_op_ecocambrella r_ext,erp_i_orden_produccion op 
+                                    WHERE r_ext.ord_id=op.ord_id and r_ext.rec_fecha='$fec' and r_ext.maq_id=$m and rec_estado=0 and op.ord_num_orden='$op' and r_ext.pro_id=$pro) as conforme,
+                                    (SELECT sum(r_ext.rec_peso_primario)as peso FROM erp_reg_op_ecocambrella r_ext,erp_i_orden_produccion op 
+                                    WHERE r_ext.ord_id=op.ord_id and r_ext.rec_fecha='$fec' and r_ext.maq_id=$m and rec_estado=3 and op.ord_num_orden='$op' and r_ext.pro_id=$pro) as inconforme
+                            ");
+        }
+    }
+
+//    function rptExt2($date, $ext, $pedido, $turno, $pro_id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("SELECT op.ord_num_orden,
+//                           cl.cli_raz_social,
+//                           p.pro_id,     
+//                           p.pro_descripcion,
+//                           m.maq_a,
+//                           p.pro_espesor,
+//                           p.pro_ancho,
+//                           p.pro_gramaje,
+//                           sum(r_ext.rec_peso_primario)as peso
+//                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
+//                    WHERE op.cli_id=cl.cli_id
+//                    and  r_ext.ord_id=op.ord_id
+//                    and p.pro_id=op.pro_id
+//                    and r_ext.pro_id=op.pro_id
+//                    and r_ext.maq_id=m.id
+//                    and  r_ext.rec_fecha='$date'	
+//                    and  op.ord_num_orden='$pedido'
+//                    and  r_ext.maq_id='$ext'
+//                    group by op.ord_num_orden,
+//                            p.pro_id,    
+//                            cl.cli_raz_social,
+//                            p.pro_descripcion,
+//                            m.maq_a, 
+//                            p.pro_espesor,
+//                            p.pro_ancho,
+//                            p.pro_gramaje");
+//        }
+//    }
+//    function rptExt3($date, $ext, $pedido, $turno, $pro_id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("SELECT op.ord_num_orden,
+//                           cl.cli_raz_social,
+//                           p.pro_id,     
+//                           p.pro_descripcion,
+//                            m.maq_a,
+//                           p.pro_espesor,
+//                           p.pro_ancho,
+//                           p.pro_gramaje,
+//                           sum(r_ext.rec_peso_primario)as peso
+//                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
+//                    WHERE op.cli_id=cl.cli_id
+//                    and  r_ext.ord_id=op.ord_id
+//                    and p.pro_id=op.ord_pro_secundario
+//                    and r_ext.pro_id=op.ord_pro_secundario
+//                    and r_ext.maq_id=m.id
+//                    and  r_ext.rec_fecha='$date'	
+//                    and  op.ord_num_orden='$pedido'
+//                    and  r_ext.maq_id='$ext'
+//                    group by op.ord_num_orden,
+//                            p.pro_id,    
+//                            cl.cli_raz_social,
+//                            p.pro_descripcion,
+//                            m.maq_a, 
+//                            p.pro_espesor,
+//                            p.pro_ancho,
+//                            p.pro_gramaje");
+//        }
+//    }
+//
+//    function rptExt4($date, $ext, $pedido, $turno, $pro_id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("SELECT op.ord_num_orden,
+//                           cl.cli_raz_social,
+//                           p.pro_id,     
+//                           p.pro_descripcion,
+//                           m.maq_a,
+//                           p.pro_espesor,
+//                           p.pro_ancho,
+//                           p.pro_gramaje,
+//                           sum(r_ext.rec_peso_primario)as peso
+//                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
+//                    WHERE op.cli_id=cl.cli_id
+//                    and  r_ext.ord_id=op.ord_id
+//                    and p.pro_id=op.ord_pro3
+//                    and r_ext.pro_id=op.ord_pro3
+//                    and r_ext.maq_id=m.id
+//                    and  r_ext.rec_fecha='$date'	
+//                    and  op.ord_num_orden='$pedido'
+//                    and  r_ext.maq_id='$ext'
+//                    group by op.ord_num_orden,
+//                            p.pro_id,    
+//                            cl.cli_raz_social,
+//                            p.pro_descripcion,
+//                            m.maq_a, 
+//                            p.pro_espesor,
+//                            p.pro_ancho,
+//                            p.pro_gramaje");
+//        }
+//    }
+//
+//    function rptExt5($date, $ext, $pedido, $turno, $pro_id) {
+//        if ($this->con->Conectar() == true) {
+//            return pg_query("SELECT op.ord_num_orden,
+//                           cl.cli_raz_social,
+//                           p.pro_id,     
+//                           p.pro_descripcion,
+//                           m.maq_a,
+//                           p.pro_espesor,
+//                           p.pro_ancho,
+//                           p.pro_gramaje,
+//                           sum(r_ext.rec_peso_primario)as peso
+//                    FROM erp_i_orden_produccion op,erp_i_cliente cl, erp_i_productos p, erp_reg_op_ecocambrella r_ext, erp_maquinas m
+//                    WHERE op.cli_id=cl.cli_id
+//                    and  r_ext.ord_id=op.ord_id
+//                    and p.pro_id=op.ord_pro4
+//                    and r_ext.pro_id=op.ord_pro4
+//                    and r_ext.maq_id=m.id
+//                    and  r_ext.rec_fecha='$date'	
+//                    and  op.ord_num_orden='$pedido'
+//                   and  r_ext.maq_id='$ext'
+//                    group by op.ord_num_orden,
+//                            p.pro_id,    
+//                            cl.cli_raz_social,
+//                            p.pro_descripcion,
+//                            m.maq_a, 
+//                            p.pro_espesor,
+//                            p.pro_ancho,
+//                            p.pro_gramaje");
+//        }
+//    }
 
     function listaPedidosCodigo($id) {
         if ($this->con->Conectar() == true) {
@@ -263,14 +336,14 @@ p.pro_descripcion");
                                                     and m.mov_fecha_trans between '$d' and '$h' and mp.mpt_id between 100 and 299");
         }
     }
-    
+
     function listaExtrusionProduccionByDateMaq($id, $from, $until) {
         if ($this->con->Conectar() == true) {
             return pg_query("select  sum(re.rec_peso_primario),sum(re.rec_peso_primario/p.pro_gramaje) as mts from erp_i_productos p, erp_reg_op_ecocambrella re, erp_maquinas m
                                         where p.pro_id=re.pro_id and re.maq_id=m.id and re.rec_fecha between '$from' and '$until' and re.maq_id=$id");
         }
     }
-    
+
     function listDesperdicio($sec, $d, $h) {
         if ($this->con->Conectar() == true) {
             return pg_query("SELECT sum(mov_cantidad) FROM erp_i_mov_inventario m, erp_transacciones t, erp_i_mp mp
@@ -278,46 +351,29 @@ p.pro_descripcion");
                                                     and m.mov_fecha_trans between '$d' and '$h' and mp.mpt_id between 300 and 399");
         }
     }
-    
-    
+
     ////reporte operativo cortadora
-    
-      function listaProduccionByDateSecTurno($from,$until,$sec){
-		if($this->con->Conectar()==true){
-			return pg_query("select sum(rs.rpa_rollo) as rollos,
+
+    function listaProduccionByDateSecTurno($from, $until, $sec) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select sum(rs.rpa_rollo) as rollos,
                                         sum(rs.rpa_peso) as peso
                                         from erp_reg_op_padding rs, erp_maquinas m 
                                         where rs.maq_id=m.id
                                         and rs.rpa_fecha between '$from' and  '$until'
                                         ");
-		}
-       }
-       
-       function listaProduccionByDateMaq($from,$until,$maq){
-		if($this->con->Conectar()==true){
-			return pg_query("select sum(rpa_rollo) as rollos,
+        }
+    }
+
+    function listaProduccionByDateMaq($from, $until, $maq) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select sum(rpa_rollo) as rollos,
                                         sum(rpa_peso) as peso
                                         from erp_reg_op_padding 
                                         where rpa_fecha between '$from' and  '$until'
                                         and maq_id=$maq ");
-		}
-       }
-    
-       
-       
-       
-       
-       
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        }
+    }
 
     function listaSecciones() {
         if ($this->con->Conectar() == true) {
@@ -471,19 +527,52 @@ group by sc.sec_descricpion,sc.sec_id order by sc.sec_descricpion ");
         }
     }
 
-     function listaExtrusionProduccionByDateMaqEst($id, $from, $until,$std) {
+    function listaExtrusionProduccionByDateMaqEst($id, $from, $until, $std) {
         if ($this->con->Conectar() == true) {
             return pg_query("select  sum(re.rec_peso_primario) as pbruto,sum(re.rec_peso_primario-pro_propiedad5) as pneto,sum(re.rec_peso_primario/p.pro_gramaje) as mts_neto,sum(re.rec_peso_primario-pro_propiedad5/p.pro_gramaje) as mts_bruto from erp_i_productos p, erp_reg_op_ecocambrella re, erp_maquinas m
                                         where p.pro_id=re.pro_id and re.maq_id=m.id and re.rec_fecha between '$from' and '$until' and re.maq_id=$id and rec_estado='$std'");
         }
     }
-    
-    function listaProduccionByDateMaqEst($from,$until,$maq,$std){
-		if($this->con->Conectar()==true){
-			return pg_query("select sum(rpa_rollo) as rollos,sum(r.rpa_peso-p.pro_capa) as pneto,sum(r.rpa_peso) as pbruto from erp_reg_op_padding r, erp_i_productos p, erp_i_orden_produccion_padding o 
+
+    function listaProduccionByDateMaqEst($from, $until, $maq, $std) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("select sum(rpa_rollo) as rollos,sum(r.rpa_peso-p.pro_capa) as pneto,sum(r.rpa_peso) as pbruto from erp_reg_op_padding r, erp_i_productos p, erp_i_orden_produccion_padding o 
                                         where o.pro_id=p.pro_id and o.opp_id=r.opp_id and r.rpa_fecha between '$from' and  '$until' and r.maq_id=$maq and r.rpa_estado='$std'");
-		}
-       }
+        }
+    }
+
+    function listaReporteMP() {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT * FROM erp_i_mp m, erp_i_tpmp t where m.mpt_id=t.mpt_id order by mpt_nombre");
+        }
+    }
+
+    function listarSumaEgresoMateriaPrimaId($id, $d, $h) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT sum(mov_cantidad) FROM erp_i_mov_inventario m, erp_transacciones t, erp_i_mp mp
+                                                    WHERE t.trs_id=m.trs_id and t.trs_operacion=1 and m.mp_id=mp.mp_id
+                                                    and m.mov_fecha_trans between '$d' and '$h' 
+                                                    and mp.mp_id=$id        
+                                                    ");
+        }
+    }
+
+    function listaSumaTotalIMPbyDateSec($d, $h) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT sum(mov_cantidad) FROM erp_i_mov_inventario m, erp_transacciones t, erp_i_mp mp
+                                                    WHERE t.trs_id=m.trs_id and t.trs_operacion=1 and m.mp_id=mp.mp_id
+                                                    and m.mov_fecha_trans between '$d' and '$h'");
+        }
+    }
+
+    function listaSumIngMPbydatetoSec($d, $h, $t) {
+        if ($this->con->Conectar() == true) {
+            return pg_query("SELECT sum(mov_cantidad) FROM erp_i_mov_inventario m, erp_transacciones t, erp_i_mp mp, erp_i_tpmp  tp
+                                                    WHERE t.trs_id=m.trs_id and t.trs_operacion=1 and m.mp_id=mp.mp_id and tp.mpt_id=mp.mpt_id 
+                                                    and tp.mpt_id=$t and m.mov_fecha_trans between '$d' and '$h'");
+        }
+    }
+
 }
 
 ?>
