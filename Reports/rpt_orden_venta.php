@@ -692,13 +692,13 @@ if (isset($_GET [id])) {
                     $n = 0;
                     while ($rst_cns = pg_fetch_array($cns_cons)) {
                         $n++;
-                        $df=explode('-',$rst[ord_fec_pedido]);
+                        $df = explode('-', $rst[ord_fec_pedido]);
                         $ultimo_dia = 28;
                         while (checkdate($df[1], $ultimo_dia + 1, $df[0])) {
                             $ultimo_dia++;
                         }
-                        $fec=$df[0].'-'.$df[1].'-'.$ultimo_dia;
-                        $rst_c = pg_fetch_array($Set->lista_costo_mp($rst_cns[mp_id],$fec));
+                        $fec = $df[0] . '-' . $df[1] . '-' . $ultimo_dia;
+                        $rst_c = pg_fetch_array($Set->lista_costo_mp($rst_cns[mp_id], $fec));
                         ?>
                         <tr>
                             <td style="width: 60px"><?php echo $rst_cns[mp_codigo] ?></td>
@@ -727,20 +727,65 @@ if (isset($_GET [id])) {
             </td>
         </tr>
         <tr>
-            <?php
-            $total_kg = $rst[tot_kg_tornillo1] + $rst[tot_kg_tornillo2] + $rst[tot_kg_tornillo3];
-            ?>
-            <td class="font">Total 100%: <?php echo str_replace(',', '', number_format($rst[ord_mftotal], 2)) ?>%</td> 
-            <td align="right">Total: <?php echo str_replace(',', '', number_format($total_kg, 2)) ?> KG</td> 
-        </tr>
-        <tr>
-            <td class="font">Merma:<?php echo str_replace(',', '', number_format($rst[ord_merma], 2)) ?>%</td>  
-            <td align="right"><?php echo str_replace(',', '', number_format($rst[ord_merma_peso], 2)) ?> Kg </td>
+            <td colspan="3">
+                <table border="0">
+                    <tr>
+                        <?php
+                        $total_kg = $rst[tot_kg_tornillo1] + $rst[tot_kg_tornillo2] + $rst[tot_kg_tornillo3];
+                        ?>
+                        <td class="font">Total 100%: <?php echo str_replace(',', '', number_format($rst[ord_mftotal], 2)) ?>%</td> 
+                        <td align="right">Total: <?php echo str_replace(',', '', number_format($total_kg, 2)) ?> KG</td> 
+            <!--            <td align="right"></td> 
+                        <td align="right"></td> 
+                        <td align="right">CONFORME</td> 
+                        <td align="right">INCONFORME</td> 
+                        <td align="right">TOTAL</td> -->
+                    </tr>
+                    <tr>
+                        <td class="font">Merma:<?php echo str_replace(',', '', number_format($rst[ord_merma], 2)) ?>%</td>  
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst[ord_merma_peso], 2)) ?> Kg </td>
 
-        </tr>
-        <tr>
-            <td class="font">Gran Total:<?php echo str_replace(',', '', number_format($rst[ord_tot_fin], 2)) ?>% 
-            <td align="right"><?php echo str_replace(',', '', number_format($rst[ord_tot_fin_peso], 2)) ?> Kg</td>
+                    </tr>
+                    <tr>
+                        <td class="font">Gran Total:<?php echo str_replace(',', '', number_format($rst[ord_tot_fin], 2)) ?>% 
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst[ord_tot_fin_peso], 2)) ?> Kg</td>
+                    </tr>
+                </table>
+            </td>
+            <td colspan="3"></td>
+            <td colspan="3"></td>
+            <td colspan="3">
+                <table>
+                    <tr>
+                        <td class="font"></td> 
+                        <td class="font">CONFORME</td> 
+                        <td class="font">INCONFORME</td> 
+                        <td class="font">TOTAL</td> 
+                    </tr>
+                    <?php
+                    $rst_rpc = pg_fetch_array($Set->total_prod_extrusion($rst[ord_id],'0'));
+                    $rst_rpi = pg_fetch_array($Set->total_prod_extrusion($rst[ord_id],'1'));
+                    ?>
+                    <tr>
+                        <td class="font">P.NETO</td> 
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[pnt], 2)) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpi[pnt],2)) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[pnt]+$rst_rpi[pnt], 2)) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="font">ROLLOS</td> 
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[rollo])) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpi[rollo])) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[rollo]+$rst_rpi[rollo])) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="font">P.BRUTO</td> 
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[pbr], 2)) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpi[pbr],2)) ?></td>
+                        <td align="right"><?php echo str_replace(',', '', number_format($rst_rpc[pbr]+$rst_rpi[pbr], 2)) ?></td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr>
             <td class="font" colspan="8">Observaciones:<?php echo $rst[ord_observaciones] ?></td>
