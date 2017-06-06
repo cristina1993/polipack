@@ -455,12 +455,14 @@ switch ($op) {
     case 4:
         ser_flush(true,true);
         ser_open("COM1", 9600, 8, "None", "1", "None");
-        sleep(1);
+        usleep(80000);
         $num="";
         for ($i = 0; $i < 9; $i++) {
             $j = ser_readbyte();
+//            $j = ser_read();
             $num.= sprintf("%c", $j);
         }
+//        $num=ser_read();
         ser_close();
         $resultado = preg_replace('/[^0-9.]+/', '', $num); 
         echo $resultado;
